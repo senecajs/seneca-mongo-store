@@ -1,0 +1,28 @@
+{
+  "name": "seneca-mongo-store",
+  "version": "0.1.0",
+  "description": "Seneca data store plugin for MongoDB",
+  "main": "lib/mongo-store.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rjrodger/seneca-mongo-store"
+  },
+  "keywords": [
+    "seneca",
+    "plugin",
+    "store",
+    "mongo",
+    "mongodb",
+    "json"
+  ],
+  "author": "Richard Rodger",
+  "license": "MIT",
+  "dependencies": {
+    "seneca": "~0.5.0",
+    "underscore": "~1.4.4",
+    "mongodb": "~1.2.11"
+  }
+}

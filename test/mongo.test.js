@@ -2,6 +2,9 @@
 "use strict";
 
 
+var assert = require('assert')
+
+
 var seneca = require('seneca')
 var shared = seneca.test.store.shared
 
@@ -10,7 +13,11 @@ var si = seneca()
 si.use(require('..'),{
   name:'senecatest',
   host:'127.0.0.1',
-  port:27017
+  port:27017,
+  options:{
+    // uncomment to test
+    // native_parser:true
+  }
 })
 
 si.__testcount = 0
@@ -37,6 +44,21 @@ describe('mongo', function(){
 
 function extratest(si,done) {
   console.log('EXTRA')
+
+  var foo = si.make$('foo')
+  foo.native$(function(err,db){
+    assert.ok(null==err)
+
+    db.collection('foo',function(err,coll){
+      assert.ok(null==err)
+
+      coll.find({},{},function(err,cursor){
+        assert.ok(null==err)
+
+        cursor.each(function(entry){if(!entry){done()}})
+      })
+    })
+  })
+
   si.__testcount++
-  done && done()
 }

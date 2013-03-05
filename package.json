@@ -25,7 +25,8 @@
     "mongodb": "~1.2.11"
   },
   "devDependencies": {
-    "seneca": "~0.5.0"
+    "seneca": "~0.5.0",
+    "async": "0.1.x"
   },
   "files": [
     "LICENSE.txt",

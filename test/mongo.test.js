@@ -37,11 +37,6 @@ describe('mongo', function(){
     extratest(si,done)
   })
 
-  it('limit/skip', function (done) {
-    testcount++
-    testlimitskip(si, done)
-  })
-
   it('close', function(done){
     shared.closetest(si,testcount,done)
   })
@@ -52,33 +47,29 @@ describe('mongo', function(){
 function extratest(si,done) {
   console.log('EXTRA')
 
-  var foo = si.make$('foo')
-  foo.native$(function(err,db){
-    assert.ok(null==err)
-
-    db.collection('foo',function(err,coll){
-      assert.ok(null==err)
-
-      coll.find({},{},function(err,cursor){
-        assert.ok(null==err)
-
-        cursor.each(function (entry) {
-          if (!entry) {
-            done()
-          }
-        })
-      })
-    })
-  })
-
-  si.__testcount++
-}
-
-function testlimitskip(si, done) {
-  console.log('Test Limit/Skip')
-
   async.series(
     {
+      native: function(cb){
+        var foo = si.make$('foo')
+        foo.native$(function(err,db){
+          assert.ok(null==err)
+
+          db.collection('foo',function(err,coll){
+            assert.ok(null==err)
+
+            coll.find({},{},function(err,cursor){
+              assert.ok(null==err)
+
+              cursor.each(function (entry) {
+                if (!entry) {
+                  cb()
+                }
+              })
+            })
+          })
+        })
+      },
+
       remove: function (cb) {
         var cl = si.make$('lmt')
         // clear 'lmt' collection
@@ -157,4 +148,6 @@ function testlimitskip(si, done) {
       done()
     }
   )
+
+  si.__testcount++
 }

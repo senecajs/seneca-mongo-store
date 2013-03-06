@@ -12,9 +12,9 @@ it also provides an example of a document-oriented storage plugin code base.
 If you're using this module, feel free to contact me on twitter if you
 have any questions! :) [@rjrodger](http://twitter.com/rjrodger)
 
-Current Version: 0.1.2
+Current Version: 0.1.3
 
-Tested on: node 0.8.16, seneca 0.5.0
+Tested on: node 0.8.16, seneca 0.5.2
 
 
 

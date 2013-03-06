@@ -18,15 +18,16 @@
     "mongodb",
     "json"
   ],
-  "author": "Richard Rodger",
+  "author": "Richard Rodger (http://richardrodger.com)",
+  "contributors": ["Mircea Alexandru (https://github.com/mirceaalexandru)"],
   "license": "MIT",
   "dependencies": {
     "underscore": "~1.4.4",
-    "mongodb": "~1.2.11"
+    "mongodb": "~1.2.13"
   },
   "devDependencies": {
     "seneca": "~0.5.2",
-    "async": "0.1.x"
+    "async": "0.2.5"
   },
   "files": [
     "LICENSE.txt",

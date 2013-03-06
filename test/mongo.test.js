@@ -6,8 +6,11 @@ var assert = require('assert')
 
 
 var seneca = require('seneca')
-var shared = seneca.test.store.shared
 var async = require('async')
+
+
+var shared = seneca.test.store.shared
+
 
 
 var si = seneca()
@@ -18,7 +21,6 @@ si.use(require('..'),{
   options:{
     // uncomment to test
     // native_parser:true
-    w: 1
   }
 })
 
@@ -64,6 +66,33 @@ function extratest(si,done) {
                 if (!entry) {
                   cb()
                 }
+              })
+            })
+          })
+        })
+      },
+
+      native_query: function(cb){
+        var nat = si.make$('nat')
+        nat.remove$({all$:true}, function(err){
+          assert.ok(null==err)
+
+          nat.a=1
+          nat.save$(function(err,nat){
+            assert.ok(null==err)
+
+            nat = nat.make$()
+            nat.a=2
+            nat.save$(function(err,nat){
+              assert.ok(null==err)
+
+              nat.list$({native$:[{/*$or:[{a:1},{a:2}]*/},{sort:[['a',-1]]}]},function(err,list){
+                assert.ok(null==err)
+                //console.log(list)
+                assert.equal(2,list.length)
+                assert.equal(2,list[0].a)
+                assert.equal(1,list[1].a)
+                cb()
               })
             })
           })
@@ -141,7 +170,6 @@ function extratest(si,done) {
           cb()
         })
       }
-
     },
     function (err, out) {
       si.__testcount++

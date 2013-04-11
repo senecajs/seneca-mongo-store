@@ -1,10 +1,16 @@
 # seneca-mongo-store
 
-### Node.js seneca data storage module for MongoDB.
+### Seneca node.js data-storage plugin for MongoDB.
 
 This module is a plugin for the Seneca framework. It provides a
 storage engine that uses MongoDB to persist data. This module is for production use.
 It also provides an example of a document-oriented storage plugin code-base.
+
+The Seneca framework provides an 
+[ActiveRecord-style data storage API](http://senecajs.org/data-entities.html). 
+Each supported database has a plugin, such as this one, that
+provides the underlying Seneca plugin actions required for data
+persistence.
 
 
 ### Support
@@ -12,7 +18,7 @@ It also provides an example of a document-oriented storage plugin code-base.
 If you're using this module, feel free to contact me on twitter if you
 have any questions! :) [@rjrodger](http://twitter.com/rjrodger)
 
-Current Version: 0.1.3
+Current Version: 0.1.4
 
 Tested on: node 0.8.16, seneca 0.5.2
 

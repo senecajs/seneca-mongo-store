@@ -89,12 +89,16 @@ The standard Seneca query format is supported:
 As with all seneca stores, you can access the native driver, in this case, 
 the `node-mongodb-native` `collection` object using `entity.native$(function(err,collection){...})`.
 
-```JavaScrip
-// SELECT cust\_id, count(\*) FROM orders GROUP BY cust\_id HAVING count(\*) > 1
+How to write this SQL query using Mongo aggregate in Seneca:
 
+```SQL
+// SELECT cust_id, count(*) FROM orders GROUP BY cust_id HAVING count(*) > 1
+```
+
+```JavaScript
 var aggregateQuery = [{ $group: { _id: "$cust_id", count: { $sum: 1 } } }, { $match: { count: { $gt: 1 } } } ];
 
-orders\_ent.native$(function(err, db){
+orders_ent.native$(function(err, db){
 	var collection = db.collection('orders');
 	collection.aggregate(aggregateQuery, function(err, list){
 		if(err) return done(err);
@@ -111,7 +115,5 @@ orders\_ent.native$(function(err, db){
 cd test
 mocha mongo.test.js --seneca.log.print
 ```
-
-
 
 

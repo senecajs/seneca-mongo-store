@@ -86,8 +86,24 @@ The standard Seneca query format is supported:
 
 ### Native Driver
 
-As with all seneca stores, you can access the native driver, in this case, the `node-mongodb-native` `collection` object using `entity.native$(function(err,collection){...})`.
+As with all seneca stores, you can access the native driver, in this case, 
+the `node-mongodb-native` `collection` object using `entity.native$(function(err,collection){...})`.
 
+```JavaScrip
+// SELECT cust\_id, count(\*) FROM orders GROUP BY cust\_id HAVING count(\*) > 1
+
+var aggregateQuery = [{ $group: { _id: "$cust_id", count: { $sum: 1 } } }, { $match: { count: { $gt: 1 } } } ];
+
+orders\_ent.native$(function(err, db){
+	var collection = db.collection('orders');
+	collection.aggregate(aggregateQuery, function(err, list){
+		if(err) return done(err);
+		console.log("Found records:", list);
+		// ...
+						
+	}); // end aggregate 
+}); // end native$
+````
 
 ## Test
 

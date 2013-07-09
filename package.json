@@ -1,6 +1,6 @@
 {
   "name": "seneca-mongo-store",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Seneca data store plugin for MongoDB",
   "main": "lib/mongo-store.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "mongodb": "~1.2.13"
   },
   "devDependencies": {
-    "seneca": "~0.5.5",
+    "seneca": ">=0.5.9",
     "async": "0.2.5"
   },
   "files": [

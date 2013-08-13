@@ -1,6 +1,6 @@
 {
   "name": "seneca-mongo-store",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Seneca data store plugin for MongoDB",
   "main": "lib/mongo-store.js",
   "scripts": {
@@ -19,15 +19,19 @@
     "json"
   ],
   "author": "Richard Rodger (http://richardrodger.com)",
-  "contributors": ["Mircea Alexandru (https://github.com/mirceaalexandru)"],
+  "contributors": [
+    "Peter Elger (https://github.com/pelger)",
+    "Cristian Ianto (https://github.com/iantocristian)",
+    "Mircea Alexandru (https://github.com/mirceaalexandru)"
+  ],
   "license": "MIT",
   "dependencies": {
-    "underscore": "~1.4.4",
-    "mongodb": "~1.2.13"
+    "underscore": "1.5.1",
+    "mongodb": "1.2.14"
   },
   "devDependencies": {
     "seneca": ">=0.5.9",
-    "async": "0.2.5"
+    "async": "0.2.9"
   },
   "files": [
     "LICENSE.txt",

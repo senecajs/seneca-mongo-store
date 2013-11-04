@@ -49,7 +49,7 @@ seneca.ready(function(){
 
 ```sh
 npm install seneca
-npm install seneca-mongodb-store
+npm install seneca-mongo-store
 ```
 
 

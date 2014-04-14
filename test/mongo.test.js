@@ -169,6 +169,34 @@ function extratest(si,done) {
           assert.equal(1, lst.length)
           cb()
         })
+      },
+
+      insertUpdate: function (cb) {
+
+        var cl = si.make$('lmt')
+        cl.p1 = 'value1'
+        cl.p2 = 2
+        cl.save$(function (err, foo) {
+          assert.ok(null == err)
+          assert.ok(foo.id)
+          assert.equal(foo.p1, 'value1')
+          assert.equal(foo.p2, 2)
+
+          delete foo.p1
+          foo.p2 = 2.2
+
+          foo.save$(function (err, foo) {
+            assert.ok(null == err)
+
+            foo.load$({id: foo.id}, function(err, foo) {
+
+              assert.ok(foo.id)
+              assert.equal(foo.p1, 'value1')
+              assert.equal(foo.p2, 2.2)
+            })
+            cb()
+          })
+        })
       }
     },
     function (err, out) {

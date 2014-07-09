@@ -156,9 +156,7 @@ module.exports = function(opts) {
 	rservs.push(new mongo.Server(servconf.host,servconf.port,dbopts))
       }
       var rset = new mongo.ReplSetServers(rservs)
-      dbinst = new mongo.Db(
-	conf.name, rset
-      )
+      dbinst = new mongo.Db( conf.name, rset, dbopts )
     }
     else {
       dbinst = new mongo.Db(

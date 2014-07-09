@@ -1,8 +1,8 @@
 {
   "name": "seneca-mongo-store",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Seneca data store plugin for MongoDB",
-  "main": "lib/mongo-store.js",
+  "main": "mongo-store.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha test/*.test.js"
   },
@@ -28,13 +28,13 @@
   "license": "MIT",
   "dependencies": {
     "underscore": "~1.6.0",
-    "mongodb": "~1.4.0"
+    "mongodb": "~1.4.7"
   },
   "devDependencies": {
-    "async": "~0.7.0",
-    "seneca": "~0.5.15",
-    "mocha": "~1.18.2",
-    "seneca-store-test": "~0.1.0"
+    "async": "~0.9.0",
+    "seneca": "~0.5.17",
+    "mocha": "~1.20.1",
+    "seneca-store-test": "~0.1.1"
   },
   "peerDependencies": {
     "seneca": "*"
@@ -42,6 +42,6 @@
   "files": [
     "LICENSE.txt",
     "README.md",
-    "lib"
+    "mongo-store.js"
   ]
 }

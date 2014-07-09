@@ -15,8 +15,6 @@ npm-debug.log
 node_modules
 *~
 .DS_Store
-test/db/*.0
-test/db/*.1
-test/db/*.2
-test/db/*.ns
-test/db/*.lock
+test/db
+db
+

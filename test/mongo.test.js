@@ -15,7 +15,7 @@ var shared = require('seneca-store-test')
 
 var si = seneca()
 si.use(require('..'),{
-  xname:'senecatest',
+  name:'senecatest',
   host:'127.0.0.1',
   port:27017,
   options:{

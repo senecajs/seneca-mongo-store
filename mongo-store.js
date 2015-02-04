@@ -1,8 +1,8 @@
-/* Copyright (c) 2010-2014 Richard Rodger, MIT License */
+/* Copyright (c) 2010-2015 Richard Rodger, MIT License */
 "use strict";
 
 
-var _     = require('underscore')
+var _     = require('lodash')
 var mongo = require('mongodb')
 
 

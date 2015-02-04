@@ -27,17 +27,14 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "underscore": "~1.6.0",
-    "mongodb": "~1.4.7"
+    "lodash": "~2.4.1",
+    "mongodb": "~1.4.30"
   },
   "devDependencies": {
     "async": "~0.9.0",
-    "seneca": "~0.5.20",
+    "seneca": "plugin",
     "mocha": "~1.20.1",
     "seneca-store-test": "~0.2.2"
-  },
-  "peerDependencies": {
-    "seneca": "*"
   },
   "files": [
     "LICENSE.txt",

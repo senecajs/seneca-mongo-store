@@ -10,9 +10,9 @@ var name = "mongo-store"
 
 
 /*
-native$ = object => use object as query, no meta settings
-native$ = array => use first elem as query, second elem as meta settings
-*/
+ native$ = object => use object as query, no meta settings
+ native$ = array => use first elem as query, second elem as meta settings
+ */
 
 
 function idstr( obj ) {
@@ -152,8 +152,8 @@ module.exports = function(opts) {
     if( conf.replicaset ) {
       var rservs = []
       for( var i = 0; i < conf.replicaset.servers.length; i++ ) {
-	var servconf = conf.replicaset.servers[i]
-	rservs.push(new mongo.Server(servconf.host,servconf.port,dbopts))
+        var servconf = conf.replicaset.servers[i]
+        rservs.push(new mongo.Server(servconf.host,servconf.port,dbopts))
       }
       var rset = new mongo.ReplSetServers(rservs)
       dbinst = new mongo.Db( conf.name, rset, dbopts )
@@ -181,7 +181,7 @@ module.exports = function(opts) {
             seneca.log.error('init','db auth failed for '+conf.username,dbopts)
             return cb(err);
           }
-          
+
           seneca.log.debug('init','db open and authed for '+conf.username,dbopts)
           cb(null)
         })
@@ -236,10 +236,20 @@ module.exports = function(opts) {
         if( !error(args,err,cb) ) {
           var entp = {};
 
+          var u = {}
+          ent.$unset && (u.$unset = ent.$unset)
+
+          var unsetFields =  _.keys(ent.$unset).concat('$unset')
+
+
           var fields = ent.fields$()
-          fields.forEach( function(field) {
-            entp[field] = ent[field]
-          })
+          fields
+            .filter(function (field) {
+              return !_.contains(unsetFields, field)
+            })
+            .forEach( function(field) {
+              entp[field] = ent[field]
+            })
 
           if( !update && void 0 != ent.id$ ) {
             entp._id = makeid(ent.id$)
@@ -248,8 +258,10 @@ module.exports = function(opts) {
           if( update ) {
             var q = {_id:makeid(ent.id)}
             delete entp.id
+            !_.isEmpty(entp) && (u.$set = entp)
 
-            coll.update(q,{$set: entp}, {upsert:true},function(err,update){
+
+            coll.update(q, u, {upsert:true},function(err,update){
               if( !error(args,err,cb) ) {
                 seneca.log.debug('save/update',ent,desc)
                 cb(null,ent)

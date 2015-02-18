@@ -176,14 +176,17 @@ function extratest(si,done) {
         var cl = si.make$('lmt')
         cl.p1 = 'value1'
         cl.p2 = 2
+        cl.unsetMe = 'removeMe'
         cl.save$(function (err, foo) {
           assert.ok(null == err)
           assert.ok(foo.id)
           assert.equal(foo.p1, 'value1')
           assert.equal(foo.p2, 2)
+          assert.equal(foo.unsetMe, 'removeMe')
 
           delete foo.p1
           foo.p2 = 2.2
+          foo.$unset = {unsetMe:''}
 
           foo.save$(function (err, foo) {
             assert.ok(null == err)
@@ -193,6 +196,37 @@ function extratest(si,done) {
               assert.ok(foo.id)
               assert.equal(foo.p1, 'value1')
               assert.equal(foo.p2, 2.2)
+              assert.equal(foo.hasOwnProperty('unsetMe'), false)
+            })
+            cb()
+          })
+        })
+      },
+
+      insertUpdateUnsetOnly: function (cb) {
+
+        var cl = si.make$('lmt')
+        cl.p1 = 'value1'
+        cl.p2 = 2
+        cl.unsetMe = 'removeMe'
+        cl.save$(function (err, foo) {
+          assert.ok(null == err)
+          assert.ok(foo.id)
+          assert.equal(foo.p1, 'value1')
+          assert.equal(foo.p2, 2)
+
+          cl = si.make$('lmt')
+          cl.id = foo.id
+          cl.$unset = {p1:''}
+
+          cl.save$(function (err, foo) {
+            assert.ok(null == err)
+
+            foo.load$({id: foo.id}, function(err, foo) {
+              assert.ok(foo.id)
+              assert.equal(foo.hasOwnProperty('p1'), false)
+              assert.equal(foo.p2, 2)
+
             })
             cb()
           })

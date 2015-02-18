@@ -84,6 +84,20 @@ The standard Seneca query format is supported:
    * `entity.list$({f1:v1,...},{native$:[{-mongo-query-},{-mongo-options-}]})` allows you to specify a native mongo query, as per [node-mongodb-native](http://mongodb.github.com/node-mongodb-native/markdown-docs/queries.html) 
 
 
+### Mongo specific
+####save$ $unset
+[$unset](http://docs.mongodb.org/manual/reference/operator/update/unset/) to remove fields when updating an entity. Note fields on the entity are ignored if specified in $unset
+
+```JavaScript
+var entity = //...load entity
+entity.$unset = {propertyToRemove:'', anotherPropertyToRemove:''}
+entity.propertyToRemove = '123' //ignored
+
+entity.save$( function(err,entity){ ... } )
+```
+
+
+
 ### Native Driver
 
 As with all seneca stores, you can access the native driver, in this case, 

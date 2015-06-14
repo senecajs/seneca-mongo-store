@@ -4,7 +4,7 @@
 
 var _     = require('lodash')
 var mongo = require('mongodb')
-
+var ObjectID = mongo.ObjectID
 
 var name = "mongo-store"
 
@@ -23,12 +23,7 @@ function idstr( obj ) {
 function makeid(hexstr) {
   if( _.isString(hexstr) && 24 == hexstr.length ) {
     try {
-      if( mongo.BSONNative ) {
-        return new mongo.BSONNative.ObjectID(hexstr)
-      }
-      else {
-        return new mongo.BSONPure.ObjectID(hexstr)
-      }
+      return ObjectID.createFromHexString(hexstr);
     }
     catch(e) {
       return hexstr;
@@ -249,7 +244,7 @@ module.exports = function(opts) {
             var q = {_id:makeid(ent.id)}
             delete entp.id
 
-            coll.update(q,{$set: entp}, {upsert:true},function(err,update){
+            coll.updateOne(q,{$set: entp}, {upsert:true},function(err,update){
               if( !error(args,err,cb) ) {
                 seneca.log.debug('save/update',ent,desc)
                 cb(null,ent)
@@ -257,9 +252,9 @@ module.exports = function(opts) {
             })
           }
           else {
-            coll.insert(entp,function(err,inserts){
+            coll.insertOne(entp, {}, function(err,r){
               if( !error(args,err,cb) ) {
-                ent.id = idstr( inserts[0]._id )
+                ent.id = idstr( r.insertedId )
 
                 seneca.log.debug('save/insert',ent,desc)
                 cb(null,ent)
@@ -349,7 +344,7 @@ module.exports = function(opts) {
           var qq = fixquery(qent,q)
 
           if( all ) {
-            coll.remove(qq,function(err){
+            coll.deleteMany(qq, {}, function(err){
               seneca.log.debug('remove/all',q,desc)
               cb(err)
             })
@@ -359,7 +354,7 @@ module.exports = function(opts) {
             coll.findOne(qq,mq,function(err,entp){
               if( !error(args,err,cb) ) {
                 if( entp ) {
-                  coll.remove({_id:entp._id},function(err){
+                  coll.deleteOne({_id:entp._id}, {}, function(err){
                     seneca.log.debug('remove/one',q,entp,desc)
 
                     var ent = load ? entp : null

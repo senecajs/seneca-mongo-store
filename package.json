@@ -4,7 +4,7 @@
   "description": "Seneca data store plugin for MongoDB",
   "main": "mongo-store.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/*.test.js"
+    "test": "lab test/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,8 @@
     "Richard Rodger (http://richardrodger.com)",
     "Peter Elger (https://github.com/pelger)",
     "Cristian Ianto (https://github.com/iantocristian)",
-    "Mircea Alexandru (https://github.com/mirceaalexandru)"
+    "Mircea Alexandru (https://github.com/mirceaalexandru)",
+		"Alan Bradley (https://github.com/gangleri)"
   ],
   "license": "MIT",
   "dependencies": {
@@ -34,7 +35,7 @@
     "async": "1.4.2",
     "lab": "5.16.0",
     "seneca": "plugin",
-    "seneca-store-test": "~0.2.2"
+    "seneca-store-test": "latest"
   },
   "files": [
     "LICENSE.txt",

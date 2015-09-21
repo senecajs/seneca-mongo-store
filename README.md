@@ -5,18 +5,14 @@
 [![travis][travis-badge]][travis-url]
 [![npm][npm-badge]][npm-url]
 
-This module is a plugin for [Seneca.js][]. It provides a storage engine that uses
-MongoDb to persist data and is ready for production use. It may also be used as
-an example on how to implement a storage plugin for Seneca.
+This module is a plugin for [Seneca.js][]. It provides a storage engine that uses MongoDb to
+persist data and is ready for production use. It may also be used as an example on how to implement
+a storage plugin for Seneca.
 
 For a gentle introduction to Seneca itself, see the [senecajs.org][seneca.js] site.
 
-If you're using this plugin module, feel free to contact me on twitter if you
-have any questions! :) [@rjrodger](http://twitter.com/rjrodger)
-
 ## Install
-To install, simply use npm. Remember you will need to install [Seneca.js][]
-seperately.
+To install, simply use npm. Remember you will need to install [Seneca.js][] separately.
 
 ```
 npm install seneca
@@ -31,43 +27,40 @@ npm run test
 ```
 
 ## Quick Example
-
 ```js
 var seneca = require('seneca')()
-seneca.use('mongo-store',{
-  name:'dbname',
-  host:'127.0.0.1',
-  port:27017
+seneca.use('mongo-store', {
+  name: 'dbname',
+  host: '127.0.0.1',
+  port: 27017
 })
 
 seneca.ready(function(){
   var apple = seneca.make$('fruit')
   apple.name  = 'Pink Lady'
   apple.price = 0.99
-  apple.save$(function(err,apple){
+  apple.save$(function (err,apple) {
     console.log( "apple.id = "+apple.id  )
   })
 })
 ```
 
 ## Usage
-
-You don't use this module directly. It provides an underlying data storage engine for the Seneca entity API:
+You don't use this module directly. It provides an underlying data storage engine for the Seneca
+entity API:
 
 ```js
 var entity = seneca.make$('typename')
 entity.someproperty = "something"
 entity.anotherproperty = 100
 
-entity.save$( function(err,entity){ ... } )
-entity.load$( {id: ...}, function(err,entity){ ... } )
-entity.list$( {property: ...}, function(err,entity){ ... } )
-entity.remove$( {id: ...}, function(err,entity){ ... } )
+entity.save$(function (err, entity) { ... })
+entity.load$({id: ...}, function (err, entity) { ... })
+entity.list$({property: ...}, function (err, entity) { ... })
+entity.remove$({id: ...}, function (err, entity) { ... })
 ```
 
-
-### Queries
-
+### Query Support
 The standard Seneca query format is supported:
 
 - `.list$({f1:v1, f2:v2, ...})` implies pseudo-query `f1==v1 AND f2==v2, ...`.
@@ -85,10 +78,9 @@ The standard Seneca query format is supported:
 Note: you can use `sort$`, `limit$`, `skip$` and `fields$` together.
 
 ### Native Driver
-
-As with all seneca stores, you can access the native driver, in this case, the `node-mongodb-native` `collection`
-object using `entity.native$(function (err,collection) {...})`. Below we have included a demonstration on how to
-write a SQL query using Mongo aggregate in Seneca:
+As with all seneca stores, you can access the native driver, in this case, the `node-mongodb-native`
+`collection` object using `entity.native$(function (err,collection) {...})`. Below we have included
+a demonstration on how to write a SQL query using Mongo aggregate in Seneca:
 
 ```SQL
 SELECT cust_id, count(*) FROM orders GROUP BY cust_id HAVING count(*) > 1
@@ -113,15 +105,14 @@ orders_ent.native$(function (err, db) {
 });
 ````
 
-You can also use: `entity.list$({f1:v1,...}, {native$:[{-mongo-query-}, {-mongo-options-}]})` which allows you to specify
-a native mongo query per [node-mongodb-native][]
+You can also use: `entity.list$({f1:v1,...}, {native$:[{-mongo-query-}, {-mongo-options-}]})` which
+allows you to specify a native mongo query per [node-mongodb-native][]
 
 ## Contributing
 We encourage participation. If you feel you can help in any way, be it with
 examples, extra testing, or new features please get in touch.
 
 ## License
-
 Copyright Richard Rodger 2015, Licensed under [MIT][].
 
 [MIT]: ./LICENSE

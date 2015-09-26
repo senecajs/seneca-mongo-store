@@ -22,19 +22,10 @@ function idstr( obj ) {
 
 function makeid(hexstr) {
   if( _.isString(hexstr) && 24 == hexstr.length ) {
-    try {
-      if( mongo.BSONNative ) {
-        return new mongo.BSONNative.ObjectID(hexstr)
-      }
-      else {
-        return new mongo.BSONPure.ObjectID(hexstr)
-      }
-    }
-    catch(e) {
-      return hexstr;
-    }
+      return mongo.ObjectID.createFromHexString(hexstr)
   }
-  else return hexstr;
+
+  return hexstr;
 }
 
 
@@ -257,9 +248,9 @@ module.exports = function(opts) {
             })
           }
           else {
-            coll.insert(entp,function(err,inserts){
+            coll.insertOne(entp,function(err,inserts){
               if( !error(args,err,cb) ) {
-                ent.id = idstr( inserts[0]._id )
+                ent.id = idstr( inserts.ops[0]._id )
 
                 seneca.log.debug('save/insert',ent,desc)
                 cb(null,ent)

@@ -4,7 +4,7 @@
 
 var _     = require('lodash')
 var mongo = require('mongodb')
-
+var ObjectID = mongo.ObjectID
 
 var name = "mongo-store"
 
@@ -23,12 +23,7 @@ function idstr( obj ) {
 function makeid(hexstr) {
   if( _.isString(hexstr) && 24 == hexstr.length ) {
     try {
-      if( mongo.BSONNative ) {
-        return new mongo.BSONNative.ObjectID(hexstr)
-      }
-      else {
-        return new mongo.BSONPure.ObjectID(hexstr)
-      }
+      return ObjectID.createFromHexString(hexstr);
     }
     catch(e) {
       return hexstr;
@@ -114,7 +109,7 @@ module.exports = function(opts) {
 
   function configure(spec,cb) {
     specifications = spec
-
+    console.log("\n\n\n",spec,"\n\n\n")
     // defer connection
     // TODO: expose connection action
     if( !_.isUndefined(spec.connect) && !spec.connect ) {
@@ -155,7 +150,7 @@ module.exports = function(opts) {
 	var servconf = conf.replicaset.servers[i]
 	rservs.push(new mongo.Server(servconf.host,servconf.port,dbopts))
       }
-      var rset = new mongo.ReplSetServers(rservs)
+      var rset = new mongo.ReplSet(rservs)
       dbinst = new mongo.Db( conf.name, rset, dbopts )
     }
     else {
@@ -181,7 +176,7 @@ module.exports = function(opts) {
             seneca.log.error('init','db auth failed for '+conf.username,dbopts)
             return cb(err);
           }
-          
+
           seneca.log.debug('init','db open and authed for '+conf.username,dbopts)
           cb(null)
         })
@@ -249,7 +244,7 @@ module.exports = function(opts) {
             var q = {_id:makeid(ent.id)}
             delete entp.id
 
-            coll.update(q,{$set: entp}, {upsert:true},function(err,update){
+            coll.updateOne(q,{$set: entp}, {upsert:true},function(err,update){
               if( !error(args,err,cb) ) {
                 seneca.log.debug('save/update',ent,desc)
                 cb(null,ent)
@@ -257,9 +252,9 @@ module.exports = function(opts) {
             })
           }
           else {
-            coll.insert(entp,function(err,inserts){
+            coll.insertOne(entp, {}, function(err,r){
               if( !error(args,err,cb) ) {
-                ent.id = idstr( inserts[0]._id )
+                ent.id = idstr( r.insertedId )
 
                 seneca.log.debug('save/insert',ent,desc)
                 cb(null,ent)
@@ -349,7 +344,7 @@ module.exports = function(opts) {
           var qq = fixquery(qent,q)
 
           if( all ) {
-            coll.remove(qq,function(err){
+            coll.deleteMany(qq, {}, function(err){
               seneca.log.debug('remove/all',q,desc)
               cb(err)
             })
@@ -359,7 +354,7 @@ module.exports = function(opts) {
             coll.findOne(qq,mq,function(err,entp){
               if( !error(args,err,cb) ) {
                 if( entp ) {
-                  coll.remove({_id:entp._id},function(err){
+                  coll.deleteOne({_id:entp._id}, {}, function(err){
                     seneca.log.debug('remove/one',q,entp,desc)
 
                     var ent = load ? entp : null
@@ -408,15 +403,3 @@ module.exports = function(opts) {
 
   return {name:store.name,tag:meta.tag}
 }
-
-
-
-
-
-
-
-
-
-
-
-

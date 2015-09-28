@@ -109,7 +109,6 @@ module.exports = function(opts) {
 
   function configure(spec,cb) {
     specifications = spec
-    console.log("\n\n\n",spec,"\n\n\n")
     // defer connection
     // TODO: expose connection action
     if( !_.isUndefined(spec.connect) && !spec.connect ) {

@@ -1,18 +1,29 @@
-# seneca-mongo-store
-
+![Seneca](http://senecajs.surge.sh/files/assets/seneca-logo.png)
 > A [Seneca.js][] data storage plugin
 
-[![travis][travis-badge]][travis-url]
-[![npm][npm-badge]][npm-url]
+# seneca-mongo-store
+[![Build Status][travis-badge]][travis-url]
+[![Gitter][gitter-badge]][gitter-url]
 
-This module is a plugin for [Seneca.js][]. It provides a storage engine that uses MongoDb to
-persist data and is ready for production use. It may also be used as an example on how to implement
-a storage plugin for Seneca.
+[![js-standard-style][standard-badge]][standard-style]
 
-For a gentle introduction to Seneca itself, see the [senecajs.org][seneca.js] site.
+This module is a plugin for [Seneca.js][]. It provides a storage engine that uses
+MongoDb to persist data and is ready for production use. It may also be used as
+an example on how to implement a storage plugin for Seneca.
+
+If you're using this module, and need help, you can:
+
+- Post a [github issue][],
+- Tweet to [@senecajs][],
+- Ask on the [Gitter][gitter-url].
+
+If you are new to Seneca in general, please take a look at [senecajs.org][]. We have everything from
+tutorials to sample apps to help get you up and running quickly.
+
 
 ## Install
-To install, simply use npm. Remember you will need to install [Seneca.js][] separately.
+To install, simply use npm. Remember you will need to install [Seneca.js][]
+seperately.
 
 ```
 npm install seneca
@@ -27,15 +38,16 @@ npm run test
 ```
 
 ## Quick Example
+
 ```js
 var seneca = require('seneca')()
-seneca.use('mongo-store', {
-  name: 'dbname',
-  host: '127.0.0.1',
-  port: 27017
+seneca.use('mongo-store',{
+  name:'dbname',
+  host:'127.0.0.1',
+  port:27017
 })
 
-seneca.ready(function(){
+seneca.ready(function () {
   var apple = seneca.make$('fruit')
   apple.name  = 'Pink Lady'
   apple.price = 0.99
@@ -46,8 +58,8 @@ seneca.ready(function(){
 ```
 
 ## Usage
-You don't use this module directly. It provides an underlying data storage engine for the Seneca
-entity API:
+
+You don't use this module directly. It provides an underlying data storage engine for the Seneca entity API:
 
 ```js
 var entity = seneca.make$('typename')
@@ -60,7 +72,9 @@ entity.list$({property: ...}, function (err, entity) { ... })
 entity.remove$({id: ...}, function (err, entity) { ... })
 ```
 
+
 ### Query Support
+
 The standard Seneca query format is supported:
 
 - `.list$({f1:v1, f2:v2, ...})` implies pseudo-query `f1==v1 AND f2==v2, ...`.
@@ -78,9 +92,10 @@ The standard Seneca query format is supported:
 Note: you can use `sort$`, `limit$`, `skip$` and `fields$` together.
 
 ### Native Driver
-As with all seneca stores, you can access the native driver, in this case, the `node-mongodb-native`
-`collection` object using `entity.native$(function (err,collection) {...})`. Below we have included
-a demonstration on how to write a SQL query using Mongo aggregate in Seneca:
+
+As with all seneca stores, you can access the native driver, in this case, the `node-mongodb-native` `collection`
+object using `entity.native$(function (err,collection) {...})`. Below we have included a demonstration on how to
+write a SQL query using Mongo aggregate in Seneca:
 
 ```SQL
 SELECT cust_id, count(*) FROM orders GROUP BY cust_id HAVING count(*) > 1
@@ -105,24 +120,32 @@ orders_ent.native$(function (err, db) {
 });
 ````
 
-You can also use: `entity.list$({f1:v1,...}, {native$:[{-mongo-query-}, {-mongo-options-}]})` which
-allows you to specify a native mongo query per [node-mongodb-native][]
+You can also use: `entity.list$({f1:v1,...}, {native$:[{-mongo-query-}, {-mongo-options-}]})` which allows you to specify
+a native mongo query per [node-mongodb-native][]
 
 ## Contributing
-We encourage participation. If you feel you can help in any way, be it with
-examples, extra testing, or new features please get in touch.
+The [Senecajs org][] encourages open participation. If you feel you can help in any way, be it with
+documentation, examples, extra testing, or new features please get in touch.
 
 ## License
+
 Copyright Richard Rodger 2015, Licensed under [MIT][].
 
 [MIT]: ./LICENSE
 [Contribution Guide]: ./CONTRIBUTING.md
 [eg]: ./eg/basic-usage.js
 
-[travis-badge]: https://img.shields.io/travis/rjrodger/seneca-mongo-store.svg?style=flat-square
+[travis-badge]: https://travis-ci.org/rjrodger/seneca-mongo-store.svg
 [travis-url]: https://travis-ci.org/rjrodger/seneca-mongo-store
-[npm-badge]: https://img.shields.io/npm/v/seneca-mongo-store.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/seneca-mongo-store
+[gitter-badge]: https://badges.gitter.im/Join%20Chat.svg
+[gitter-url]: https://gitter.im/senecajs/seneca
+[standard-badge]: https://raw.githubusercontent.com/feross/standard/master/badge.png
+[standard-style]: https://github.com/feross/standard
 
+
+[Senecajs org]: https://github.com/senecajs/
 [Seneca.js]: https://www.npmjs.com/package/seneca
+[senecajs.org]: http://senecajs.org/
 [node-mongodb-native]: http://mongodb.github.com/node-mongodb-native/markdown-docs/queries.html
+[github issue]: https://github.com/rjrodger/seneca-mongo-store/issues
+[@senecajs]: http://twitter.com/senecajs

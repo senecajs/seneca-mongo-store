@@ -47,11 +47,11 @@ seneca.use('mongo-store',{
   port:27017
 })
 
-seneca.ready(function(){
+seneca.ready(){
   var apple = seneca.make$('fruit')
   apple.name  = 'Pink Lady'
   apple.price = 0.99
-  apple.save$(function(err,apple){
+  apple.save$(function (err,apple) {
     console.log( "apple.id = "+apple.id  )
   })
 })
@@ -66,10 +66,10 @@ var entity = seneca.make$('typename')
 entity.someproperty = "something"
 entity.anotherproperty = 100
 
-entity.save$( function(err,entity){ ... } )
-entity.load$( {id: ...}, function(err,entity){ ... } )
-entity.list$( {property: ...}, function(err,entity){ ... } )
-entity.remove$( {id: ...}, function(err,entity){ ... } )
+entity.save$( function (err,entity) { ... } )
+entity.load$( {id: ...}, function (err,entity) { ... } )
+entity.list$( {property: ...}, function (err,entity) { ... } )
+entity.remove$( {id: ...}, function (err,entity) { ... } )
 ```
 
 
@@ -135,8 +135,8 @@ Copyright Richard Rodger 2015, Licensed under [MIT][].
 [Contribution Guide]: ./CONTRIBUTING.md
 [eg]: ./eg/basic-usage.js
 
-[travis-badge]: https://travis-ci.org/senecajs/seneca-level-store.svg
-[travis-url]: https://travis-ci.org/senecajs/seneca-level-store
+[travis-badge]: https://travis-ci.org/rjrodger/seneca-mongo-store.svg
+[travis-url]: https://travis-ci.org/rjrodger/seneca-mongo-store
 [gitter-badge]: https://badges.gitter.im/Join%20Chat.svg
 [gitter-url]: https://gitter.im/senecajs/seneca
 [standard-badge]: https://raw.githubusercontent.com/feross/standard/master/badge.png
@@ -147,5 +147,5 @@ Copyright Richard Rodger 2015, Licensed under [MIT][].
 [Seneca.js]: https://www.npmjs.com/package/seneca
 [senecajs.org]: http://senecajs.org/
 [node-mongodb-native]: http://mongodb.github.com/node-mongodb-native/markdown-docs/queries.html
-[github issue]: https://github.com/rjrodger/seneca-level-store/issues
+[github issue]: https://github.com/rjrodger/seneca-mongo-store/issues
 [@senecajs]: http://twitter.com/senecajs

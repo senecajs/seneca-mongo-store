@@ -47,7 +47,7 @@ seneca.use('mongo-store',{
   port:27017
 })
 
-seneca.ready(){
+seneca.ready(function () {
   var apple = seneca.make$('fruit')
   apple.name  = 'Pink Lady'
   apple.price = 0.99
@@ -66,10 +66,10 @@ var entity = seneca.make$('typename')
 entity.someproperty = "something"
 entity.anotherproperty = 100
 
-entity.save$( function (err,entity) { ... } )
-entity.load$( {id: ...}, function (err,entity) { ... } )
-entity.list$( {property: ...}, function (err,entity) { ... } )
-entity.remove$( {id: ...}, function (err,entity) { ... } )
+entity.save$(function (err, entity) { ... })
+entity.load$({id: ...}, function (err, entity) { ... })
+entity.list$({property: ...}, function (err, entity) { ... })
+entity.remove$({id: ...}, function (err, entity) { ... })
 ```
 
 
@@ -124,7 +124,7 @@ You can also use: `entity.list$({f1:v1,...}, {native$:[{-mongo-query-}, {-mongo-
 a native mongo query per [node-mongodb-native][]
 
 ## Contributing
-The [Senecajs org][] encourage open participation. If you feel you can help in any way, be it with
+The [Senecajs org][] encourages open participation. If you feel you can help in any way, be it with
 documentation, examples, extra testing, or new features please get in touch.
 
 ## License

@@ -146,7 +146,7 @@ module.exports = function(opts) {
 	var servconf = conf.replicaset.servers[i]
 	rservs.push(new mongo.Server(servconf.host,servconf.port,dbopts))
       }
-      var rset = new mongo.ReplSetServers(rservs)
+      var rset = new mongo.ReplSet(rservs)
       dbinst = new mongo.Db( conf.name, rset, dbopts )
     }
     else {

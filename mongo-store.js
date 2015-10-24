@@ -95,7 +95,8 @@ module.exports = function(opts) {
 
   function error(args,err,cb) {
     if( err ) {
-      seneca.log.error('entity',err,{store:name})
+      seneca.log.error('entity',err,{store:name});
+      cb(err);
       return true;
     }
     else return false;

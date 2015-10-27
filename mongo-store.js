@@ -30,7 +30,8 @@ function makeid(hexstr) {
       return hexstr;
     }
   }
-  else return hexstr;
+
+  return hexstr;
 }
 
 
@@ -212,9 +213,9 @@ module.exports = function(opts) {
             })
           }
           else {
-            coll.insertOne(entp, {}, function(err,r){
+            coll.insertOne(entp,function(err,inserts){
               if( !error(args,err,cb) ) {
-                ent.id = idstr( r.insertedId )
+                ent.id = idstr( inserts.ops[0]._id )
 
                 seneca.log.debug('save/insert',ent,desc)
                 cb(null,ent)

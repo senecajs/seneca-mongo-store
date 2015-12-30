@@ -29,11 +29,11 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "lodash": "~2.4.1",
-    "mongodb": "~2.0.43"
+    "lodash": "~3.10.1",
+    "mongodb": "~2.1.2"
   },
   "devDependencies": {
-    "async": "~0.9.0",
+    "async": "~1.5.0",
     "coveralls": "^2.11.6",
     "eslint-config-seneca": "^1.1.2",
     "eslint-plugin-hapi": "^4.0.0",

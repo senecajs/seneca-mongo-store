@@ -4,7 +4,7 @@
   "description": "Seneca data store plugin for MongoDB",
   "main": "mongo-store.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/*.test.js"
+    "test": "lab test/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -32,8 +32,8 @@
   },
   "devDependencies": {
     "async": "~0.9.0",
+    "lab": "^6.2.0",
     "seneca": "plugin",
-    "mocha": "~1.20.1",
     "seneca-store-test": "~0.2.2"
   },
   "files": [

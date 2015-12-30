@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "space-in-parens": 0
+  },
+  "extends": "seneca"
+}

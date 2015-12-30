@@ -2,8 +2,11 @@
 > A [Seneca.js][] data storage plugin
 
 # seneca-mongo-store
+[![npm version][npm-badge]][npm-url]
 [![Build Status][travis-badge]][travis-url]
-[![Gitter][gitter-badge]][gitter-url]
+[![Coverage Status][coveralls-badge]][coveralls-url]
+[![Dependency Status][david-badge]][david-url]
+[![Gitter chat][gitter-badge]][gitter-url]
 
 [![js-standard-style][standard-badge]][standard-style]
 
@@ -135,9 +138,16 @@ Copyright Richard Rodger 2015, Licensed under [MIT][].
 [Contribution Guide]: ./CONTRIBUTING.md
 [eg]: ./eg/basic-usage.js
 
-[travis-badge]: https://travis-ci.org/rjrodger/seneca-mongo-store.svg
+
+[npm-badge]: https://badge.fury.io/js/seneca-mongo-store.svg
+[npm-url]: https://badge.fury.io/js/seneca-mongo-store
+[travis-badge]: https://api.travis-ci.org/rjrodger/seneca-mongo-store.svg
 [travis-url]: https://travis-ci.org/rjrodger/seneca-mongo-store
-[gitter-badge]: https://badges.gitter.im/Join%20Chat.svg
+[coveralls-badge]:https://coveralls.io/repos/rjrodger/seneca-mongo-store/badge.svg?branch=master&service=github
+[coveralls-url]: https://coveralls.io/github/rjrodger/seneca-mongo-store?branch=master
+[david-badge]: https://david-dm.org/rjrodger/seneca-mongo-store.svg
+[david-url]: https://david-dm.org/rjrodger/seneca-mongo-store
+[gitter-badge]: https://badges.gitter.im/senecajs/seneca.svg
 [gitter-url]: https://gitter.im/senecajs/seneca
 [standard-badge]: https://raw.githubusercontent.com/feross/standard/master/badge.png
 [standard-style]: https://github.com/feross/standard

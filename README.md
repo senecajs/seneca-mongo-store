@@ -139,14 +139,14 @@ Copyright Richard Rodger 2015, Licensed under [MIT][].
 [eg]: ./eg/basic-usage.js
 
 
-[npm-badge]: https://badge.fury.io/js/seneca-mongo-store.svg
-[npm-url]: https://badge.fury.io/js/seneca-mongo-store
-[travis-badge]: https://api.travis-ci.org/rjrodger/seneca-mongo-store.svg
-[travis-url]: https://travis-ci.org/rjrodger/seneca-mongo-store
-[coveralls-badge]:https://coveralls.io/repos/rjrodger/seneca-mongo-store/badge.svg?branch=master&service=github
-[coveralls-url]: https://coveralls.io/github/rjrodger/seneca-mongo-store?branch=master
-[david-badge]: https://david-dm.org/rjrodger/seneca-mongo-store.svg
-[david-url]: https://david-dm.org/rjrodger/seneca-mongo-store
+[npm-badge]: https://img.shields.io/npm/v/seneca-mongo-store.svg
+[npm-url]: https://npmjs.com/package/seneca-mongo-store
+[travis-badge]: https://api.travis-ci.org/senecajs/seneca-mongo-store.svg
+[travis-url]: https://travis-ci.org/senecajs/seneca-mongo-store
+[coveralls-badge]:https://coveralls.io/repos/senecajs/seneca-mongo-store/badge.svg?branch=master&service=github
+[coveralls-url]: https://coveralls.io/github/senecajs/seneca-mongo-store?branch=master
+[david-badge]: https://david-dm.org/senecajs/seneca-mongo-store.svg
+[david-url]: https://david-dm.org/senecajs/seneca-mongo-store
 [gitter-badge]: https://badges.gitter.im/senecajs/seneca.svg
 [gitter-url]: https://gitter.im/senecajs/seneca
 [standard-badge]: https://raw.githubusercontent.com/feross/standard/master/badge.png
@@ -157,5 +157,5 @@ Copyright Richard Rodger 2015, Licensed under [MIT][].
 [Seneca.js]: https://www.npmjs.com/package/seneca
 [senecajs.org]: http://senecajs.org/
 [node-mongodb-native]: http://mongodb.github.com/node-mongodb-native/markdown-docs/queries.html
-[github issue]: https://github.com/rjrodger/seneca-mongo-store/issues
+[github issue]: https://github.com/senecajs/seneca-mongo-store/issues
 [@senecajs]: http://twitter.com/senecajs

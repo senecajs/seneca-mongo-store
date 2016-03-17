@@ -82,17 +82,19 @@ The standard Seneca query format is supported:
 
 - `.list$({f1:v1, f2:v2, ...})` implies pseudo-query `f1==v1 AND f2==v2, ...`.
 
-- `.list$({f1:v1,...}, {sort$:{field1:1}})` means sort by f1, ascending.
+- `.list$({f1:v1, ..., sort$:{field1:1}})` means sort by f1, ascending.
 
-- `.list$({f1:v1,...}, {sort$:{field1:-1}})` means sort by f1, descending.
+- `.list$({f1:v1, ..., sort$:{field1:-1}})` means sort by f1, descending.
 
-- `.list$({f1:v1,...}, {limit$:10})` means only return 10 results.
+- `.list$({f1:v1, ..., limit$:10})` means only return 10 results.
 
-- `.list$({f1:v1,...}, {skip$:5})` means skip the first 5.
+- `.list$({f1:v1, ..., skip$:5})` means skip the first 5.
 
-- `.list$({f1:v1,...}, {fields$:['fd1','f2']})` means only return the listed fields.
+- `.list$({f1:v1, ..., fields$:['fd1','f2']})` means only return the listed fields.
 
 Note: you can use `sort$`, `limit$`, `skip$` and `fields$` together.
+
+- `.list$({f1:v1, ..., sort$:{field1:-1}, limit$:10})` means sort by f1, descending and only return 10 results.
 
 ### Native Driver
 

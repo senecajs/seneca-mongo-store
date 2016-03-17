@@ -1,16 +1,17 @@
 /* Copyright (c) 2010-2015 Richard Rodger */
 "use strict";
 
-
-var assert = require('assert')
-
-
 var seneca = require('seneca')
 var async = require('async')
 
+var Lab = require('lab')
+var assert = require('assert')
+
+var lab = exports.lab = Lab.script()
+var describe = lab.describe
+var it = lab.it
 
 var shared = require('seneca-store-test')
-
 
 
 var si = seneca()
@@ -28,19 +29,19 @@ si.__testcount = 0
 var testcount = 0
 
 
-describe('mongo', function(){
-  it('basic', function(done){
+describe('mongo', function (){
+  it('basic', function (done){
     testcount++
-    shared.basictest(si,done)
+    shared.basictest(si, done)
   })
 
-  it('extra', function(done){
+  it('extra', function (done){
     testcount++
     extratest(si,done)
   })
 
-  it('close', function(done){
-    shared.closetest(si,testcount,done)
+  it('close', function (done){
+    shared.closetest(si, testcount, done)
   })
 })
 
@@ -51,15 +52,15 @@ function extratest(si,done) {
 
   async.series(
     {
-      native: function(cb){
+      native: function (cb){
         var foo = si.make$('foo')
-        foo.native$(function(err,db){
+        foo.native$(function (err,db){
           assert.ok(null==err)
 
-          db.collection('foo',function(err,coll){
+          db.collection('foo',function (err,coll){
             assert.ok(null==err)
 
-            coll.find({},{},function(err,cursor){
+            coll.find({},{},function (err,cursor){
               assert.ok(null==err)
 
               cursor.each(function (entry) {

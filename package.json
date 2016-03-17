@@ -4,7 +4,8 @@
   "description": "Seneca data store plugin for MongoDB",
   "main": "mongo-store.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/*.test.js"
+    "test": "./node_modules/.bin/mocha test/*.test.js",
+    "lint": "lab -dL"
   },
   "repository": {
     "type": "git",
@@ -32,8 +33,14 @@
   },
   "devDependencies": {
     "async": "~0.9.0",
-    "seneca": "plugin",
+    "code": "^1.5.0",
+    "docco": "0.7.0",
+    "eslint-config-seneca": "1.x.x",
+    "eslint-plugin-hapi": "4.x.x",
+    "eslint-plugin-standard": "1.x.x",
+    "lab": "6.2.0",
     "mocha": "~1.20.1",
+    "seneca": "plugin",
     "seneca-store-test": "~0.2.2"
   },
   "files": [

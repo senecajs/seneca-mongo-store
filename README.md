@@ -44,10 +44,8 @@ npm run test
 
 ```js
 var seneca = require('seneca')()
-seneca.use('mongo-store',{
-  name:'dbname',
-  host:'127.0.0.1',
-  port:27017
+seneca.use('mongo-store', {
+  uri: 'mongodb://120.0.0.1:27017/dbname'
 })
 
 seneca.ready(function () {
@@ -59,6 +57,28 @@ seneca.ready(function () {
   })
 })
 ```
+
+## Connection Options
+
+You can connection to MongoDB a few different ways.
+
+```js
+// Standard URI pattern which gets passed directly to the native MongoDB .connect() method
+seneca.use('mongo-store', {
+  uri: 'mongodb://120.0.0.1:27017/dbname',
+  options: {}
+})
+
+// Key based connection gets transformed into a mongodb:// URI
+seneca.use('mongo-store', {
+  db: 'dbname',
+  host: '127.0.0.1',
+  port: 27017,
+  options: {}
+})
+```
+
+The `options` also gets passed into the MongoDB .connect() method. Refer to the [Connection Settings](http://mongodb.github.io/node-mongodb-native/2.0/reference/connecting/connection-settings/) documentation for a list of those options.
 
 ## Usage
 

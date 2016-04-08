@@ -4,7 +4,8 @@
 
 var _     = require('lodash')
 var mongo = require('mongodb')
-
+var MongoClient = mongo.MongoClient
+var ObjectID = mongo.ObjectID
 
 var name = "mongo-store"
 
@@ -22,7 +23,12 @@ function idstr( obj ) {
 
 function makeid(hexstr) {
   if( _.isString(hexstr) && 24 == hexstr.length ) {
-      return mongo.ObjectID.createFromHexString(hexstr)
+    try {
+      return ObjectID.createFromHexString(hexstr);
+    }
+    catch(e) {
+      return hexstr;
+    }
   }
 
   return hexstr;
@@ -103,85 +109,44 @@ module.exports = function(opts) {
 
 
 
-  function configure(spec,cb) {
-    specifications = spec
-
+  function configure(conf,cb) {
     // defer connection
     // TODO: expose connection action
-    if( !_.isUndefined(spec.connect) && !spec.connect ) {
+    if( !_.isUndefined(conf.connect) && !conf.connect ) {
       return cb()
     }
 
-
-    var conf = 'string' == typeof(spec) ? null : spec
-
-    if( !conf ) {
-      conf = {}
-      var urlM = /^mongo:\/\/((.*?):(.*?)@)?(.*?)(:?(\d+))?\/(.*?)$/.exec(spec);
-      conf.name   = urlM[7]
-      conf.port   = urlM[6]
-      conf.server = urlM[4]
-      conf.username = urlM[2]
-      conf.password = urlM[3]
-
-      conf.port = conf.port ? parseInt(conf.port,10) : null
+    // Turn the hash into a mongo uri
+    if (!conf.uri) {
+      conf.uri = 'mongodb://';
+      conf.uri += (conf.username) ? conf.username : '';
+      conf.uri += (conf.password) ? ':' + conf.password + '@' : '';
+      conf.uri += conf.host || conf.server;
+      conf.uri += (conf.port) ? ':' + conf.port : '';
+      conf.uri += '/' + opts.db || opts.name;
     }
 
-
-    conf.host = conf.host || conf.server
-    conf.username = conf.username || conf.user
-    conf.password = conf.password || conf.pass
-
-
-    var dbopts = seneca.util.deepextend({
-      native_parser:false,
-      auto_reconnect:true,
-      w:1
-    },conf.options)
+    // Extend the db options with some defaults
+    // See http://mongodb.github.io/node-mongodb-native/2.0/reference/connecting/connection-settings/ for options
+    var options = seneca.util.deepextend({
+      db: {},
+      server: {},
+      replset: {},
+      mongos: {}
+    }, conf.options)
 
 
-    if( conf.replicaset ) {
-      var rservs = []
-      for( var i = 0; i < conf.replicaset.servers.length; i++ ) {
-	var servconf = conf.replicaset.servers[i]
-	rservs.push(new mongo.Server(servconf.host,servconf.port,dbopts))
-      }
-      var rset = new mongo.ReplSet(rservs)
-      dbinst = new mongo.Db( conf.name, rset, dbopts )
-    }
-    else {
-      dbinst = new mongo.Db(
-        conf.name,
-        new mongo.Server(
-          conf.host || conf.server,
-          conf.port || mongo.Connection.DEFAULT_PORT,
-          {}
-        ),
-        dbopts
-      )
-    }
-
-    dbinst.open(function(err){
-      if( err ) {
-        return seneca.die('open',err,conf);
+    // Connect using the URI
+    MongoClient.connect(conf.uri, options, function(err, db) {
+      if (err) {
+        return seneca.die('connect', err, conf);
       }
 
-      if( conf.username ) {
-        dbinst.authenticate(conf.username,conf.password,function(err){
-          if( err) {
-            seneca.log.error('init','db auth failed for '+conf.username,dbopts)
-            return cb(err);
-          }
-          
-          seneca.log.debug('init','db open and authed for '+conf.username,dbopts)
-          cb(null)
-        })
-      }
-      else {
-        seneca.log.debug('init','db open',dbopts)
-        cb(null)
-      }
-    })
+      // Set the instance to use throughout the plugin
+      dbinst = db;
+      seneca.log.debug('init', 'db open', conf);
+      cb(null);
+    });
   }
 
 
@@ -240,7 +205,7 @@ module.exports = function(opts) {
             var q = {_id:makeid(ent.id)}
             delete entp.id
 
-            coll.update(q,{$set: entp}, {upsert:true},function(err,update){
+            coll.updateOne(q,{$set: entp}, {upsert:true},function(err,update){
               if( !error(args,err,cb) ) {
                 seneca.log.debug('save/update',ent,desc)
                 cb(null,ent)
@@ -340,7 +305,7 @@ module.exports = function(opts) {
           var qq = fixquery(qent,q)
 
           if( all ) {
-            coll.remove(qq,function(err){
+            coll.deleteMany(qq, {}, function(err){
               seneca.log.debug('remove/all',q,desc)
               cb(err)
             })
@@ -350,7 +315,7 @@ module.exports = function(opts) {
             coll.findOne(qq,mq,function(err,entp){
               if( !error(args,err,cb) ) {
                 if( entp ) {
-                  coll.remove({_id:entp._id},function(err){
+                  coll.deleteOne({_id:entp._id}, {}, function(err){
                     seneca.log.debug('remove/one',q,entp,desc)
 
                     var ent = load ? entp : null
@@ -399,15 +364,3 @@ module.exports = function(opts) {
 
   return {name:store.name,tag:meta.tag}
 }
-
-
-
-
-
-
-
-
-
-
-
-

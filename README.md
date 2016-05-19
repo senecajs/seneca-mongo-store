@@ -4,7 +4,7 @@
 # seneca-mongo-store
 [![npm version][npm-badge]][npm-url]
 [![Build Status][travis-badge]][travis-url]
-[![Coverage Status][coveralls-badge]][coveralls-url]
+[![Coveralls][BadgeCoveralls]][Coveralls]
 [![Dependency Status][david-badge]][david-url]
 [![Gitter chat][gitter-badge]][gitter-url]
 
@@ -164,8 +164,8 @@ Licensed under [MIT][].
 [npm-url]: https://npmjs.com/package/seneca-mongo-store
 [travis-badge]: https://api.travis-ci.org/senecajs/seneca-mongo-store.svg
 [travis-url]: https://travis-ci.org/senecajs/seneca-mongo-store
-[coveralls-badge]:https://coveralls.io/repos/senecajs/seneca-mongo-store/badge.svg?branch=master&service=github
-[coveralls-url]: https://coveralls.io/github/senecajs/seneca-mongo-store?branch=master
+[Coveralls]: https://coveralls.io/github/senecajs/seneca-mongo-store?branch=master
+[BadgeCoveralls]: https://coveralls.io/repos/github/senecajs/seneca-mongo-store/badge.svg?branch=master
 [david-badge]: https://david-dm.org/senecajs/seneca-mongo-store.svg
 [david-url]: https://david-dm.org/senecajs/seneca-mongo-store
 [gitter-badge]: https://badges.gitter.im/senecajs/seneca.svg

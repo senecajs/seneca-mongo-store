@@ -71,7 +71,7 @@ seneca.use('mongo-store', {
 
 // Key based connection gets transformed into a mongodb:// URI
 seneca.use('mongo-store', {
-  db: 'dbname',
+  name: 'dbname',
   host: '127.0.0.1',
   port: 27017,
   options: {}

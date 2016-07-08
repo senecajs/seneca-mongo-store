@@ -124,7 +124,7 @@ module.exports = function(opts) {
       conf.uri += (conf.password) ? ':' + conf.password + '@' : '';
       conf.uri += conf.host || conf.server;
       conf.uri += (conf.port) ? ':' + conf.port : '';
-      conf.uri += '/' + opts.db || opts.name;
+      conf.uri += '/' + (conf.db || conf.name);
     }
 
     // Extend the db options with some defaults

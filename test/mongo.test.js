@@ -15,6 +15,7 @@ var shared = require('seneca-store-test')
 
 
 var si = seneca()
+si.use('entity')
 si.use(require('..'),{
   uri: 'mongodb://127.0.0.1/senecatest',
   options:{

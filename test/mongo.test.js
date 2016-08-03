@@ -10,6 +10,7 @@ var assert = require('assert')
 var lab = exports.lab = Lab.script()
 var describe = lab.describe
 var it = lab.it
+var before = lab.before
 
 var shared = require('seneca-store-test')
 
@@ -23,11 +24,19 @@ si.use(require('..'),{
   }
 })
 
+if (si.version >= '2.0.0') {
+  si.use('entity')
+}
+
 si.__testcount = 0
 var testcount = 0
 
 
 describe('mongo', function (){
+  before({}, function (done) {
+    si.ready(done)
+  })
+  
   it('basic', function (done){
     testcount++
     shared.basictest(si, done)

@@ -4,7 +4,7 @@
 # seneca-mongo-store
 [![npm version][npm-badge]][npm-url]
 [![Build Status][travis-badge]][travis-url]
-[![Coverage Status][coveralls-badge]][coveralls-url]
+[![Coveralls][BadgeCoveralls]][Coveralls]
 [![Dependency Status][david-badge]][david-url]
 [![Gitter chat][gitter-badge]][gitter-url]
 
@@ -23,6 +23,9 @@ If you're using this module, and need help, you can:
 If you are new to Seneca in general, please take a look at [senecajs.org][]. We have everything from
 tutorials to sample apps to help get you up and running quickly.
 
+### Seneca compatibility
+
+Supports Seneca versions **1.x** and **2.x**
 
 ## Install
 To install, simply use npm. Remember you will need to install [Seneca.js][]
@@ -31,13 +34,6 @@ seperately.
 ```
 npm install seneca
 npm install seneca-mongo-store
-```
-
-## Test
-To run tests, simply use npm:
-
-```
-npm run test
 ```
 
 ## Quick Example
@@ -152,32 +148,33 @@ a native mongo query per [node-mongodb-native][]
 The [Senecajs org][] encourages open participation. If you feel you can help in any way, be it with
 documentation, examples, extra testing, or new features please get in touch.
 
+## Test
+To run tests, simply use npm:
+
+```
+npm run test
+```
+
 ## License
+Copyright (c) 2012-2016, Richard Rodger and other contributors.
+Licensed under [MIT][].
 
-Copyright Richard Rodger 2015, Licensed under [MIT][].
-
-[MIT]: ./LICENSE
-[Contribution Guide]: ./CONTRIBUTING.md
-[eg]: ./eg/basic-usage.js
-
-
+[MIT]: ./LICENSE.txt
 [npm-badge]: https://img.shields.io/npm/v/seneca-mongo-store.svg
 [npm-url]: https://npmjs.com/package/seneca-mongo-store
 [travis-badge]: https://api.travis-ci.org/senecajs/seneca-mongo-store.svg
 [travis-url]: https://travis-ci.org/senecajs/seneca-mongo-store
-[coveralls-badge]:https://coveralls.io/repos/senecajs/seneca-mongo-store/badge.svg?branch=master&service=github
-[coveralls-url]: https://coveralls.io/github/senecajs/seneca-mongo-store?branch=master
+[Coveralls]: https://coveralls.io/github/senecajs/seneca-mongo-store?branch=master
+[BadgeCoveralls]: https://coveralls.io/repos/github/senecajs/seneca-mongo-store/badge.svg?branch=master
 [david-badge]: https://david-dm.org/senecajs/seneca-mongo-store.svg
 [david-url]: https://david-dm.org/senecajs/seneca-mongo-store
 [gitter-badge]: https://badges.gitter.im/senecajs/seneca.svg
 [gitter-url]: https://gitter.im/senecajs/seneca
 [standard-badge]: https://raw.githubusercontent.com/feross/standard/master/badge.png
 [standard-style]: https://github.com/feross/standard
-
-
 [Senecajs org]: https://github.com/senecajs/
 [Seneca.js]: https://www.npmjs.com/package/seneca
 [senecajs.org]: http://senecajs.org/
-[node-mongodb-native]: http://mongodb.github.com/node-mongodb-native/markdown-docs/queries.html
+[node-mongodb-native]: http://mongodb.github.io/node-mongodb-native/markdown-docs/queries.html
 [github issue]: https://github.com/senecajs/seneca-mongo-store/issues
 [@senecajs]: http://twitter.com/senecajs

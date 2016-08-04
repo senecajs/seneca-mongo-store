@@ -17,7 +17,7 @@ var Shared = require('seneca-store-test')
 
 var si = Seneca()
 si.use(require('..'), {
-  uri: 'mongodb://192.168.99.100/senecatest',
+  uri: 'mongodb://127.0.0.1/senecatest',
   options: {
     // uncomment to test
     // native_parser:true

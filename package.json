@@ -34,7 +34,7 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "4.6.0",
-    "mongodb": "~2.1.2"
+    "mongodb": "2.2.5"
   },
   "devDependencies": {
     "async": "1.5.2",

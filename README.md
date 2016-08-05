@@ -25,7 +25,7 @@ tutorials to sample apps to help get you up and running quickly.
 
 ### Seneca compatibility
 
-Supports Seneca versions **1.x** and **2.x**
+Supports Seneca versions **1.x**, **2.x** and **3.x**
 
 ## Install
 To install, simply use npm. Remember you will need to install [Seneca.js][]
@@ -148,12 +148,33 @@ a native mongo query per [node-mongodb-native][]
 The [Senecajs org][] encourages open participation. If you feel you can help in any way, be it with
 documentation, examples, extra testing, or new features please get in touch.
 
-## Test
-To run tests, simply use npm:
+## To run tests with Docker
+Build the Mongo Docker image:
+
+```sh
+npm run build
 
 ```
+
+Start the Mongo container:
+```sh
+npm run start
+```
+
+Stop the Mongo container:
+```sh
+npm run stop
+```
+
+While the container is running you can run the tests into another terminal:
+```sh
 npm run test
 ```
+
+#### Testing for Mac users
+Before the tests can be run you must run `docker-machine env default` and copy the docker host address (example: '192.168.99.100').
+This address must be inserted into the test/mongo.test.js file as the value for the host variable (uri). The tests can now be run.
+
 
 ## License
 Copyright (c) 2012-2016, Richard Rodger and other contributors.

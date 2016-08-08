@@ -11,8 +11,7 @@
 [![js-standard-style][standard-badge]][standard-style]
 
 This module is a plugin for [Seneca.js][]. It provides a storage engine that uses
-MongoDb to persist data and is ready for production use. It may also be used as
-an example on how to implement a storage plugin for Seneca.
+MongoDb to persist data.
 
 If you're using this module, and need help, you can:
 
@@ -25,11 +24,11 @@ tutorials to sample apps to help get you up and running quickly.
 
 ### Seneca compatibility
 
-Supports Seneca versions **1.x**, **2.x** and **3.x**
+Supports Seneca versions **1.x** - **3.x**
 
 ## Install
 To install, simply use npm. Remember you will need to install [Seneca.js][]
-seperately.
+separately.
 
 ```
 npm install seneca
@@ -56,10 +55,10 @@ seneca.ready(function () {
 
 ## Connection Options
 
-You can connection to MongoDB a few different ways.
+You can connect to MongoDB in a few different ways:
 
 ```js
-// Standard URI pattern which gets passed directly to the native MongoDB .connect() method
+// URI pattern which gets passed directly to the native MongoDB .connect() method
 seneca.use('mongo-store', {
   uri: 'mongodb://120.0.0.1:27017/dbname',
   options: {}
@@ -177,7 +176,7 @@ This address must be inserted into the test/mongo.test.js file as the value for 
 
 
 ## License
-Copyright (c) 2012-2016, Richard Rodger and other contributors.
+Copyright (c) 2012 - 2016, Richard Rodger and other contributors.
 Licensed under [MIT][].
 
 [MIT]: ./LICENSE.txt

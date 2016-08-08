@@ -4,7 +4,7 @@
   "description": "Seneca data store plugin for MongoDB",
   "main": "mongo-store.js",
   "scripts": {
-    "test": "lab test/*.test.js $LAB_FLAGS",
+    "test": "lab test/*.test.js -r console -v -L $LAB_FLAGS",
     "test:node6": "LAB_FLAGS='--leaks' && npm test",
     "cov": "lab test/*.test.js -v -r lcov | coveralls",
     "lint": "lab -dL",
@@ -34,7 +34,7 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "4.6.0",
-    "mongodb": "~2.1.2"
+    "mongodb": "2.2.5"
   },
   "devDependencies": {
     "async": "1.5.2",
@@ -45,6 +45,7 @@
     "lab": "6.2.x",
     "seneca": "plugin",
     "seneca-entity": "1.2.0",
+    "code": "1.5.0",
     "seneca-store-test": "~0.2.2"
   },
   "files": [

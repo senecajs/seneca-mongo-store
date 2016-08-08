@@ -16,9 +16,8 @@ var before = lab.before
 var Shared = require('seneca-store-test')
 
 
-var si = Seneca()
-si.use(require('..'), {
-  uri: 'mongodb://127.0.0.1/senecatest',
+var si = Seneca({
+  log: 'none',
   default_plugins: {
     'mem-store': false
   }
@@ -27,6 +26,10 @@ si.use(require('..'), {
 if (si.version >= '2.0.0') {
   si.use('entity')
 }
+
+si.use(require('..'), {
+  uri: 'mongodb://127.0.0.1/senecatest'
+})
 
 si.__testcount = 0
 var testcount = 0
@@ -213,7 +216,13 @@ function extratest (si, done) {
   si.__testcount++
 }
 
-var siNative = Seneca()
+var siNative = Seneca({
+  log: 'none',
+  default_plugins: {
+    'mem-store': false
+  }
+})
+
 siNative.use(require('..'), {
   uri: 'mongodb://127.0.0.1/senecatest',
   options: {

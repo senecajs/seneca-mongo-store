@@ -1,4 +1,3 @@
-/* Copyright (c) 2010-2015 Richard Rodger */
 'use strict'
 
 var Seneca = require('seneca')
@@ -6,6 +5,8 @@ var Async = require('async')
 
 var Lab = require('lab')
 var Assert = require('assert')
+var Code = require('code')
+var expect = Code.expect
 
 var lab = exports.lab = Lab.script()
 var describe = lab.describe
@@ -18,9 +19,8 @@ var Shared = require('seneca-store-test')
 var si = Seneca()
 si.use(require('..'), {
   uri: 'mongodb://127.0.0.1/senecatest',
-  options: {
-    // uncomment to test
-    // native_parser:true
+  default_plugins: {
+    'mem-store': false
   }
 })
 
@@ -32,22 +32,22 @@ si.__testcount = 0
 var testcount = 0
 
 
-describe('mongo', function () {
+describe('mongo tests', function () {
   before({}, function (done) {
     si.ready(done)
   })
 
-  it('basic', function (done) {
+  it('basic test', function (done) {
     testcount++
     Shared.basictest(si, done)
   })
 
-  it('extra', function (done) {
+  it('extra test', function (done) {
     testcount++
     extratest(si, done)
   })
 
-  it('close', function (done) {
+  it('close test', function (done) {
     Shared.closetest(si, testcount, done)
   })
 })
@@ -95,7 +95,6 @@ function extratest (si, done) {
 
               nat.list$({native$: [{/* $or:[{a:1},{a:2}]*/}, {sort: [['a', -1]]}]}, function (err, list) {
                 Assert.ok(null == err)
-                // console.log(list)
                 Assert.equal(2, list.length)
                 Assert.equal(2, list[0].a)
                 Assert.equal(1, list[1].a)
@@ -108,7 +107,6 @@ function extratest (si, done) {
 
       remove: function (cb) {
         var cl = si.make$('lmt')
-        // clear 'lmt' collection
         cl.remove$({all$: true}, function (err, foo) {
           Assert.ok(null == err)
           cb()
@@ -214,3 +212,64 @@ function extratest (si, done) {
 
   si.__testcount++
 }
+
+var siNative = Seneca()
+siNative.use(require('..'), {
+  uri: 'mongodb://127.0.0.1/senecatest',
+  options: {
+    native_parser: true
+  }
+})
+
+if (siNative.version >= '2.0.0') {
+  siNative.use('entity')
+}
+
+describe('mongo native tests', function () {
+  before({}, function (done) {
+    siNative.ready(done)
+  })
+
+  it('basic native', function (done) {
+    Shared.basictest(siNative, done)
+  })
+})
+
+
+var si2 = Seneca()
+si2.use(require('..'), {
+  name: 'senecatest',
+  host: '127.0.0.1',
+  port: 27017
+})
+
+if (si2.version >= '2.0.0') {
+  si2.use('entity')
+}
+
+describe('mongo regular connection test', function () {
+  before({}, function (done) {
+    si2.ready(done)
+  })
+
+  it('simple test', function (done) {
+    var foo = si2.make('foo')
+    foo.p1 = 'v1'
+    foo.p2 = 'v2'
+
+    foo.save$(function (err, foo1) {
+      expect(err).to.not.exist()
+      expect(foo1.id).to.exist()
+
+      foo1.load$(foo1.id, function (err, foo2) {
+        expect(err).to.not.exist()
+        expect(foo2).to.exist()
+        expect(foo2.id).to.equal(foo1.id)
+        expect(foo2.p1).to.equal('v1')
+        expect(foo2.p2).to.equal('v2')
+
+        done()
+      })
+    })
+  })
+})

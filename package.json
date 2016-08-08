@@ -46,7 +46,7 @@
     "seneca": "plugin",
     "seneca-entity": "1.2.0",
     "code": "1.5.0",
-    "seneca-store-test": "~0.2.2"
+    "seneca-store-test": "0.3.0"
   },
   "files": [
     "LICENSE.txt",

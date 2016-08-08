@@ -23,13 +23,6 @@ var si = Seneca({
   }
 })
 
-if (si.version >= '2.0.0') {
-  si.use('entity')
-}
-
-si.use(require('..'), {
-  uri: 'mongodb://127.0.0.1/senecatest'
-})
 
 si.__testcount = 0
 var testcount = 0
@@ -37,6 +30,13 @@ var testcount = 0
 
 describe('mongo tests', function () {
   before({}, function (done) {
+    if (si.version >= '2.0.0') {
+      si.use('entity')
+    }
+
+    si.use(require('..'), {
+      uri: 'mongodb://127.0.0.1/senecatest'
+    })
     si.ready(done)
   })
 
@@ -223,19 +223,19 @@ var siNative = Seneca({
   }
 })
 
-siNative.use(require('..'), {
-  uri: 'mongodb://127.0.0.1/senecatest',
-  options: {
-    native_parser: true
-  }
-})
-
-if (siNative.version >= '2.0.0') {
-  siNative.use('entity')
-}
 
 describe('mongo native tests', function () {
   before({}, function (done) {
+    if (siNative.version >= '2.0.0') {
+      siNative.use('entity')
+    }
+    siNative.use(require('..'), {
+      uri: 'mongodb://127.0.0.1/senecatest',
+      options: {
+        native_parser: true
+      }
+    })
+
     siNative.ready(done)
   })
 
@@ -246,18 +246,18 @@ describe('mongo native tests', function () {
 
 
 var si2 = Seneca()
-si2.use(require('..'), {
-  name: 'senecatest',
-  host: '127.0.0.1',
-  port: 27017
-})
-
-if (si2.version >= '2.0.0') {
-  si2.use('entity')
-}
 
 describe('mongo regular connection test', function () {
   before({}, function (done) {
+    if (si2.version >= '2.0.0') {
+      si2.use('entity')
+    }
+    si2.use(require('..'), {
+      name: 'senecatest',
+      host: '127.0.0.1',
+      port: 27017
+    })
+
     si2.ready(done)
   })
 

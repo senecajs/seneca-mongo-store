@@ -17,12 +17,10 @@ var Shared = require('seneca-store-test')
 
 
 var si = Seneca({
-  log: 'none',
   default_plugins: {
     'mem-store': false
   }
 })
-
 
 si.__testcount = 0
 var testcount = 0
@@ -217,12 +215,10 @@ function extratest (si, done) {
 }
 
 var siNative = Seneca({
-  log: 'none',
   default_plugins: {
     'mem-store': false
   }
 })
-
 
 describe('mongo native tests', function () {
   before({}, function (done) {

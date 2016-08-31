@@ -43,7 +43,6 @@ seneca.use('mongo-store', {
   uri: 'mongodb://120.0.0.1:27017/dbname'
 })
 .use("entity")
-.use("basic")
 
 seneca.ready(function () {
   var apple = seneca.make$('fruit')

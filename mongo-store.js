@@ -315,7 +315,7 @@ module.exports = function (opts) {
                     cb(err, ent)
                   })
                 }
-                else cb(null)
+                else cb(null, {ok: 0, why: 'invalid-id'})
               }
             })
           }

@@ -308,10 +308,10 @@ module.exports = function (opts) {
             coll.findOne(qq, mq, function (err, entp) {
               if (!error(args, err, cb)) {
                 if (entp) {
-                  coll.deleteOne({_id: entp._id}, {}, function (err) {
+                  coll.deleteOne({_id: entp._id}, {}, function (err, res) {
                     seneca.log.debug('remove/one', q, entp, desc)
 
-                    var ent = load ? entp : null
+                    var ent = load ? entp : res
                     cb(err, ent)
                   })
                 }

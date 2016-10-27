@@ -311,7 +311,7 @@ module.exports = function (opts) {
                   coll.deleteOne({_id: entp._id}, {}, function (err, res) {
                     seneca.log.debug('remove/one', q, entp, desc)
 
-                    var ent = load ? entp : res
+                    var ent = load ? entp : res.result
                     cb(err, ent)
                   })
                 }

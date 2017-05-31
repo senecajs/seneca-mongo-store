@@ -182,26 +182,45 @@ module.exports = function (opts) {
     save: function (args, cb) {
       var ent = args.ent
 
-      var update = !!ent.id
+      var update = !!ent.id || !!ent.$multi
 
       getcoll(args, ent, function (err, coll) {
         if (!error(args, err, cb)) {
           var entp = {}
 
+          var u = {}
+          ent.$unset && (u.$unset = ent.$unset)
+
+          var unsetFields = _.keys(ent.$unset).concat('$unset', '$multi')
+
+
           var fields = ent.fields$()
-          fields.forEach(function (field) {
-            entp[field] = ent[field]
-          })
+          fields
+            .filter(function (field) {
+              return !_.includes(unsetFields, field)
+            })
+            .forEach(function (field) {
+              entp[field] = ent[field]
+            })
 
           if (!update && void 0 !== ent.id$) {
             entp._id = makeid(ent.id$)
           }
 
           if (update) {
-            var q = {_id: makeid(ent.id)}
-            delete entp.id
+            var o = ent.$multi ? {multi: true} : {upsert: true}
+            var q = ent.$multi ? _.clone(ent.$multi) : {_id: makeid(ent.id)}
 
-            coll.updateOne(q, {$set: entp}, {upsert: true}, function (err, update) {
+            ent.$multi && q.id &&
+              (q._id = q.id) &&
+              delete q.id &&
+              q._id.$in && (q._id.$in = _.map(q._id.$in, function (id) { return makeid(id) }))
+
+
+            delete entp.id
+            !_.isEmpty(entp) && (u.$set = entp)
+
+            coll.update(q, u, o, function (err, update) {
               if (!error(args, err, cb)) {
                 seneca.log.debug({kind: 'entity', store: 'mongo-store', case: 'save/update', entity: ent, desc})
                 cb(null, ent)

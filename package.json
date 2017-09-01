@@ -41,7 +41,7 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "4.15.0",
-    "mongodb": "2.2.5"
+    "mongodb": "^2.2.31"
   },
   "devDependencies": {
     "async": "2.0.x",
@@ -51,7 +51,7 @@
     "eslint-config-seneca": "3.x.x",
     "eslint-plugin-hapi": "4.x.x",
     "eslint-plugin-standard": "2.x.x",
-    "lab": "11.0.x",
+    "lab": "^14.2.2",
     "lodash": "^4.15.0",
     "pre-commit": "1.1.x",
     "q": "^1.5.0",

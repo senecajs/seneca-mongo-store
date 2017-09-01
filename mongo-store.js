@@ -114,28 +114,8 @@ module.exports = function (opts) {
       return cb()
     }
 
-    // Turn the hash into a mongo uri
-    if (!conf.uri) {
-      conf.uri = 'mongodb://'
-      conf.uri += (conf.username) ? conf.username : ''
-      conf.uri += (conf.password) ? ':' + conf.password + '@' : ''
-      conf.uri += conf.host || conf.server
-      conf.uri += (conf.port) ? ':' + conf.port : ''
-      conf.uri += '/' + (conf.db || conf.name)
-    }
-
-    // Extend the db options with some defaults
-    // See http://mongodb.github.io/node-mongodb-native/2.0/reference/connecting/connection-settings/ for options
-    var options = seneca.util.deepextend({
-      db: {},
-      server: {},
-      replset: {},
-      mongos: {}
-    }, conf.options)
-
-
     // Connect using the URI
-    MongoClient.connect(conf.uri, options, function (err, db) {
+    MongoClient.connect(conf.uri, function (err, db) {
       if (err) {
         err.message = [err.message, 'mongo-store conf: ' + Util.inspect(conf)].join('. ')
         return seneca.die(err)

@@ -367,9 +367,7 @@ describe('mongo regular connection test', function () {
       si2.use('entity')
     }
     si2.use(require('..'), {
-      name: 'senecatest',
-      host: '127.0.0.1',
-      port: 27017
+      uri: 'mongodb://127.0.0.1:27017/senecatest'
     })
 
     si2.ready(done)

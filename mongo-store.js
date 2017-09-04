@@ -6,6 +6,8 @@ var _ = require('lodash')
 var Mongo = require('mongodb')
 var MongoClient = Mongo.MongoClient
 var ObjectID = Mongo.ObjectID
+var Util = require('util')
+
 
 var name = 'mongo-store'
 
@@ -97,7 +99,7 @@ module.exports = function (opts) {
 
   function error (args, err, cb) {
     if (err) {
-      seneca.log.error('entity', err, {store: name})
+      seneca.log.error({kind: 'entity', store: 'mongo-store', err})
       cb(err)
       return true
     }
@@ -112,35 +114,16 @@ module.exports = function (opts) {
       return cb()
     }
 
-    // Turn the hash into a mongo uri
-    if (!conf.uri) {
-      conf.uri = 'mongodb://'
-      conf.uri += (conf.username) ? conf.username : ''
-      conf.uri += (conf.password) ? ':' + conf.password + '@' : ''
-      conf.uri += conf.host || conf.server
-      conf.uri += (conf.port) ? ':' + conf.port : ''
-      conf.uri += '/' + (conf.db || conf.name)
-    }
-
-    // Extend the db options with some defaults
-    // See http://mongodb.github.io/node-mongodb-native/2.0/reference/connecting/connection-settings/ for options
-    var options = seneca.util.deepextend({
-      db: {},
-      server: {},
-      replset: {},
-      mongos: {}
-    }, conf.options)
-
-
     // Connect using the URI
-    MongoClient.connect(conf.uri, options, function (err, db) {
+    MongoClient.connect(conf.uri, function (err, db) {
       if (err) {
-        return seneca.die('connect', err, conf)
+        err.message = [err.message, 'mongo-store conf: ' + Util.inspect(conf)].join('. ')
+        return seneca.die(err)
       }
 
       // Set the instance to use throughout the plugin
       dbinst = db
-      seneca.log.debug('init', 'db open', conf)
+      seneca.log.debug({kind: 'entity', store: 'mongo-store', case: 'init', msg: 'db open', conf})
       cb(null)
     })
   }
@@ -179,28 +162,47 @@ module.exports = function (opts) {
     save: function (args, cb) {
       var ent = args.ent
 
-      var update = !!ent.id
+      var update = !!ent.id || !!ent.$multi
 
       getcoll(args, ent, function (err, coll) {
         if (!error(args, err, cb)) {
           var entp = {}
 
+          var u = {}
+          ent.$unset && (u.$unset = ent.$unset)
+
+          var unsetFields = _.keys(ent.$unset).concat('$unset', '$multi')
+
+
           var fields = ent.fields$()
-          fields.forEach(function (field) {
-            entp[field] = ent[field]
-          })
+          fields
+            .filter(function (field) {
+              return !_.includes(unsetFields, field)
+            })
+            .forEach(function (field) {
+              entp[field] = ent[field]
+            })
 
           if (!update && void 0 !== ent.id$) {
             entp._id = makeid(ent.id$)
           }
 
           if (update) {
-            var q = {_id: makeid(ent.id)}
-            delete entp.id
+            var o = ent.$multi ? {multi: true} : {upsert: true}
+            var q = ent.$multi ? _.clone(ent.$multi) : {_id: makeid(ent.id)}
 
-            coll.updateOne(q, {$set: entp}, {upsert: true}, function (err, update) {
+            ent.$multi && q.id &&
+              (q._id = q.id) &&
+              delete q.id &&
+              q._id.$in && (q._id.$in = _.map(q._id.$in, function (id) { return makeid(id) }))
+
+
+            delete entp.id
+            !_.isEmpty(entp) && (u.$set = entp)
+
+            coll.update(q, u, o, function (err, update) {
               if (!error(args, err, cb)) {
-                seneca.log.debug('save/update', ent, desc)
+                seneca.log.debug({kind: 'entity', store: 'mongo-store', case: 'save/update', entity: ent, desc})
                 cb(null, ent)
               }
             })
@@ -209,8 +211,7 @@ module.exports = function (opts) {
             coll.insertOne(entp, function (err, inserts) {
               if (!error(args, err, cb)) {
                 ent.id = idstr(inserts.ops[0]._id)
-
-                seneca.log.debug('save/insert', ent, desc)
+                seneca.log.debug({kind: 'entity', store: 'mongo-store', case: 'save/insert', entity: ent, desc})
                 cb(null, ent)
               }
             })
@@ -239,7 +240,7 @@ module.exports = function (opts) {
                 fent = qent.make$(entp)
               }
 
-              seneca.log.debug('load', q, fent, desc)
+              seneca.log.debug({kind: 'entity', store: 'mongo-store', case: 'load', entity: fent, desc})
               cb(null, fent)
             }
           })
@@ -274,7 +275,7 @@ module.exports = function (opts) {
                     list.push(fent)
                   }
                   else {
-                    seneca.log.debug('list', q, list.length, list[0], desc)
+                    seneca.log.debug({kind: 'entity', store: 'mongo-store', case: 'list', q, length: list.length, entity: list[0], desc})
                     cb(null, list)
                   }
                 }
@@ -299,7 +300,7 @@ module.exports = function (opts) {
 
           if (all) {
             coll.deleteMany(qq, {}, function (err) {
-              seneca.log.debug('remove/all', q, desc)
+              seneca.log.debug({kind: 'entity', store: 'mongo-store', case: 'remove/all', q, desc})
               cb(err)
             })
           }
@@ -309,7 +310,7 @@ module.exports = function (opts) {
               if (!error(args, err, cb)) {
                 if (entp) {
                   coll.deleteOne({_id: entp._id}, {}, function (err) {
-                    seneca.log.debug('remove/one', q, entp, desc)
+                    seneca.log.debug({kind: 'entity', store: 'mongo-store', case: 'remove/one', q, entity: entp, desc})
 
                     var ent = load ? entp : null
                     cb(err, ent)
@@ -349,7 +350,7 @@ module.exports = function (opts) {
 
   seneca.add({init: store.name, tag: meta.tag}, function (args, done) {
     configure(opts, function (err) {
-      if (err) return seneca.die('store', err, {store: store.name, desc: desc})
+      if (err) return seneca.die('store', err, {store: store.name, desc: desc})// configure never returns an error, this should be refactored to an Error class if it does
       return done()
     })
   })

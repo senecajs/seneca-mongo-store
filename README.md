@@ -115,6 +115,40 @@ Note: you can use `sort$`, `limit$`, `skip$` and `fields$` together.
 
 - `.list$({f1:v1, ..., sort$:{field1:-1}, limit$:10})` means sort by f1, descending and only return 10 results.
 
+
+### Mongo specific
+####save$ $unset
+[$unset](http://docs.mongodb.org/manual/reference/operator/update/unset/) to remove fields when updating an entity. Note fields on the entity are ignored if specified in $unset.
+Note this only work when setting $unset on the entity, does not work for passing in $unset as props to save$
+
+```js
+var entity = //...load entity
+entity.$unset = {propertyToRemove:'', anotherPropertyToRemove:''}
+entity.propertyToRemove = '123' //ignored
+
+entity.save$( function(err,entity){ ... } )
+````
+
+####save$ $multi
+[$multi](http://docs.mongodb.org/manual/reference/method/db.collection.update/#multi-parameter) to update multiple documents at once. Note id is ignored if $multi is set.
+Note this only work when setting $multi on the entity, does not work for passing in $multi as props to save$
+
+```js
+var entity = //...load entity
+entity.$multi = {query:'isThis', query2:'isThat'}
+entity.propertyToBeUpdated = '123'
+
+entity.save$( function(err,entity){ ... } )
+````
+and
+```js
+var entity = //...load entity
+entity.$multi = {id: {$in: ['id1', 'id2', 'id3']}}
+entity.propertyToBeUpdated = '123'
+
+entity.save$( function(err,entity){ ... } )
+````
+
 ### Native Driver
 
 As with all seneca stores, you can access the native driver, in this case, the `node-mongodb-native` `collection`

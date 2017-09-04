@@ -2,6 +2,8 @@
 
 var Seneca = require('seneca')
 var Async = require('async')
+var Q = require('q')
+var _ = require('lodash')
 
 var Lab = require('lab')
 var Assert = require('assert')
@@ -40,15 +42,18 @@ describe('mongo tests', function () {
 
   it('basic test', function (done) {
     testcount++
+    si.test(done)
     Shared.basictest(si, done)
   })
 
   it('extra test', function (done) {
     testcount++
+    si.test(done)
     extratest(si, done)
   })
 
   it('close test', function (done) {
+    si.test(done)
     Shared.closetest(si, testcount, done)
   })
 })
@@ -181,27 +186,140 @@ function extratest (si, done) {
         var cl = si.make$('lmt')
         cl.p1 = 'value1'
         cl.p2 = 2
+        cl.p3 = 'unsetMe'
         cl.save$(function (err, foo) {
           Assert.ok(null == err)
           Assert.ok(foo.id)
           Assert.equal(foo.p1, 'value1')
           Assert.equal(foo.p2, 2)
+          Assert.equal(foo.p3, 'unsetMe')
 
           delete foo.p1
           foo.p2 = 2.2
+          foo.$unset = {p3: ''}
 
           foo.save$(function (err, foo) {
             Assert.ok(null == err)
 
             foo.load$({id: foo.id}, function (err, foo) {
               if (err) done(err)
+
               Assert.ok(foo.id)
               Assert.equal(foo.p1, 'value1')
               Assert.equal(foo.p2, 2.2)
+              Assert.equal(foo.hasOwnProperty('p3'), false, 'should have remove unset property')
+
+              cb()
             })
-            cb()
           })
         })
+      },
+
+      insertUpdateUnsetOnly: function (cb) {
+        var cl = si.make$('lmt')
+        cl.u1 = 'value1'
+        cl.u2 = 2
+        cl.save$(function (err, foo) {
+          Assert.ok(null == err)
+          Assert.ok(foo.id)
+          Assert.equal(foo.u1, 'value1')
+          Assert.equal(foo.u2, 2)
+
+          cl = si.make$('lmt')
+          cl.id = foo.id
+          cl.$unset = {u1: ''}
+
+          cl.save$(function (err, foo) {
+            Assert.ok(null == err)
+
+            foo.load$({id: foo.id}, function (err, foo) {
+              if (err) done(err)
+
+              Assert.ok(foo.id)
+              Assert.equal(foo.hasOwnProperty('u1'), false)
+              Assert.equal(foo.u2, 2)
+              cb()
+            })
+          })
+        })
+      },
+
+      updateMulti: function (cb) {
+        var e = si.make$('lmt')
+        var el1 = Q.nbind(e.save$, e)({multi: 'updateMulti', m: 1, p: 'a'})
+
+        e = si.make$('lmt')
+        var el2 = Q.nbind(e.save$, e)({multi: 'updateMulti', m: 2, p: 'b'})
+
+        e = si.make$('lmt')
+        var el3 = Q.nbind(e.save$, e)({multi: 'updateMulti', m: 3, p: 'a'})
+
+        function updateMulti () {
+          e = si.make$('lmt')
+          e.$multi = {p: 'a'}
+          e.u = 'updated'
+          return Q.nbind(e.save$, e)()
+        }
+
+        function list () {
+          e = si.make$('lmt')
+          return Q.nbind(e.list$, e)({multi: 'updateMulti'})
+        }
+
+        function assertList (list) {
+          list = list.map(function (el) {
+            return _.pick(el, ['m', 'u'])
+          })
+          Assert.deepEqual(_.find(list, {m: 1}), {m: 1, u: 'updated'})
+          Assert.deepEqual(_.find(list, {m: 2}), {m: 2})
+          Assert.deepEqual(_.find(list, {m: 3}), {m: 3, u: 'updated'})
+        }
+
+        Q.all([el1, el2, el3])
+          .spread(updateMulti)
+          .then(list)
+          .then(assertList)
+          .fin(cb)
+          .done()
+      },
+
+      updateMultiWithId$in: function (cb) {
+        var e = si.make$('lmt')
+        var el1 = Q.nbind(e.save$, e)({multi: 'updateMultiWithId$in', m: 1, p: 'a'})
+
+        e = si.make$('lmt')
+        var el2 = Q.nbind(e.save$, e)({multi: 'updateMultiWithId$in', m: 2, p: 'b'})
+
+        e = si.make$('lmt')
+        var el3 = Q.nbind(e.save$, e)({multi: 'updateMultiWithId$in', m: 3, p: 'a'})
+
+        function updateMulti (el1, el2, el3) {
+          e = si.make$('lmt')
+          e.$multi = {id: {$in: [el2.id, el3.id]}}
+          e.u = 'updated'
+          return Q.nbind(e.save$, e)()
+        }
+
+        function list () {
+          e = si.make$('lmt')
+          return Q.nbind(e.list$, e)({multi: 'updateMultiWithId$in'})
+        }
+
+        function assertList (list) {
+          list = list.map(function (el) {
+            return _.pick(el, ['m', 'u'])
+          })
+          Assert.deepEqual(_.find(list, {m: 1}), {m: 1})
+          Assert.deepEqual(_.find(list, {m: 2}), {m: 2, u: 'updated'})
+          Assert.deepEqual(_.find(list, {m: 3}), {m: 3, u: 'updated'})
+        }
+
+        Q.all([el1, el2, el3])
+          .spread(updateMulti)
+          .then(list)
+          .then(assertList)
+          .fin(cb)
+          .done()
       }
     },
     function (err, out) {
@@ -249,9 +367,7 @@ describe('mongo regular connection test', function () {
       si2.use('entity')
     }
     si2.use(require('..'), {
-      name: 'senecatest',
-      host: '127.0.0.1',
-      port: 27017
+      uri: 'mongodb://127.0.0.1:27017/senecatest'
     })
 
     si2.ready(done)

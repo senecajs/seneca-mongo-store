@@ -1,7 +1,6 @@
 /* Copyright (c) 2010-2015 Richard Rodger, MIT License */
 'use strict'
 
-
 var _ = require('lodash')
 var Mongo = require('mongodb')
 var MongoClient = Mongo.MongoClient
@@ -9,31 +8,26 @@ var ObjectID = Mongo.ObjectID
 
 var name = 'mongo-store'
 
-
 /*
 native$ = object => use object as query, no meta settings
 native$ = array => use first elem as query, second elem as meta settings
 */
 
-
 function idstr (obj) {
-  return (obj && obj.toHexString) ? obj.toHexString() : '' + obj
+  return obj && obj.toHexString ? obj.toHexString() : '' + obj
 }
 
-
 function makeid (hexstr) {
-  if (_.isString(hexstr) && 24 === hexstr.length) {
+  if (_.isString(hexstr) && hexstr.length === 24) {
     try {
       return ObjectID.createFromHexString(hexstr)
-    }
-    catch (e) {
+    } catch (e) {
       return hexstr
     }
   }
 
   return hexstr
 }
-
 
 function fixquery (qent, q) {
   var qq = {}
@@ -48,14 +42,12 @@ function fixquery (qent, q) {
       qq._id = makeid(qq.id)
       delete qq.id
     }
-  }
-  else {
+  } else {
     qq = _.isArray(q.native$) ? q.native$[0] : q.native$
   }
 
   return qq
 }
-
 
 function metaquery (qent, q) {
   var mq = {}
@@ -78,14 +70,12 @@ function metaquery (qent, q) {
     if (q.fields$) {
       mq.fields = q.fields$
     }
-  }
-  else {
+  } else {
     mq = _.isArray(q.native$) ? q.native$[1] : mq
   }
 
   return mq
 }
-
 
 module.exports = function (opts) {
   var seneca = this
@@ -94,16 +84,13 @@ module.exports = function (opts) {
   var dbinst = null
   var collmap = {}
 
-
   function error (args, err, cb) {
     if (err) {
-      seneca.log.error('entity', err, {store: name})
+      seneca.log.error('entity', err, { store: name })
       cb(err)
       return true
-    }
-    else return false
+    } else return false
   }
-
 
   function configure (conf, cb) {
     // defer connection
@@ -115,22 +102,24 @@ module.exports = function (opts) {
     // Turn the hash into a mongo uri
     if (!conf.uri) {
       conf.uri = 'mongodb://'
-      conf.uri += (conf.username) ? conf.username : ''
-      conf.uri += (conf.password) ? ':' + conf.password + '@' : ''
+      conf.uri += conf.username ? conf.username : ''
+      conf.uri += conf.password ? ':' + conf.password + '@' : ''
       conf.uri += conf.host || conf.server
-      conf.uri += (conf.port) ? ':' + conf.port : ''
+      conf.uri += conf.port ? ':' + conf.port : ''
       conf.uri += '/' + (conf.db || conf.name)
     }
 
     // Extend the db options with some defaults
     // See http://mongodb.github.io/node-mongodb-native/2.0/reference/connecting/connection-settings/ for options
-    var options = seneca.util.deepextend({
-      db: {},
-      server: {},
-      replset: {},
-      mongos: {}
-    }, conf.options)
-
+    var options = seneca.util.deepextend(
+      {
+        db: {},
+        server: {},
+        replset: {},
+        mongos: {}
+      },
+      conf.options
+    )
 
     // Connect using the URI
     MongoClient.connect(conf.uri, options, function (err, db) {
@@ -145,9 +134,8 @@ module.exports = function (opts) {
     })
   }
 
-
   function getcoll (args, ent, cb) {
-    var canon = ent.canon$({object: true})
+    var canon = ent.canon$({ object: true })
 
     var collname = (canon.base ? canon.base + '_' : '') + canon.name
 
@@ -158,12 +146,10 @@ module.exports = function (opts) {
           cb(null, coll)
         }
       })
-    }
-    else {
+    } else {
       cb(null, collmap[collname])
     }
   }
-
 
   var store = {
     name: name,
@@ -171,10 +157,8 @@ module.exports = function (opts) {
     close: function (args, cb) {
       if (dbinst) {
         dbinst.close(cb)
-      }
-      else return cb()
+      } else return cb()
     },
-
 
     save: function (args, cb) {
       var ent = args.ent
@@ -189,23 +173,24 @@ module.exports = function (opts) {
           fields.forEach(function (field) {
             entp[field] = ent[field]
           })
-
           if (!update && void 0 !== ent.id$) {
             entp._id = makeid(ent.id$)
           }
 
           if (update) {
-            var q = {_id: makeid(ent.id)}
+            var q = { _id: makeid(ent.id) }
             delete entp.id
-
-            coll.updateOne(q, {$set: entp}, {upsert: true}, function (err, update) {
+            var upsert = 'upsert$' in ent ? ent.upsert$ : true
+            coll.updateOne(q, { $set: entp }, { upsert: upsert }, function (
+              err,
+              update
+            ) {
               if (!error(args, err, cb)) {
                 seneca.log.debug('save/update', ent, desc)
                 cb(null, ent)
               }
             })
-          }
-          else {
+          } else {
             coll.insertOne(entp, function (err, inserts) {
               if (!error(args, err, cb)) {
                 ent.id = idstr(inserts.ops[0]._id)
@@ -218,7 +203,6 @@ module.exports = function (opts) {
         }
       })
     },
-
 
     load: function (args, cb) {
       var qent = args.qent
@@ -247,7 +231,6 @@ module.exports = function (opts) {
       })
     },
 
-
     list: function (args, cb) {
       var qent = args.qent
       var q = args.q
@@ -272,8 +255,7 @@ module.exports = function (opts) {
                       fent = qent.make$(entp)
                     }
                     list.push(fent)
-                  }
-                  else {
+                  } else {
                     seneca.log.debug('list', q, list.length, list[0], desc)
                     cb(null, list)
                   }
@@ -284,7 +266,6 @@ module.exports = function (opts) {
         }
       })
     },
-
 
     remove: function (args, cb) {
       var qent = args.qent
@@ -302,20 +283,18 @@ module.exports = function (opts) {
               seneca.log.debug('remove/all', q, desc)
               cb(err)
             })
-          }
-          else {
+          } else {
             var mq = metaquery(qent, q)
             coll.findOne(qq, mq, function (err, entp) {
               if (!error(args, err, cb)) {
                 if (entp) {
-                  coll.deleteOne({_id: entp._id}, {}, function (err) {
+                  coll.deleteOne({ _id: entp._id }, {}, function (err) {
                     seneca.log.debug('remove/one', q, entp, desc)
 
                     var ent = load ? entp : null
                     cb(err, ent)
                   })
-                }
-                else cb(null)
+                } else cb(null)
               }
             })
           }
@@ -329,31 +308,28 @@ module.exports = function (opts) {
           coll.findOne({}, {}, function (err, entp) {
             if (!error(args, err, done)) {
               done(null, dbinst)
-            }
-            else {
+            } else {
               done(err)
             }
           })
-        }
-        else {
+        } else {
           done(err)
         }
       })
     }
   }
 
-
   var meta = seneca.store.init(seneca, opts, store)
   desc = meta.desc
 
-
-  seneca.add({init: store.name, tag: meta.tag}, function (args, done) {
+  seneca.add({ init: store.name, tag: meta.tag }, function (args, done) {
     configure(opts, function (err) {
-      if (err) return seneca.die('store', err, {store: store.name, desc: desc})
+      if (err) {
+        return seneca.die('store', err, { store: store.name, desc: desc })
+      }
       return done()
     })
   })
 
-
-  return {name: store.name, tag: meta.tag}
+  return { name: store.name, tag: meta.tag }
 }

@@ -189,7 +189,6 @@ module.exports = function (opts) {
           fields.forEach(function (field) {
             entp[field] = ent[field]
           })
-
           if (!update && void 0 !== ent.id$) {
             entp._id = makeid(ent.id$)
           }
@@ -197,8 +196,8 @@ module.exports = function (opts) {
           if (update) {
             var q = {_id: makeid(ent.id)}
             delete entp.id
-
-            coll.updateOne(q, {$set: entp}, {upsert: true}, function (err, update) {
+			var upsert = "upsert$" in ent ? ent.upsert$ : true
+            coll.updateOne(q, {$set: entp}, {upsert: upsert}, function (err, update) {
               if (!error(args, err, cb)) {
                 seneca.log.debug('save/update', ent, desc)
                 cb(null, ent)

@@ -23,24 +23,25 @@ var senecaMerge = Seneca({
   log: 'debug'
 })
 
-before({}, function (done) {
-  if (si.version >= '2.0.0') {
-    si.use('entity')
-    senecaMerge.use('entity')
-  }
-  senecaMerge.use(require('..'), {
-    uri: 'mongodb://127.0.0.1:27017',
-    db: 'senecatest',
-    merge: false
-  })
-  si.use(require('..'), {
-    uri: 'mongodb://127.0.0.1:27017',
-    db: 'senecatest'
-  })
-  si.ready(done)
-})
 
-describe('shared tests', function () {
+describe('mongo tests', function () {
+  before({}, function (done) {
+    if (si.version >= '2.0.0') {
+      si.use('entity')
+      senecaMerge.use('entity')
+    }
+    senecaMerge.use(require('..'), {
+      uri: 'mongodb://127.0.0.1:27017',
+      db: 'senecatest',
+      merge: false
+    })
+    si.use(require('..'), {
+      uri: 'mongodb://127.0.0.1:27017',
+      db: 'senecatest'
+    })
+    si.ready(done)
+  })
+
   Shared.basictest({
     seneca: si,
     senecaMerge: senecaMerge,
@@ -56,17 +57,19 @@ describe('shared tests', function () {
     seneca: si,
     script: lab
   })
-})
 
-describe('mongo tests', function () {
   it('extra test', function (done) {
     extratest(si, done)
   })
-  // TODO: not in shared any more, id this needed?
-  // it('close test', function (done) {
-  //   Shared.closetest(si, testcount, done)
-  // })
 })
+
+// describe('mongo tests', function () {
+
+//   // TODO: not in shared any more, id this needed?
+//   // it('close test', function (done) {
+//   //   Shared.closetest(si, testcount, done)
+//   // })
+// })
 
 
 function extratest (si, done) {

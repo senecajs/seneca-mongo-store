@@ -4,9 +4,10 @@
   "description": "Seneca data store plugin for MongoDB",
   "main": "mongo-store.js",
   "scripts": {
-    "test": "lab -l test/*.test.js -r console -v -L",
+    "test": "lab -P test -t 86 -I SharedArrayBuffer,Atomics",
     "cov": "lab test/*.test.js -v -r lcov | coveralls",
-    "lint": "lab -dL",
+    "prettier":
+      "prettier --write --no-semi --single-quote *.js lib/*.js test/*.js",
     "build": "docker-compose build",
     "start": "docker-compose up",
     "stop": "docker-compose kill",
@@ -16,14 +17,7 @@
     "type": "git",
     "url": "https://github.com/senecajs/seneca-mongo-store"
   },
-  "keywords": [
-    "seneca",
-    "plugin",
-    "store",
-    "mongo",
-    "mongodb",
-    "json"
-  ],
+  "keywords": ["seneca", "plugin", "store", "mongo", "mongodb", "json"],
   "author": "Richard Rodger (http://richardrodger.com)",
   "contributors": [
     "Richard Rodger (http://richardrodger.com)",
@@ -40,31 +34,22 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "lodash": "4.15.0",
-    "mongo-dot-notation": "^1.2.0",
-    "mongodb": "^3.0.7"
+    "lodash": "4.17",
+    "mongo-dot-notation": "1.2",
+    "mongodb": "3.0"
   },
   "devDependencies": {
-    "async": "2.0.x",
-    "code": "3.0.x",
-    "coveralls": "2.11.x",
-    "docco": "0.7.x",
-    "eslint-config-seneca": "3.x.x",
-    "eslint-plugin-hapi": "4.x.x",
-    "eslint-plugin-standard": "2.x.x",
-    "lab": "^14.3.1",
-    "pre-commit": "1.1.x",
+    "async": "2",
+    "code": "3",
+    "coveralls": "2",
+    "docco": "0",
+    "lab": "14",
+    "pre-commit": "1",
     "seneca": "plugin",
-    "seneca-basic": "^0.5.1",
-    "seneca-entity": "^2.0.2",
-    "seneca-store-test": "^1.1.1"
+    "seneca-basic": "0.5.1",
+    "seneca-entity": "2.1.0",
+    "seneca-store-test": "1.1.1"
   },
-  "files": [
-    "LICENSE.txt",
-    "README.md",
-    "mongo-store.js"
-  ],
-  "pre-commit": [
-    "test"
-  ]
+  "files": ["LICENSE.txt", "README.md", "mongo-store.js"],
+  "pre-commit": ["test"]
 }

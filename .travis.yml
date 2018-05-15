@@ -19,6 +19,8 @@ install:
   - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB}.tgz
   - tar xzf mongodb-linux-x86_64-${MONGODB}.tgz
   - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --version
+  - NODE_VERSION=$(node -v); if [ ${NODE_VERSION:1:2} -ge 10 ]; then npm i -g npm@6; npm ci; else npm install; fi
+
 
 before_script:
   - npm uninstall seneca
@@ -26,9 +28,13 @@ before_script:
   - mkdir ${PWD}/mongodb-linux-x86_64-${MONGODB}/data
   - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --dbpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/data --logpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/mongodb.log --fork
 
+script:
+  - npm test
+  - if [ ${NODE_VERSION:1:2} -ge 10 ]; then npm audit; fi
+
 after_script:
   - pkill mongod
-  - npm run cov
+  - npm run coverage
 
 cache:
   directories:

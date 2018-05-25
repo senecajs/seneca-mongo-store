@@ -122,6 +122,13 @@ module.exports = function(opts) {
       conf.uri += conf.password ? ":" + conf.password + "@" : "";
       conf.uri += conf.host || conf.server;
       conf.uri += conf.port ? ":" + conf.port : ":27017";
+    } else {
+      // Extract db name from uri if available
+      let parts = conf.uri.split("/");
+      if (parts.length == 4) {
+        conf.db = parts.pop();
+        conf.uri = parts.join("/");
+      }
     }
 
     conf.db = conf.db || conf.name;

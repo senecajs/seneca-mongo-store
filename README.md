@@ -24,7 +24,7 @@ tutorials to sample apps to help get you up and running quickly.
 
 ### Seneca compatibility
 
-Supports Seneca versions **1.x** - **3.x**
+Supports Seneca versions **3.x**
 
 ### Supported functionality
 All Seneca data store supported functionality is implemented in [seneca-store-test](https://github.com/senecajs/seneca-store-test) as a test suite. The tests represent the store functionality specifications.

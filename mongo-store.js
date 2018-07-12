@@ -127,7 +127,6 @@ module.exports = function(opts) {
       let parts = conf.uri.split('/')
       if (parts.length == 4) {
         conf.db = parts.pop()
-        conf.uri = parts.join('/')
       }
     }
 

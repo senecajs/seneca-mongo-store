@@ -127,16 +127,19 @@ module.exports = function(opts) {
     conf.db = conf.db || conf.name
 
     // Connect using the URI
-    MongoClient.connect(conf.uri, function(err, client) {
-      if (err) {
-        return seneca.die('connect', err, conf)
+    MongoClient.connect(
+      conf.uri,
+      function(err, client) {
+        if (err) {
+          return seneca.die('connect', err, conf)
+        }
+        dbclient = client
+        // Set the instance to use throughout the plugin
+        dbinst = client.db(conf.db)
+        seneca.log.debug('init', 'db open', conf.db)
+        cb(null)
       }
-      dbclient = client
-      // Set the instance to use throughout the plugin
-      dbinst = client.db(conf.db)
-      seneca.log.debug('init', 'db open', conf.db)
-      cb(null)
-    })
+    )
   }
 
   function getcoll(args, ent, cb) {
@@ -179,11 +182,24 @@ module.exports = function(opts) {
             entp[field] = ent[field]
           })
 
-          if (!update && void 0 !== ent.id$) {
-            entp._id = makeid(ent.id$)
-          }
+          if (!update) {
+            var id
+            if (void 0 !== ent.id$) {
+              id = makeid(ent.id$)
+            } else {
+              var canon = ent.canon$({ object: true })
+              id = makeid(opts.generate_id ? opts.generate_id(canon) : void 0)
+            }
 
-          if (update) {
+            entp._id = id
+            coll.insertOne(entp, function(err, inserts) {
+              if (!error(args, err, cb)) {
+                ent.id = idstr(inserts.ops[0]._id)
+                seneca.log.debug('save/insert', ent, desc)
+                cb(null, _.cloneDeep(ent))
+              }
+            })
+          } else {
             var q = { _id: makeid(ent.id) }
             delete entp.id
 
@@ -217,14 +233,6 @@ module.exports = function(opts) {
                     cb(null, fent)
                   }
                 })
-              }
-            })
-          } else {
-            coll.insertOne(entp, function(err, inserts) {
-              if (!error(args, err, cb)) {
-                ent.id = idstr(inserts.ops[0]._id)
-                seneca.log.debug('save/insert', ent, desc)
-                cb(null, _.cloneDeep(ent))
               }
             })
           }

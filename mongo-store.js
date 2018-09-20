@@ -184,14 +184,14 @@ module.exports = function(opts) {
 
           if (!update) {
             var id
-            if (void 0 !== ent.id$) {
-              id = makeid(ent.id$)
-            } else {
-              var canon = ent.canon$({ object: true })
-              id = makeid(opts.generate_id ? opts.generate_id(canon) : void 0)
+            if (undefined !== ent.id$) {
+              id = ent.id$
+            } else if (opts.generate_id) {
+              id = opts.generate_id(ent)
             }
 
-            entp._id = id
+            entp._id = makeid(id)
+
             coll.insertOne(entp, function(err, inserts) {
               if (!error(args, err, cb)) {
                 ent.id = idstr(inserts.ops[0]._id)

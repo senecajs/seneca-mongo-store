@@ -3,7 +3,6 @@
 
 var _ = require('lodash')
 var Mongo = require('mongodb')
-var Dot = require('mongo-dot-notation')
 var MongoClient = Mongo.MongoClient
 var ObjectID = Mongo.ObjectID
 
@@ -83,7 +82,7 @@ function metaquery(qent, q) {
     }
 
     if (q.fields$) {
-      mq.fields = q.fields$
+      mq.projection = q.fields$
     }
 
     if (q.hint$) {
@@ -135,6 +134,7 @@ module.exports = function(opts) {
     // Connect using the URI
     MongoClient.connect(
       conf.uri,
+      { useNewUrlParser: true },
       function(err, client) {
         if (err) {
           return seneca.die('connect', err, conf)
@@ -225,7 +225,7 @@ module.exports = function(opts) {
             var func = 'replaceOne'
 
             if (shouldMerge) {
-              set = Dot.flatten(entp)
+              set = { $set: entp }
               func = 'updateOne'
             }
 
@@ -297,19 +297,17 @@ module.exports = function(opts) {
             if (!error(args, err, cb)) {
               var list = []
 
-              cur.each(function(err, entp) {
-                if (!error(args, err, cb)) {
-                  if (entp) {
-                    var fent = null
-                    entp.id = idstr(entp._id)
-                    delete entp._id
-                    fent = qent.make$(entp)
-                    list.push(fent)
-                  } else {
-                    seneca.log.debug('list', q, list.length, list[0], desc)
-                    cb(null, list)
-                  }
-                }
+              cur.forEach(function(entp) {
+                var fent = null
+                entp.id = idstr(entp._id)
+                delete entp._id
+                fent = qent.make$(entp)
+                list.push(fent)
+              }).then(function() {
+                seneca.log.debug('list', q, list.length, list[0], desc)
+                cb(null, list)
+              }).catch(function(err) {
+                error(args, err, cb)
               })
             }
           })
@@ -335,24 +333,24 @@ module.exports = function(opts) {
                 var list = []
                 var toDelete = []
 
-                cur.each(function(err, entp) {
-                  if (!error(args, err, cb)) {
+                cur.forEach(function(entp) {
+                  if (entp) {
+                    var fent = null
                     if (entp) {
-                      var fent = null
-                      if (entp) {
-                        toDelete.push(entp._id)
-                        entp.id = idstr(entp._id)
-                        delete entp._id
-                        fent = qent.make$(entp)
-                      }
-                      list.push(fent)
-                    } else {
-                      coll.remove({ _id: { $in: toDelete } }, function(err) {
-                        seneca.log.debug('remove/all', q, desc)
-                        cb(err, null)
-                      })
+                      toDelete.push(entp._id)
+                      entp.id = idstr(entp._id)
+                      delete entp._id
+                      fent = qent.make$(entp)
                     }
+                    list.push(fent)
                   }
+                }).then(function() {
+                  coll.deleteMany({ _id: { $in: toDelete } }, function(err) {
+                    seneca.log.debug('remove/all', q, desc)
+                    cb(err, null)
+                  })
+                }).catch(function(err) {
+                  error(args, err, cb)
                 })
               }
             })

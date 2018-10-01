@@ -42,7 +42,6 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "4",
-    "mongo-dot-notation": "1",
     "mongodb": "3"
   },
   "devDependencies": {

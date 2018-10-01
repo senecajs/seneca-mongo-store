@@ -85,7 +85,12 @@ function metaquery(qent, q) {
     if (q.fields$) {
       mq.fields = q.fields$
     }
-  } else {
+
+    if (q.hint$) {
+      mq.hint = q.hint$
+    }
+  }
+  else {
     mq = _.isArray(q.native$) ? q.native$[1] : mq
   }
 
@@ -96,8 +101,8 @@ module.exports = function(opts) {
   var seneca = this
   var desc
 
-  var dbinst = null
   var dbclient = null
+  var defaultDB
   var collmap = {}
 
   function error(args, err, cb) {
@@ -124,7 +129,8 @@ module.exports = function(opts) {
       conf.uri += conf.port ? ':' + conf.port : ':27017'
     }
 
-    conf.db = conf.db || conf.name
+    // Keeping trace of the default database name to use throughout the plugin if canon entity's zone is not defined
+    defaultDB = conf.db = conf.db || conf.name
 
     // Connect using the URI
     MongoClient.connect(
@@ -134,9 +140,7 @@ module.exports = function(opts) {
           return seneca.die('connect', err, conf)
         }
         dbclient = client
-        // Set the instance to use throughout the plugin
-        dbinst = client.db(conf.db)
-        seneca.log.debug('init', 'db open', conf.db)
+        seneca.log.debug('init', 'db connect', conf.uri)
         cb(null)
       }
     )
@@ -145,17 +149,23 @@ module.exports = function(opts) {
   function getcoll(args, ent, cb) {
     var canon = ent.canon$({ object: true })
 
+    var zone = canon.zone ? canon.zone : defaultDB
     var collname = (canon.base ? canon.base + '_' : '') + canon.name
 
-    if (!collmap[collname]) {
-      dbinst.collection(collname, function(err, coll) {
+    if (_.isEmpty(zone)) cb(new Error('No canon/zone define in entity ' + collname + ' and no default database defined.'))
+
+    collmap[zone] = collmap[zone] || {}
+    if (!collmap[zone][collname]) {
+      let db = dbclient.db(zone)
+      db.collection(collname, function (err, coll) {
         if (!error(args, err, cb)) {
-          collmap[collname] = coll
-          cb(null, coll)
+          collmap[zone][collname] = coll
+          cb(null, coll, db)
         }
       })
-    } else {
-      cb(null, collmap[collname])
+    }
+    else {
+      cb(null, collmap[zone][collname])
     }
   }
 
@@ -219,7 +229,7 @@ module.exports = function(opts) {
               func = 'updateOne'
             }
 
-            coll[func](q, set, { upsert: true }, function(err) {
+            var handle = function (err) {
               if (!error(args, err, cb)) {
                 seneca.log.debug('save/update', ent, desc)
                 coll.findOne(q, {}, function(err, entu) {
@@ -234,13 +244,22 @@ module.exports = function(opts) {
                   }
                 })
               }
+            }
+
+            coll[func](q, set, { upsert: true }, function(err) {
+              // https://jira.mongodb.org/browse/SERVER-14322 => catch duplicate key and retry one time
+              if (err && err.message.includes('E11000')) {
+                seneca.log.warn('Duplicate key caught:', err.message)
+                // retry
+                coll[func](q, set, { upsert: true }, handle)
+              } else handle(err)
             })
           }
         }
       })
     },
 
-    load: function(args, cb) {
+    load: function (args, cb) {
       var qent = args.qent
       var q = args.q
 
@@ -354,13 +373,20 @@ module.exports = function(opts) {
       })
     },
 
-    native: function(args, done) {
-      dbinst.collection('seneca', function(err, coll) {
+    native: function (args, done) {
+      var zone = defaultDB
+      if (args.ent) {
+        var canon = args.ent.canon$({object: true})
+        zone = canon.zone ? canon.zone : defaultDB
+      }
+      var db = dbclient.db(zone)
+      db.collection('seneca', function (err, coll) {
         if (!error(args, err, done)) {
           coll.findOne({}, {}, function(err) {
             if (!error(args, err, done)) {
-              done(null, dbinst)
-            } else {
+              done(null, db)
+            }
+            else {
               done(err)
             }
           })

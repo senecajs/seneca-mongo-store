@@ -359,6 +359,8 @@ module.exports = function(opts) {
               if (!error(args, err, cb)) {
                 if (entp) {
                   coll.deleteOne({ _id: entp._id }, {}, function(err) {
+                    entp.id = idstr(entp._id)
+                    delete entp._id
                     seneca.log.debug('remove/one', q, entp, desc)
                     var ent = load ? entp : null
                     cb(err, ent)

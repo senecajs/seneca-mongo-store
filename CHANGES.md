@@ -1,3 +1,11 @@
+# ...
+
+* Support multiple mongodb databases usage based on entity canon zone. Using a default DB when no zone are available in entity canon.
+* Workaround the duplicate key issue of mongo in saving with upsert by automatically retry save (see https://jira.mongodb.org/browse/SERVER-14322)
+* Support hint$ in query to help mongo to select the best index to use. 
+
+# 1.4.0
+
 # 1.1.0 - 27.08.2016
 
 * Added Seneca 3 and Node 6 support

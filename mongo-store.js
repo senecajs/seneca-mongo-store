@@ -127,19 +127,16 @@ module.exports = function(opts) {
     conf.db = conf.db || conf.name
 
     // Connect using the URI
-    MongoClient.connect(
-      conf.uri,
-      function(err, client) {
-        if (err) {
-          return seneca.die('connect', err, conf)
-        }
-        dbclient = client
-        // Set the instance to use throughout the plugin
-        dbinst = client.db(conf.db)
-        seneca.log.debug('init', 'db open', conf.db)
-        cb(null)
+    MongoClient.connect(conf.uri, function(err, client) {
+      if (err) {
+        return seneca.die('connect', err, conf)
       }
-    )
+      dbclient = client
+      // Set the instance to use throughout the plugin
+      dbinst = client.db(conf.db)
+      seneca.log.debug('init', 'db open', conf.db)
+      cb(null)
+    })
   }
 
   function getcoll(args, ent, cb) {
@@ -194,9 +191,15 @@ module.exports = function(opts) {
 
             coll.insertOne(entp, function(err, inserts) {
               if (!error(args, err, cb)) {
-                ent.id = idstr(inserts.ops[0]._id)
+                var entu = inserts.ops[0]
+                var fent = null
+                if (entu) {
+                  entu.id = idstr(entu._id)
+                  delete entu._id
+                  fent = ent.make$(_.cloneDeep(entu))
+                }
                 seneca.log.debug('save/insert', ent, desc)
-                cb(null, _.cloneDeep(ent))
+                cb(null, fent)
               }
             })
           } else {
@@ -228,7 +231,7 @@ module.exports = function(opts) {
                     if (entu) {
                       entu.id = idstr(entu._id)
                       delete entu._id
-                      fent = ent.make$(entu)
+                      fent = ent.make$(_.cloneDeep(entu))
                     }
                     cb(null, fent)
                   }

@@ -15,13 +15,9 @@ var before = lab.before
 
 var Shared = require('seneca-store-test')
 
-var si = Seneca({
-  log: 'debug'
-})
+var si = Seneca().test()
 
-var senecaMerge = Seneca({
-  log: 'debug'
-})
+var senecaMerge = Seneca().test()
 
 describe('mongo tests', function() {
   before({}, function(done) {

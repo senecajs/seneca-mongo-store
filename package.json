@@ -1,17 +1,21 @@
 {
   "name": "seneca-mongo-store",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Seneca data store plugin for MongoDB",
   "main": "mongo-store.js",
   "scripts": {
-    "test": "lab -v -P test -L -t 85 -I URL,URLSearchParams,SharedArrayBuffer,Atomics,BigUint64Array,BigInt64Array,BigInt",
+    "test": "lab -v -P test -L -t 85 -I URL,URLSearchParams,SharedArrayBuffer,Atomics,BigUint64Array,BigInt64Array,BigInt,TextEncoder,TextDecoder,queueMicrotask",
     "prettier": "prettier --write --no-semi --single-quote *.js lib/*.js test/*.js",
     "coveralls": "lab -s -P test -r lcov | coveralls",
     "coverage": "lab -v -P test -L -t 85 -r html > docs/coverage.html",
     "build": "docker-compose build",
     "start": "docker-compose up",
     "stop": "docker-compose kill",
-    "annotate": "docco mongo-store.js -o docs/annotated"
+    "annotate": "docco mongo-store.js -o docs/annotated",
+    "reset": "npm run clean && npm i && npm test",
+    "clean": "rm -rf node_modules package-lock.json yarn.lock",
+    "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
+    "repo-publish": "npm run clean && npm i --registry=http://registry.npmjs.org && npm run prettier && npm test && npm run repo-tag && npm publish --access public --registry=http://registry.npmjs.org"
   },
   "repository": {
     "type": "git",
@@ -41,7 +45,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "mongo-dot-notation": "^1.2.0",
     "mongodb": "^3.2.2"
   },
@@ -52,9 +56,9 @@
     "docco": "0",
     "lab": "14",
     "pre-commit": "1",
-    "seneca": "plugin",
-    "seneca-entity": "^3.2.0",
-    "seneca-store-test": "^1.4.0"
+    "seneca": "^3.20.1",
+    "seneca-entity": "^7.0.0",
+    "seneca-store-test": "1.4.0"
   },
   "files": [
     "LICENSE.txt",

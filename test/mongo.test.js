@@ -223,6 +223,38 @@ function extratest(si, done) {
             })
           })
         })
+      },
+
+      FieldOr: function(cb) {
+        si.make('zed').remove$({ all$: true })
+        si.make('zed', { p1: 'a', p2: 10 }).save$()
+        si.make('zed', { p1: 'b', p2: 20 }).save$()
+        si.make('zed', { p1: 'c', p2: 30 }).save$()
+        si.make('zed', { p1: 'a', p2: 40 }).save$()
+        si.ready(function() {
+          si.make('zed').list$(function(err, list) {
+            expect(list.length).equal(4)
+
+            si.make('zed').list$({ p1: 'a' }, function(err, list) {
+              //console.log(list)
+              expect(list.length).equal(2)
+
+              // OR on list values ($in operator)
+              si.make('zed').list$({ p1: ['a', 'b'] }, function(err, list) {
+                //console.log(list)
+                expect(list.length).equal(3)
+
+                var ids = list.map(ent => ent.id)
+                si.make('zed').list$({ id: ids }, function(err, list) {
+                  //console.log(list)
+                  expect(list.length).equal(3)
+
+                  cb()
+                })
+              })
+            })
+          })
+        })
       }
     },
     function(err, out) {

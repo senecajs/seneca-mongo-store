@@ -47,14 +47,26 @@ function fixquery(qent, q) {
         }
       }
     } else {
+      if (q.id) {
+        if (Array.isArray(q.id)) {
+          q._id = q.id.map(id => {
+            return makeid(id)
+          })
+        } else {
+          q._id = makeid(q.id)
+        }
+
+        delete q.id
+      }
+
       for (var qp in q) {
         if (!qp.match(/\$$/)) {
-          qq[qp] = q[qp]
+          if (Array.isArray(q[qp])) {
+            qq[qp] = { $in: q[qp] }
+          } else {
+            qq[qp] = q[qp]
+          }
         }
-      }
-      if (qq.id) {
-        qq._id = makeid(qq.id)
-        delete qq.id
       }
     }
   } else {

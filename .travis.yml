@@ -1,18 +1,21 @@
 language: node_js
-sudo: false
 
 env:
   global:
     - MONGODB=3.6.4
+    - MONGODB=4.2.6
 
   matrix:
-    - SENECA_VER=@3.x.x
+    - SENECA_VER=seneca@3.x.x
+    - SENECA_VER=seneca@plugin
+    - SENECA_VER=senecajs/seneca
+
 
 node_js:
-  - "8"
   - "10"
   - "12"
   - "13"
+  - "14"
 
 matrix:
   fast_finish: true
@@ -21,9 +24,8 @@ install:
   - wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB}.tgz
   - tar xzf mongodb-linux-x86_64-${MONGODB}.tgz
   - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --version
-  - NODE_VERSION=$(node -v); if [ ${NODE_VERSION:1:2} -ge 10 ]; then npm i -g npm@6; npm ci; else npm install; fi
 
-
+  
 before_script:
   - npm uninstall seneca
   - npm install seneca$SENECA_VER
@@ -32,15 +34,9 @@ before_script:
 
 script:
   - npm test
-  - if [ ${NODE_VERSION:1:2} -ge 10 ]; then npm audit; fi
+  - npm audit
 
 after_script:
   - pkill mongod
   - npm run coverage
-
-cache:
-  directories:
-      - node_modules
-
-
 

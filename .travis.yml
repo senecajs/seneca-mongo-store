@@ -12,8 +12,13 @@ env:
     - SENECA_VER=seneca@3.x.x
       MONGODB=4.2.6 
     - SENECA_VER=seneca@plugin
+      MONGODB=3.6.4
+    - SENECA_VER=seneca@plugin
+      MONGODB=4.2.6 
     - SENECA_VER=senecajs/seneca
-
+      MONGODB=3.6.4
+    - SENECA_VER=senecajs/seneca
+      MONGODB=4.2.6 
 
 node_js:
   - "10"
@@ -32,7 +37,7 @@ install:
   
 before_script:
   - npm uninstall seneca
-  - npm install seneca$SENECA_VER
+  - npm install seneca${SENECA_VER}
   - mkdir ${PWD}/mongodb-linux-x86_64-${MONGODB}/data
   - ${PWD}/mongodb-linux-x86_64-${MONGODB}/bin/mongod --dbpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/data --logpath ${PWD}/mongodb-linux-x86_64-${MONGODB}/mongodb.log --fork
 

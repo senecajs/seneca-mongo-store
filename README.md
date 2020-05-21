@@ -6,6 +6,8 @@
 [![Build Status][travis-badge]][travis-url]
 [![Coveralls][BadgeCoveralls]][Coveralls]
 [![Dependency Status][david-badge]][david-url]
+[![Maintainability](https://api.codeclimate.com/v1/badges/5948324b4b0c8fbc6471/maintainability)](https://codeclimate.com/github/senecajs/seneca-mongo-store/maintainability)
+[![DeepScan grade](https://deepscan.io/api/teams/5016/projects/11815/branches/175630/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=5016&pid=11815&bid=175630)
 [![Gitter chat][gitter-badge]][gitter-url]
 
 [![js-standard-style][standard-badge]][standard-style]

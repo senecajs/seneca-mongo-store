@@ -62,8 +62,5 @@
     "LICENSE.txt",
     "README.md",
     "mongo-store.js"
-  ],
-  "pre-commit": [
-    "test"
   ]
 }

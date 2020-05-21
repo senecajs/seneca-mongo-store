@@ -1,16 +1,15 @@
 language: node_js
 
 env:
-#  global:
-#    - MONGODB=3.6.4
+  global:
+    matrix:
+      - MONGODB=3.6.4
+      - MONGODB=4.2.6 
 
   matrix:
-    - MONGODB=3.6.4 SENECA_VER=seneca@3.x.x
-    - MONGODB=3.6.4 SENECA_VER=seneca@plugin
-    - MONGODB=3.6.4 SENECA_VER=senecajs/seneca
-    - MONGODB=4.2.6 SENECA_VER=seneca@3.x.x
-    - MONGODB=4.2.6 SENECA_VER=seneca@plugin
-    - MONGODB=4.2.6 SENECA_VER=senecajs/seneca
+    - SENECA_VER=seneca@3.x.x
+    - SENECA_VER=seneca@plugin
+    - SENECA_VER=senecajs/seneca
 
 
 node_js:

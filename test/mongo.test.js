@@ -1,17 +1,24 @@
+/*
+  MIT License,
+  Copyright (c) 2010-2020, Richard Rodger and other contributors.
+*/
+
 'use strict'
+
+var Util = require('util')
+var Assert = require('assert')
 
 var Seneca = require('seneca')
 var Async = require('async')
 
-var Lab = require('lab')
-var Assert = require('assert')
-var Code = require('code')
-var expect = Code.expect
+const Lab = require('@hapi/lab')
+const Code = require('@hapi/code')
+const lab = (exports.lab = Lab.script())
+const expect = Code.expect
 
-var lab = (exports.lab = Lab.script())
-var describe = lab.describe
-var it = lab.it
-var before = lab.before
+const describe = lab.describe
+const it = make_it(lab)
+const before = lab.before
 
 var Shared = require('seneca-store-test')
 
@@ -301,3 +308,21 @@ describe('mongo regular connection test', function() {
     })
   })
 })
+
+
+function make_it(lab) {
+  return function it(name, opts, func) {
+    if ('function' === typeof opts) {
+      func = opts
+      opts = {}
+    }
+
+    lab.it(
+      name,
+      opts,
+      Util.promisify(function (x, fin) {
+        func(fin)
+      })
+    )
+  }
+}

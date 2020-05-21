@@ -4,7 +4,7 @@
   "description": "Seneca data store plugin for MongoDB",
   "main": "mongo-store.js",
   "scripts": {
-    "test": "lab -v -P test -L -t 85 -I URL,URLSearchParams,SharedArrayBuffer,Atomics,BigUint64Array,BigInt64Array,BigInt,TextEncoder,TextDecoder,queueMicrotask",
+    "test": "lab -v -P test -L -t 85 -I globalThis",
     "prettier": "prettier --write --no-semi --single-quote *.js lib/*.js test/*.js",
     "coveralls": "lab -s -P test -r lcov | coveralls",
     "coverage": "lab -v -P test -L -t 85 -r html > docs/coverage.html",
@@ -46,19 +46,17 @@
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.15",
-    "mongo-dot-notation": "^1.2.0",
-    "mongodb": "^3.2.2"
+    "mongo-dot-notation": "^2.0.0",
+    "mongodb": "^3.5.7"
   },
   "devDependencies": {
-    "async": "2",
-    "code": "5",
-    "coveralls": "3",
-    "docco": "0",
-    "lab": "14",
-    "pre-commit": "1",
-    "seneca": "^3.20.1",
-    "seneca-entity": "^7.0.0",
-    "seneca-store-test": "1.4.0"
+    "@hapi/code": "^8.0.1",
+    "@hapi/lab": "^22.0.4",
+    "async": "^3.2.0",
+    "coveralls": "^3.1.0",
+    "seneca": "^3.21.0",
+    "seneca-entity": "^8.1.0",
+    "seneca-store-test": "1.5.1"
   },
   "files": [
     "LICENSE.txt",

@@ -26,8 +26,8 @@ var si = Seneca().test()
 
 var senecaMerge = Seneca().test()
 
-describe('mongo tests', function() {
-  before({}, function(done) {
+describe('mongo tests', function () {
+  before({}, function (done) {
     if (si.version >= '2.0.0') {
       si.use('entity')
       senecaMerge.use('entity')
@@ -35,11 +35,11 @@ describe('mongo tests', function() {
     senecaMerge.use(require('..'), {
       uri: 'mongodb://127.0.0.1:27017',
       db: 'senecatest',
-      merge: false
+      merge: false,
     })
     si.use(require('..'), {
       uri: 'mongodb://127.0.0.1:27017',
-      db: 'senecatest'
+      db: 'senecatest',
     })
     si.ready(done)
   })
@@ -47,20 +47,20 @@ describe('mongo tests', function() {
   Shared.basictest({
     seneca: si,
     senecaMerge: senecaMerge,
-    script: lab
+    script: lab,
   })
 
   Shared.limitstest({
     seneca: si,
-    script: lab
+    script: lab,
   })
 
   Shared.sorttest({
     seneca: si,
-    script: lab
+    script: lab,
   })
 
-  it('extra test', function(done) {
+  it('extra test', function (done) {
     extratest(si, done)
   })
 })
@@ -76,18 +76,18 @@ describe('mongo tests', function() {
 function extratest(si, done) {
   Async.series(
     {
-      native: function(cb) {
+      native: function (cb) {
         var foo = si.make$('foo')
-        foo.native$(function(err, db) {
+        foo.native$(function (err, db) {
           if (err) return cb(err)
 
-          db.collection('foo', function(err, coll) {
+          db.collection('foo', function (err, coll) {
             if (err) return cb(err)
 
-            coll.find({}, {}, function(err, cursor) {
+            coll.find({}, {}, function (err, cursor) {
               if (err) return cb(err)
 
-              cursor.each(function(err, entry) {
+              cursor.each(function (err, entry) {
                 if (err) return cb(err)
                 if (!entry) {
                   cb()
@@ -98,18 +98,18 @@ function extratest(si, done) {
         })
       },
 
-      native_query: function(cb) {
+      native_query: function (cb) {
         var nat = si.make$('nat')
-        nat.remove$({ all$: true }, function(err) {
+        nat.remove$({ all$: true }, function (err) {
           if (err) return cb(err)
 
           nat.a = 1
-          nat.save$(function(err, nat) {
+          nat.save$(function (err, nat) {
             if (err) return cb(err)
 
             nat = nat.make$()
             nat.a = 2
-            nat.save$(function(err, nat) {
+            nat.save$(function (err, nat) {
               if (err) return cb(err)
 
               nat.list$(
@@ -118,10 +118,10 @@ function extratest(si, done) {
                     {
                       /* $or:[{a:1},{a:2}]*/
                     },
-                    { sort: [['a', -1]] }
-                  ]
+                    { sort: [['a', -1]] },
+                  ],
                 },
-                function(err, list) {
+                function (err, list) {
                   if (err) return cb(err)
                   Assert.equal(2, list.length)
                   Assert.equal(2, list[0].a)
@@ -134,82 +134,82 @@ function extratest(si, done) {
         })
       },
 
-      remove: function(cb) {
+      remove: function (cb) {
         var cl = si.make$('lmt')
-        cl.remove$({ all$: true }, function(err, foo) {
+        cl.remove$({ all$: true }, function (err, foo) {
           if (err) return cb(err)
           cb()
         })
       },
 
-      insert1st: function(cb) {
+      insert1st: function (cb) {
         var cl = si.make$('lmt')
         cl.p1 = 'v1'
-        cl.save$(function(err, foo) {
+        cl.save$(function (err, foo) {
           if (err) return cb(err)
           cb()
         })
       },
 
-      insert2nd: function(cb) {
+      insert2nd: function (cb) {
         var cl = si.make$('lmt')
         cl.p1 = 'v2'
-        cl.save$(function(err, foo) {
+        cl.save$(function (err, foo) {
           if (err) return cb(err)
           cb()
         })
       },
 
-      insert3rd: function(cb) {
+      insert3rd: function (cb) {
         var cl = si.make$('lmt')
         cl.p1 = 'v3'
-        cl.save$(function(err, foo) {
+        cl.save$(function (err, foo) {
           if (err) return cb(err)
           cb()
         })
       },
 
-      listall: function(cb) {
+      listall: function (cb) {
         var cl = si.make({ name$: 'lmt' })
-        cl.list$({}, function(err, lst) {
+        cl.list$({}, function (err, lst) {
           if (err) return cb(err)
           Assert.equal(3, lst.length)
           cb()
         })
       },
 
-      listlimit1skip1: function(cb) {
+      listlimit1skip1: function (cb) {
         var cl = si.make({ name$: 'lmt' })
-        cl.list$({ limit$: 1, skip$: 1 }, function(err, lst) {
+        cl.list$({ limit$: 1, skip$: 1 }, function (err, lst) {
           if (err) return cb(err)
           Assert.equal(1, lst.length)
           cb()
         })
       },
 
-      listlimit2skip3: function(cb) {
+      listlimit2skip3: function (cb) {
         var cl = si.make({ name$: 'lmt' })
-        cl.list$({ limit$: 2, skip$: 3 }, function(err, lst) {
+        cl.list$({ limit$: 2, skip$: 3 }, function (err, lst) {
           if (err) return cb(err)
           Assert.equal(0, lst.length)
           cb()
         })
       },
 
-      listlimit5skip2: function(cb) {
+      listlimit5skip2: function (cb) {
         var cl = si.make({ name$: 'lmt' })
-        cl.list$({ limit$: 5, skip$: 2 }, function(err, lst) {
+        cl.list$({ limit$: 5, skip$: 2 }, function (err, lst) {
           if (err) return cb(err)
           Assert.equal(1, lst.length)
           cb()
         })
       },
 
-      insertUpdate: function(cb) {
+      insertUpdate: function (cb) {
         var cl = si.make$('lmt')
         cl.p1 = 'value1'
         cl.p2 = 2
-        cl.save$(function(err, foo) {
+        cl.save$(function (err, foo) {
           if (err) return cb(err)
           Assert.ok(foo.id)
           Assert.equal(foo.p1, 'value1')
@@ -218,10 +218,10 @@ function extratest(si, done) {
           delete foo.p1
           foo.p2 = 2.2
 
-          foo.save$(function(err, foo) {
+          foo.save$(function (err, foo) {
             if (err) return cb(err)
 
-            foo.load$({ id: foo.id }, function(err, foo) {
+            foo.load$({ id: foo.id }, function (err, foo) {
               if (err) return cb(err)
               Assert.ok(foo.id)
               Assert.equal(foo.p1, 'value1')
@@ -232,27 +232,27 @@ function extratest(si, done) {
         })
       },
 
-      FieldOr: function(cb) {
+      FieldOr: function (cb) {
         si.make('zed').remove$({ all$: true })
         si.make('zed', { p1: 'a', p2: 10 }).save$()
         si.make('zed', { p1: 'b', p2: 20 }).save$()
         si.make('zed', { p1: 'c', p2: 30 }).save$()
         si.make('zed', { p1: 'a', p2: 40 }).save$()
-        si.ready(function() {
-          si.make('zed').list$(function(err, list) {
+        si.ready(function () {
+          si.make('zed').list$(function (err, list) {
             expect(list.length).equal(4)
 
-            si.make('zed').list$({ p1: 'a' }, function(err, list) {
+            si.make('zed').list$({ p1: 'a' }, function (err, list) {
               //console.log(list)
               expect(list.length).equal(2)
 
               // OR on list values ($in operator)
-              si.make('zed').list$({ p1: ['a', 'b'] }, function(err, list) {
+              si.make('zed').list$({ p1: ['a', 'b'] }, function (err, list) {
                 //console.log(list)
                 expect(list.length).equal(3)
 
-                var ids = list.map(ent => ent.id)
-                si.make('zed').list$({ id: ids }, function(err, list) {
+                var ids = list.map((ent) => ent.id)
+                si.make('zed').list$({ id: ids }, function (err, list) {
                   //console.log(list)
                   expect(list.length).equal(3)
 
@@ -262,9 +262,9 @@ function extratest(si, done) {
             })
           })
         })
-      }
+      },
     },
-    function(err, out) {
+    function (err, out) {
       if (err) return done(err)
       done()
     }
@@ -273,30 +273,30 @@ function extratest(si, done) {
 
 var si2 = Seneca()
 
-describe('mongo regular connection test', function() {
-  before({}, function(done) {
+describe('mongo regular connection test', function () {
+  before({}, function (done) {
     if (si2.version >= '2.0.0') {
       si2.use('entity')
     }
     si2.use(require('..'), {
       name: 'senecatest',
       host: '127.0.0.1',
-      port: 27017
+      port: 27017,
     })
 
     si2.ready(done)
   })
 
-  it('simple test', function(done) {
+  it('simple test', function (done) {
     var foo = si2.make('foo')
     foo.p1 = 'v1'
     foo.p2 = 'v2'
 
-    foo.save$(function(err, foo1) {
+    foo.save$(function (err, foo1) {
       expect(err).to.not.exist()
       expect(foo1.id).to.exist()
 
-      foo1.load$(foo1.id, function(err, foo2) {
+      foo1.load$(foo1.id, function (err, foo2) {
         expect(err).to.not.exist()
         expect(foo2).to.exist()
         expect(foo2.id).to.equal(foo1.id)
@@ -308,7 +308,6 @@ describe('mongo regular connection test', function() {
     })
   })
 })
-
 
 function make_it(lab) {
   return function it(name, opts, func) {

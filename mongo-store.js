@@ -36,20 +36,20 @@ function fixquery(qent, q) {
   if (!q.native$) {
     if (_.isString(q)) {
       qq = {
-        _id: makeid(q)
+        _id: makeid(q),
       }
     } else if (_.isArray(q)) {
       qq = {
         _id: {
-          $in: q.map(id => {
+          $in: q.map((id) => {
             return makeid(id)
-          })
-        }
+          }),
+        },
       }
     } else {
       if (q.id) {
         if (Array.isArray(q.id)) {
-          q._id = q.id.map(id => {
+          q._id = q.id.map((id) => {
             return makeid(id)
           })
         } else {
@@ -104,7 +104,7 @@ function metaquery(qent, q) {
   return mq
 }
 
-module.exports = function(opts) {
+module.exports = function (opts) {
   var seneca = this
   var desc
 
@@ -139,7 +139,7 @@ module.exports = function(opts) {
     conf.db = conf.db || conf.name
 
     // Connect using the URI
-    MongoClient.connect(conf.uri, function(err, client) {
+    MongoClient.connect(conf.uri, function (err, client) {
       if (err) {
         return seneca.die('connect', err, conf)
       }
@@ -157,7 +157,7 @@ module.exports = function(opts) {
     var collname = (canon.base ? canon.base + '_' : '') + canon.name
 
     if (!collmap[collname]) {
-      dbinst.collection(collname, function(err, coll) {
+      dbinst.collection(collname, function (err, coll) {
         if (!error(args, err, cb)) {
           collmap[collname] = coll
           cb(null, coll)
@@ -171,100 +171,95 @@ module.exports = function(opts) {
   var store = {
     name: name,
 
-    close: function(args, cb) {
+    close: function (args, cb) {
       if (dbclient) {
         dbclient.close(cb)
       } else return cb()
     },
 
-    save: function(args, cb) {
+    save: function (args, cb) {
       var ent = args.ent
 
       var update = !!ent.id
 
-      getcoll(args, ent, function(err, coll) {
-        if (!error(args, err, cb)) {
-          var entp = {}
+      getcoll(args, ent, function (err, coll) {
+        if (error(args, err, cb)) return
 
-          var fields = ent.fields$()
-          fields.forEach(function(field) {
-            entp[field] = ent[field]
-          })
+        var entp = ent.data$(false)
 
-          if (!update) {
-            var id
-            if (undefined !== ent.id$) {
-              id = ent.id$
-            } else if (opts.generate_id) {
-              id = opts.generate_id(ent)
-            }
-
-            entp._id = makeid(id)
-
-            coll.insertOne(entp, function(err, inserts) {
-              if (!error(args, err, cb)) {
-                var entu = inserts.ops[0]
-                var fent = null
-                if (entu) {
-                  entu.id = idstr(entu._id)
-                  delete entu._id
-                  fent = ent.make$(_.cloneDeep(entu))
-                }
-                seneca.log.debug('save/insert', ent, desc)
-                cb(null, fent)
-              }
-            })
-          } else {
-            var q = { _id: makeid(ent.id) }
-            delete entp.id
-
-            var shouldMerge = true
-            if (opts.merge !== false && ent.merge$ === false) {
-              shouldMerge = false
-            }
-            if (opts.merge === false && ent.merge$ !== true) {
-              shouldMerge = false
-            }
-
-            var set = entp
-            var func = 'replaceOne'
-
-            if (shouldMerge) {
-              set = Dot.flatten(entp)
-              func = 'updateOne'
-            }
-
-            coll[func](q, set, { upsert: true }, function(err) {
-              if (!error(args, err, cb)) {
-                seneca.log.debug('save/update', ent, desc)
-                coll.findOne(q, {}, function(err, entu) {
-                  if (!error(args, err, cb)) {
-                    var fent = null
-                    if (entu) {
-                      entu.id = idstr(entu._id)
-                      delete entu._id
-                      fent = ent.make$(_.cloneDeep(entu))
-                    }
-                    cb(null, fent)
-                  }
-                })
-              }
-            })
+        if (!update) {
+          var id
+          if (undefined !== ent.id$) {
+            id = ent.id$
+          } else if (opts.generate_id) {
+            id = opts.generate_id(ent)
           }
+
+          entp._id = makeid(id)
+
+          coll.insertOne(entp, function (err, inserts) {
+            if (!error(args, err, cb)) {
+              var entu = inserts.ops[0]
+              var fent = null
+              if (entu) {
+                entu.id = idstr(entu._id)
+                delete entu._id
+                fent = ent.make$(_.cloneDeep(entu))
+              }
+              seneca.log.debug('save/insert', ent, desc)
+              cb(null, fent)
+            }
+          })
+        } else {
+          var q = { _id: makeid(ent.id) }
+          delete entp.id
+
+          var shouldMerge = true
+          if (opts.merge !== false && ent.merge$ === false) {
+            shouldMerge = false
+          }
+          if (opts.merge === false && ent.merge$ !== true) {
+            shouldMerge = false
+          }
+
+          var set = entp
+          var func = 'replaceOne'
+
+          if (shouldMerge) {
+            set = Dot.flatten(entp)
+            func = 'updateOne'
+          }
+
+          coll[func](q, set, { upsert: true }, function (err) {
+            if (!error(args, err, cb)) {
+              seneca.log.debug('save/update', ent, desc)
+              coll.findOne(q, {}, function (err, entu) {
+                if (!error(args, err, cb)) {
+                  var fent = null
+                  if (entu) {
+                    entu.id = idstr(entu._id)
+                    delete entu._id
+                    fent = ent.make$(_.cloneDeep(entu))
+                  }
+                  cb(null, fent)
+                }
+              })
+            }
+          })
         }
       })
     },
 
-    load: function(args, cb) {
+    load: function (args, cb) {
       var qent = args.qent
       var q = args.q
 
-      getcoll(args, qent, function(err, coll) {
+      getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
           var mq = metaquery(qent, q)
           var qq = fixquery(qent, q)
 
-          coll.findOne(qq, mq, function(err, entp) {
+          coll.findOne(qq, mq, function (err, entp) {
             if (!error(args, err, cb)) {
               var fent = null
               if (entp) {
@@ -280,20 +275,20 @@ module.exports = function(opts) {
       })
     },
 
-    list: function(args, cb) {
+    list: function (args, cb) {
       var qent = args.qent
       var q = args.q
 
-      getcoll(args, qent, function(err, coll) {
+      getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
           var mq = metaquery(qent, q)
           var qq = fixquery(qent, q)
 
-          coll.find(qq, mq, function(err, cur) {
+          coll.find(qq, mq, function (err, cur) {
             if (!error(args, err, cb)) {
               var list = []
 
-              cur.each(function(err, entp) {
+              cur.each(function (err, entp) {
                 if (!error(args, err, cb)) {
                   if (entp) {
                     var fent = null
@@ -313,25 +308,25 @@ module.exports = function(opts) {
       })
     },
 
-    remove: function(args, cb) {
+    remove: function (args, cb) {
       var qent = args.qent
       var q = args.q
 
       var all = q.all$ // default false
       var load = _.isUndefined(q.load$) ? false : q.load$ // default false
 
-      getcoll(args, qent, function(err, coll) {
+      getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
           var qq = fixquery(qent, q)
           var mq = metaquery(qent, q)
 
           if (all) {
-            coll.find(qq, mq, function(err, cur) {
+            coll.find(qq, mq, function (err, cur) {
               if (!error(args, err, cb)) {
                 var list = []
                 var toDelete = []
 
-                cur.each(function(err, entp) {
+                cur.each(function (err, entp) {
                   if (!error(args, err, cb)) {
                     if (entp) {
                       var fent = null
@@ -343,7 +338,7 @@ module.exports = function(opts) {
                       }
                       list.push(fent)
                     } else {
-                      coll.remove({ _id: { $in: toDelete } }, function(err) {
+                      coll.remove({ _id: { $in: toDelete } }, function (err) {
                         seneca.log.debug('remove/all', q, desc)
                         cb(err, null)
                       })
@@ -353,10 +348,10 @@ module.exports = function(opts) {
               }
             })
           } else {
-            coll.findOne(qq, mq, function(err, entp) {
+            coll.findOne(qq, mq, function (err, entp) {
               if (!error(args, err, cb)) {
                 if (entp) {
-                  coll.deleteOne({ _id: entp._id }, {}, function(err) {
+                  coll.deleteOne({ _id: entp._id }, {}, function (err) {
                     seneca.log.debug('remove/one', q, entp, desc)
                     var ent = load ? entp : null
                     cb(err, ent)
@@ -369,10 +364,10 @@ module.exports = function(opts) {
       })
     },
 
-    native: function(args, done) {
-      dbinst.collection('seneca', function(err, coll) {
+    native: function (args, done) {
+      dbinst.collection('seneca', function (err, coll) {
         if (!error(args, err, done)) {
-          coll.findOne({}, {}, function(err) {
+          coll.findOne({}, {}, function (err) {
             if (!error(args, err, done)) {
               done(null, dbinst)
             } else {
@@ -383,14 +378,14 @@ module.exports = function(opts) {
           done(err)
         }
       })
-    }
+    },
   }
 
   var meta = seneca.store.init(seneca, opts, store)
   desc = meta.desc
 
-  seneca.add({ init: store.name, tag: meta.tag }, function(args, done) {
-    configure(opts, function(err) {
+  seneca.add({ init: store.name, tag: meta.tag }, function (args, done) {
+    configure(opts, function (err) {
       if (err)
         return seneca.die('store', err, { store: store.name, desc: desc })
       return done()

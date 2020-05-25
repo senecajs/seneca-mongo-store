@@ -1,11 +1,11 @@
 {
   "name": "seneca-mongo-store",
-  "version": "1.5.1",
+  "version": "2.0.0",
   "description": "Seneca data store plugin for MongoDB",
   "main": "mongo-store.js",
   "scripts": {
     "test": "lab -v -P test -L -t 85 -I globalThis",
-    "prettier": "prettier --write --no-semi --single-quote *.js lib/*.js test/*.js",
+    "prettier": "prettier --write --no-semi --single-quote *.js test/*.js",
     "coveralls": "lab -s -P test -r lcov | coveralls",
     "coverage": "lab -v -P test -L -t 85 -r html > docs/coverage.html",
     "build": "docker-compose build",
@@ -55,8 +55,8 @@
     "async": "^3.2.0",
     "coveralls": "^3.1.0",
     "seneca": "^3.21.0",
-    "seneca-entity": "^8.1.0",
-    "seneca-store-test": "1.5.1"
+    "seneca-entity": "^9.0.0",
+    "seneca-store-test": "2.1.0"
   },
   "files": [
     "LICENSE.txt",

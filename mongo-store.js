@@ -52,19 +52,18 @@ function fixquery(qent, q) {
           qq._id = {
             $in: q.id.map((id) => {
               return makeid(id)
-            })
+            }),
           }
         } else {
           qq._id = makeid(q.id)
         }
 
         //delete q.id
-      }
-      else {
+      } else {
         for (var qp in q) {
-          if ('id'!==qp && !qp.match(/\$$/)) {
+          if ('id' !== qp && !qp.match(/\$$/)) {
             if (Array.isArray(q[qp])) {
-            qq[qp] = { $in: q[qp] }
+              qq[qp] = { $in: q[qp] }
             } else {
               qq[qp] = q[qp]
             }

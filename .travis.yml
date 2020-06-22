@@ -4,7 +4,7 @@ env:
   # global:
   #   matrix:
   #     - MONGODB=3.6.4
-  #     - MONGODB=4.2.6 
+  #     - MONGODB=4.0.19 
 
   matrix:
     - SENECA_VER=seneca@3.x.x

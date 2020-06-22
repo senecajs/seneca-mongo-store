@@ -1,6 +1,6 @@
 {
   "name": "seneca-mongo-store",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Seneca data store plugin for MongoDB",
   "main": "mongo-store.js",
   "scripts": {
@@ -47,15 +47,15 @@
   "dependencies": {
     "lodash": "^4.17.15",
     "mongo-dot-notation": "^2.0.0",
-    "mongodb": "^3.5.7"
+    "mongodb": "^3.5.9"
   },
   "devDependencies": {
     "@hapi/code": "^8.0.1",
     "@hapi/lab": "^22.0.4",
     "async": "^3.2.0",
     "coveralls": "^3.1.0",
-    "seneca": "^3.21.0",
-    "seneca-entity": "^9.0.0",
+    "seneca": "^3.21.2",
+    "seneca-entity": "^9.0.1",
     "seneca-store-test": "2.1.0"
   },
   "files": [

@@ -232,7 +232,7 @@ function extratest(si, done) {
         })
       },
 
-      FieldOr: function (cb) {
+      fieldor: function (cb) {
         si.make('zed').remove$({ all$: true })
         si.make('zed', { p1: 'a', p2: 10 }).save$()
         si.make('zed', { p1: 'b', p2: 20 }).save$()

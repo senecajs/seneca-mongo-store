@@ -49,22 +49,25 @@ function fixquery(qent, q) {
     } else {
       if (q.id) {
         if (Array.isArray(q.id)) {
-          q._id = q.id.map((id) => {
-            return makeid(id)
-          })
+          qq._id = {
+            $in: q.id.map((id) => {
+              return makeid(id)
+            })
+          }
         } else {
-          q._id = makeid(q.id)
+          qq._id = makeid(q.id)
         }
 
-        delete q.id
+        //delete q.id
       }
-
-      for (var qp in q) {
-        if (!qp.match(/\$$/)) {
-          if (Array.isArray(q[qp])) {
+      else {
+        for (var qp in q) {
+          if ('id'!==qp && !qp.match(/\$$/)) {
+            if (Array.isArray(q[qp])) {
             qq[qp] = { $in: q[qp] }
-          } else {
-            qq[qp] = q[qp]
+            } else {
+              qq[qp] = q[qp]
+            }
           }
         }
       }

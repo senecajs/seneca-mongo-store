@@ -10,15 +10,15 @@ env:
     - SENECA_VER=seneca@3.x.x
       MONGODB=3.6.4
     - SENECA_VER=seneca@3.x.x
-      MONGODB=4.2.6 
+      MONGODB=4.0.19
     - SENECA_VER=seneca@plugin
       MONGODB=3.6.4
     - SENECA_VER=seneca@plugin
-      MONGODB=4.2.6 
+      MONGODB=4.0.19
     - SENECA_VER=senecajs/seneca
       MONGODB=3.6.4
     - SENECA_VER=senecajs/seneca
-      MONGODB=4.2.6 
+      MONGODB=4.0.19
 
 node_js:
   - "10"

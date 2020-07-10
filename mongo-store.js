@@ -1,7 +1,7 @@
-/* Copyright (c) 2010-2015 Richard Rodger, MIT License */
+/* Copyright (c) 2010-2020 Richard Rodger and other contributors, MIT License */
 'use strict'
 
-var _ = require('lodash')
+//var _ = require('lodash')
 var Mongo = require('mongodb')
 var Dot = require('mongo-dot-notation')
 var MongoClient = Mongo.MongoClient
@@ -19,7 +19,7 @@ function idstr(obj) {
 }
 
 function makeid(hexstr) {
-  if (_.isString(hexstr) && 24 === hexstr.length) {
+  if ('string' === typeof(hexstr) && 24 === hexstr.length) {
     try {
       return ObjectID.createFromHexString(hexstr)
     } catch (e) {
@@ -34,11 +34,11 @@ function fixquery(qent, q) {
   var qq = {}
 
   if (!q.native$) {
-    if (_.isString(q)) {
+    if ('string' === typeof(q)) {
       qq = {
         _id: makeid(q),
       }
-    } else if (_.isArray(q)) {
+    } else if (Array.isArray(q)) {
       qq = {
         _id: {
           $in: q.map((id) => {
@@ -72,7 +72,7 @@ function fixquery(qent, q) {
       }
     }
   } else {
-    qq = _.isArray(q.native$) ? q.native$[0] : q.native$
+    qq = Array.isArray(q.native$) ? q.native$[0] : q.native$
   }
 
   return qq
@@ -100,7 +100,7 @@ function metaquery(qent, q) {
       mq.fields = q.fields$
     }
   } else {
-    mq = _.isArray(q.native$) ? q.native$[1] : mq
+    mq = Array.isArray(q.native$) ? q.native$[1] : mq
   }
 
   return mq
@@ -125,7 +125,8 @@ module.exports = function (opts) {
   function configure(conf, cb) {
     // defer connection
     // TODO: expose connection action
-    if (!_.isUndefined(conf.connect) && !conf.connect) {
+    //if (!_.isUndefined(conf.connect) && !conf.connect) {
+    if (false === conf.connect) {
       return cb()
     }
 
@@ -206,7 +207,8 @@ module.exports = function (opts) {
               if (entu) {
                 entu.id = idstr(entu._id)
                 delete entu._id
-                fent = ent.make$(_.cloneDeep(entu))
+                //fent = ent.make$(_.cloneDeep(entu))
+                fent = ent.make$(seneca.util.deep(entu))
               }
               seneca.log.debug('save/insert', ent, desc)
               cb(null, fent)
@@ -241,7 +243,8 @@ module.exports = function (opts) {
                   if (entu) {
                     entu.id = idstr(entu._id)
                     delete entu._id
-                    fent = ent.make$(_.cloneDeep(entu))
+                    //fent = ent.make$(_.cloneDeep(entu))
+                    fent = ent.make$(seneca.util.deep(entu))
                   }
                   cb(null, fent)
                 }
@@ -315,7 +318,7 @@ module.exports = function (opts) {
       var q = args.q
 
       var all = q.all$ // default false
-      var load = _.isUndefined(q.load$) ? false : q.load$ // default false
+      var load = null == q.load$ ? false : q.load$ // default false
 
       getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
@@ -394,5 +397,11 @@ module.exports = function (opts) {
     })
   })
 
-  return { name: store.name, tag: meta.tag }
+  return {
+    name: store.name,
+    tag: meta.tag,
+    export: {
+      mongo: ()=>dbinst
+    }
+  }
 }

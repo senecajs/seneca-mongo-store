@@ -19,7 +19,7 @@ function idstr(obj) {
 }
 
 function makeid(hexstr) {
-  if ('string' === typeof(hexstr) && 24 === hexstr.length) {
+  if ('string' === typeof hexstr && 24 === hexstr.length) {
     try {
       return ObjectID.createFromHexString(hexstr)
     } catch (e) {
@@ -34,7 +34,7 @@ function fixquery(qent, q) {
   var qq = {}
 
   if (!q.native$) {
-    if ('string' === typeof(q)) {
+    if ('string' === typeof q) {
       qq = {
         _id: makeid(q),
       }
@@ -401,7 +401,7 @@ module.exports = function (opts) {
     name: store.name,
     tag: meta.tag,
     export: {
-      mongo: ()=>dbinst
-    }
+      mongo: () => dbinst,
+    },
   }
 }

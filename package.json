@@ -1,10 +1,10 @@
 {
   "name": "seneca-mongo-store",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Seneca data store plugin for MongoDB",
   "main": "mongo-store.js",
   "scripts": {
-    "test": "lab -v -P test -L -t 85 -I globalThis",
+    "test": "lab -v -P test -L -t 85 -I globalThis -r console -o stdout -r html -o test/coverage.html",
     "prettier": "prettier --write --no-semi --single-quote *.js test/*.js",
     "coveralls": "lab -s -P test -r lcov | coveralls",
     "coverage": "lab -v -P test -L -t 85 -r html > docs/coverage.html",

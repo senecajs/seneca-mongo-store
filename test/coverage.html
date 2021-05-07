@@ -536,7 +536,7 @@
         <li><a href="#tests">Test Report</a></li>
         <li><a href="#coverage">Coverage Report</a></li>
         <li class="">
-            <span class="cov high">86.05</span>
+            <span class="cov high">86.65</span>
             <a href="#mongo-store.js"><span class="basename">mongo-store.js</span></a>
         </li>
         <li><a href="#linting">Linting Report</a></li>
@@ -546,8 +546,8 @@
       <div class="stats high">
           <div class="failures">0</div>
           <div class="skipped">0</div>
-          <div class="test-count">72</div>
-          <div class="duration">7435</div>
+          <div class="test-count">80</div>
+          <div class="duration">8109</div>
       </div>
       <div id="filters">
           <input type="checkbox" checked="" onchange="filter(this)" value="success" id="show-success">
@@ -575,6 +575,24 @@
           <label for="show-Limits">Limits</label>
           <input type="checkbox" checked="" onchange="filter(this)" value="Sorting" id="show-Sorting">
           <label for="show-Sorting">Sorting</label>
+          <input type="checkbox" checked="" onchange="filter(this)" value="extra_tests" id="show-extra_tests">
+          <label for="show-extra_tests">extra tests</label>
+          <input type="checkbox" checked="" onchange="filter(this)" value="#save$" id="show-#save$">
+          <label for="show-#save$">#save$</label>
+          <input type="checkbox" checked="" onchange="filter(this)" value="creating_a_new_entity" id="show-creating_a_new_entity">
+          <label for="show-creating_a_new_entity">creating a new entity</label>
+          <input type="checkbox" checked="" onchange="filter(this)" value="the_save$_query_includes_the_id$_field" id="show-the_save$_query_includes_the_id$_field">
+          <label for="show-the_save$_query_includes_the_id$_field">the save$ query includes the id$ field</label>
+          <input type="checkbox" checked="" onchange="filter(this)" value="the_mongo_store_plugin_is_passed_the_&#x60;generate_id&#x60;_option" id="show-the_mongo_store_plugin_is_passed_the_&#x60;generate_id&#x60;_option">
+          <label for="show-the_mongo_store_plugin_is_passed_the_&#x60;generate_id&#x60;_option">the mongo store plugin is passed the &#x60;generate id&#x60; option</label>
+          <input type="checkbox" checked="" onchange="filter(this)" value="both_the_save$.id$_field_is_present_and_the_plugin_includes_the_&#x60;generate_id&#x60;_option" id="show-both_the_save$.id$_field_is_present_and_the_plugin_includes_the_&#x60;generate_id&#x60;_option">
+          <label for="show-both_the_save$.id$_field_is_present_and_the_plugin_includes_the_&#x60;generate_id&#x60;_option">both the save$.id$ field is present and the plugin includes the &#x60;generate id&#x60; option</label>
+          <input type="checkbox" checked="" onchange="filter(this)" value="updating_an_existing_entity" id="show-updating_an_existing_entity">
+          <label for="show-updating_an_existing_entity">updating an existing entity</label>
+          <input type="checkbox" checked="" onchange="filter(this)" value="the_merge:false_option_is_passed_to_the_plugin" id="show-the_merge:false_option_is_passed_to_the_plugin">
+          <label for="show-the_merge:false_option_is_passed_to_the_plugin">the merge:false option is passed to the plugin</label>
+          <input type="checkbox" checked="" onchange="filter(this)" value="without_the_merge_option" id="show-without_the_merge_option">
+          <label for="show-without_the_merge_option">without the merge option</label>
           <input type="checkbox" checked="" onchange="filter(this)" value="mongo_regular_connection_test" id="show-mongo_regular_connection_test">
           <label for="show-mongo_regular_connection_test">mongo regular connection test</label>
       </div>
@@ -587,509 +605,565 @@
           </tr>
           </thead>
           <tbody>
-          <tr class="show mongo_tests success">
+          <tr class="show mongo_tests Basic_Tests Load success">
               <td class="test-id">1</td>
-              <td class="test-title">mongo tests extra test
+              <td class="test-title">mongo tests Basic Tests Load should load an entity qqq
                   
               </td>
-              <td class="test-duration">282</td>
+              <td class="test-duration">6</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Load success">
               <td class="test-id">2</td>
-              <td class="test-title">mongo tests Basic Tests Load should load an entity qqq
+              <td class="test-title">mongo tests Basic Tests Load should return null for non existing entity
                   
               </td>
               <td class="test-duration">3</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Load success">
               <td class="test-id">3</td>
-              <td class="test-title">mongo tests Basic Tests Load should return null for non existing entity
-                  
-              </td>
-              <td class="test-duration">2</td>
-          </tr>
-          <tr class="show mongo_tests Basic_Tests Load success">
-              <td class="test-id">4</td>
               <td class="test-title">mongo tests Basic Tests Load should support filtering
                   
               </td>
               <td class="test-duration">3</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Load success">
-              <td class="test-id">5</td>
+              <td class="test-id">4</td>
               <td class="test-title">mongo tests Basic Tests Load should filter with AND
                   
               </td>
-              <td class="test-duration">2</td>
+              <td class="test-duration">7</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Load success">
-              <td class="test-id">6</td>
+              <td class="test-id">5</td>
               <td class="test-title">mongo tests Basic Tests Load should filter with AND 2
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Load success">
-              <td class="test-id">7</td>
+              <td class="test-id">6</td>
               <td class="test-title">mongo tests Basic Tests Load should support different attribute types
                   
               </td>
               <td class="test-duration">3</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Load success">
-              <td class="test-id">8</td>
+              <td class="test-id">7</td>
               <td class="test-title">mongo tests Basic Tests Load should not mix attributes from entity to query for filtering
                   
               </td>
-              <td class="test-duration">2</td>
+              <td class="test-duration">3</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Load success">
-              <td class="test-id">9</td>
+              <td class="test-id">8</td>
               <td class="test-title">mongo tests Basic Tests Load should reload current entity if no query provided and id present
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Load success">
-              <td class="test-id">10</td>
+              <td class="test-id">9</td>
               <td class="test-title">mongo tests Basic Tests Load should do nothing if no query provided and id not present
                   
               </td>
               <td class="test-duration">0</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Save success">
-              <td class="test-id">11</td>
+              <td class="test-id">10</td>
               <td class="test-title">mongo tests Basic Tests Save should save an entity to store (and generate an id)
                   
               </td>
-              <td class="test-duration">4</td>
+              <td class="test-duration">11</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Save success">
-              <td class="test-id">12</td>
+              <td class="test-id">11</td>
               <td class="test-title">mongo tests Basic Tests Save should save an entity to store (with provided id)
                   
               </td>
-              <td class="test-duration">5</td>
+              <td class="test-duration">7</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Save success">
-              <td class="test-id">13</td>
+              <td class="test-id">12</td>
               <td class="test-title">mongo tests Basic Tests Save should update an entity if id provided
                   
               </td>
-              <td class="test-duration">6</td>
+              <td class="test-duration">15</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Save success">
-              <td class="test-id">14</td>
+              <td class="test-id">13</td>
               <td class="test-title">mongo tests Basic Tests Save should save an entity if id provided but original doesn&#x27;t exist
                   
               </td>
-              <td class="test-duration">6</td>
+              <td class="test-duration">10</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Save success">
-              <td class="test-id">15</td>
+              <td class="test-id">14</td>
               <td class="test-title">mongo tests Basic Tests Save should allow to not merge during update with merge$: false
                   
               </td>
               <td class="test-duration">5</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Save success">
-              <td class="test-id">16</td>
+              <td class="test-id">15</td>
               <td class="test-title">mongo tests Basic Tests Save should support different attribute types
-                  
-              </td>
-              <td class="test-duration">5</td>
-          </tr>
-          <tr class="show mongo_tests Basic_Tests Save success">
-              <td class="test-id">17</td>
-              <td class="test-title">mongo tests Basic Tests Save should allow dublicate attributes
                   
               </td>
               <td class="test-duration">4</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Save success">
-              <td class="test-id">18</td>
+              <td class="test-id">16</td>
+              <td class="test-title">mongo tests Basic Tests Save should allow dublicate attributes
+                  
+              </td>
+              <td class="test-duration">3</td>
+          </tr>
+          <tr class="show mongo_tests Basic_Tests Save success">
+              <td class="test-id">17</td>
               <td class="test-title">mongo tests Basic Tests Save should not save modifications to entity after save completes
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Save success">
-              <td class="test-id">19</td>
+              <td class="test-id">18</td>
               <td class="test-title">mongo tests Basic Tests Save should not backport modification to saved entity to the original one
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Save success">
-              <td class="test-id">20</td>
+              <td class="test-id">19</td>
               <td class="test-title">mongo tests Basic Tests Save should clear an attribute if &#x3D; null
                   
               </td>
-              <td class="test-duration">7</td>
+              <td class="test-duration">6</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests With_Option_merge:false success">
-              <td class="test-id">21</td>
+              <td class="test-id">20</td>
               <td class="test-title">mongo tests Basic Tests With Option merge:false should provide senecaMerge
                   
               </td>
               <td class="test-duration">0</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests With_Option_merge:false success">
-              <td class="test-id">22</td>
+              <td class="test-id">21</td>
               <td class="test-title">mongo tests Basic Tests With Option merge:false should update an entity if id provided
                   
               </td>
-              <td class="test-duration">7</td>
+              <td class="test-duration">5</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests With_Option_merge:false success">
-              <td class="test-id">23</td>
+              <td class="test-id">22</td>
               <td class="test-title">mongo tests Basic Tests With Option merge:false should allow to merge during update with merge$: true
                   
               </td>
-              <td class="test-duration">8</td>
+              <td class="test-duration">4</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests List success">
-              <td class="test-id">24</td>
+              <td class="test-id">23</td>
               <td class="test-title">mongo tests Basic Tests List should load all elements if no params
                   
               </td>
               <td class="test-duration">3</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests List success">
-              <td class="test-id">25</td>
+              <td class="test-id">24</td>
               <td class="test-title">mongo tests Basic Tests List should load all elements if no params 2
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests List success">
-              <td class="test-id">26</td>
+              <td class="test-id">25</td>
               <td class="test-title">mongo tests Basic Tests List should load all elements if no query provided
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests List success">
-              <td class="test-id">27</td>
+              <td class="test-id">26</td>
               <td class="test-title">mongo tests Basic Tests List should list entities by id
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests List success">
-              <td class="test-id">28</td>
+              <td class="test-id">27</td>
               <td class="test-title">mongo tests Basic Tests List should list entities by integer property
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests List success">
-              <td class="test-id">29</td>
+              <td class="test-id">28</td>
               <td class="test-title">mongo tests Basic Tests List should list entities by string property
                   
               </td>
-              <td class="test-duration">2</td>
+              <td class="test-duration">1</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests List success">
-              <td class="test-id">30</td>
+              <td class="test-id">29</td>
               <td class="test-title">mongo tests Basic Tests List should list entities by two properties
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests List success">
-              <td class="test-id">31</td>
+              <td class="test-id">30</td>
               <td class="test-title">mongo tests Basic Tests List should support opaque ids (array)
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests List success">
-              <td class="test-id">32</td>
+              <td class="test-id">31</td>
               <td class="test-title">mongo tests Basic Tests List should support opaque ids (single id)
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests List success">
-              <td class="test-id">33</td>
+              <td class="test-id">32</td>
               <td class="test-title">mongo tests Basic Tests List should support opaque ids (string)
                   
               </td>
-              <td class="test-duration">2</td>
+              <td class="test-duration">9</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests List success">
-              <td class="test-id">34</td>
+              <td class="test-id">33</td>
               <td class="test-title">mongo tests Basic Tests List should filter with AND
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests List success">
-              <td class="test-id">35</td>
+              <td class="test-id">34</td>
               <td class="test-title">mongo tests Basic Tests List should not mix attributes from entity to query for filtering
                   
               </td>
-              <td class="test-duration">2</td>
+              <td class="test-duration">3</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Remove success">
-              <td class="test-id">36</td>
+              <td class="test-id">35</td>
               <td class="test-title">mongo tests Basic Tests Remove should delete only an entity
-                  
-              </td>
-              <td class="test-duration">4</td>
-          </tr>
-          <tr class="show mongo_tests Basic_Tests Remove success">
-              <td class="test-id">37</td>
-              <td class="test-title">mongo tests Basic Tests Remove should delete all entities if all$ &#x3D; true
-                  
-              </td>
-              <td class="test-duration">4</td>
-          </tr>
-          <tr class="show mongo_tests Basic_Tests Remove success">
-              <td class="test-id">38</td>
-              <td class="test-title">mongo tests Basic Tests Remove should delete an entity by property
-                  
-              </td>
-              <td class="test-duration">9</td>
-          </tr>
-          <tr class="show mongo_tests Basic_Tests Remove success">
-              <td class="test-id">39</td>
-              <td class="test-title">mongo tests Basic Tests Remove should delete entities filtered by AND
                   
               </td>
               <td class="test-duration">5</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Remove success">
-              <td class="test-id">40</td>
+              <td class="test-id">36</td>
+              <td class="test-title">mongo tests Basic Tests Remove should delete all entities if all$ &#x3D; true
+                  
+              </td>
+              <td class="test-duration">5</td>
+          </tr>
+          <tr class="show mongo_tests Basic_Tests Remove success">
+              <td class="test-id">37</td>
+              <td class="test-title">mongo tests Basic Tests Remove should delete an entity by property
+                  
+              </td>
+              <td class="test-duration">3</td>
+          </tr>
+          <tr class="show mongo_tests Basic_Tests Remove success">
+              <td class="test-id">38</td>
+              <td class="test-title">mongo tests Basic Tests Remove should delete entities filtered by AND
+                  
+              </td>
+              <td class="test-duration">7</td>
+          </tr>
+          <tr class="show mongo_tests Basic_Tests Remove success">
+              <td class="test-id">39</td>
               <td class="test-title">mongo tests Basic Tests Remove should return deleted entity if load$: true
                   
               </td>
-              <td class="test-duration">3</td>
+              <td class="test-duration">6</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Remove success">
-              <td class="test-id">41</td>
+              <td class="test-id">40</td>
               <td class="test-title">mongo tests Basic Tests Remove should never return deleted entities if all$: true
                   
               </td>
-              <td class="test-duration">3</td>
+              <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Remove success">
-              <td class="test-id">42</td>
+              <td class="test-id">41</td>
               <td class="test-title">mongo tests Basic Tests Remove should not delete current ent (only uses query)
                   
               </td>
               <td class="test-duration">4</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Remove success">
-              <td class="test-id">43</td>
+              <td class="test-id">42</td>
               <td class="test-title">mongo tests Basic Tests Remove should delete current entity if no query present
                   
               </td>
-              <td class="test-duration">14</td>
+              <td class="test-duration">5</td>
           </tr>
           <tr class="show mongo_tests Basic_Tests Native success">
-              <td class="test-id">44</td>
+              <td class="test-id">43</td>
               <td class="test-title">mongo tests Basic Tests Native should prived direct access to the driver
                   
               </td>
-              <td class="test-duration">3</td>
+              <td class="test-duration">1</td>
           </tr>
           <tr class="show mongo_tests Limits success">
-              <td class="test-id">45</td>
+              <td class="test-id">44</td>
               <td class="test-title">mongo tests Limits check setup correctly
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Limits Load success">
-              <td class="test-id">46</td>
+              <td class="test-id">45</td>
               <td class="test-title">mongo tests Limits Load should support skip and sort
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Limits Load success">
-              <td class="test-id">47</td>
+              <td class="test-id">46</td>
               <td class="test-title">mongo tests Limits Load should return empty array when skipping all the records
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Limits Load success">
-              <td class="test-id">48</td>
+              <td class="test-id">47</td>
               <td class="test-title">mongo tests Limits Load should not be influenced by limit
-                  
-              </td>
-              <td class="test-duration">5</td>
-          </tr>
-          <tr class="show mongo_tests Limits Load success">
-              <td class="test-id">49</td>
-              <td class="test-title">mongo tests Limits Load should ignore skip &lt; 0
-                  
-              </td>
-              <td class="test-duration">3</td>
-          </tr>
-          <tr class="show mongo_tests Limits Load success">
-              <td class="test-id">50</td>
-              <td class="test-title">mongo tests Limits Load should ignore limit &lt; 0
-                  
-              </td>
-              <td class="test-duration">3</td>
-          </tr>
-          <tr class="show mongo_tests Limits Load success">
-              <td class="test-id">51</td>
-              <td class="test-title">mongo tests Limits Load should ignore invalid qualifier values
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
+          <tr class="show mongo_tests Limits Load success">
+              <td class="test-id">48</td>
+              <td class="test-title">mongo tests Limits Load should ignore skip &lt; 0
+                  
+              </td>
+              <td class="test-duration">2</td>
+          </tr>
+          <tr class="show mongo_tests Limits Load success">
+              <td class="test-id">49</td>
+              <td class="test-title">mongo tests Limits Load should ignore limit &lt; 0
+                  
+              </td>
+              <td class="test-duration">1</td>
+          </tr>
+          <tr class="show mongo_tests Limits Load success">
+              <td class="test-id">50</td>
+              <td class="test-title">mongo tests Limits Load should ignore invalid qualifier values
+                  
+              </td>
+              <td class="test-duration">1</td>
+          </tr>
           <tr class="show mongo_tests Limits List success">
-              <td class="test-id">52</td>
+              <td class="test-id">51</td>
               <td class="test-title">mongo tests Limits List should support limit, skip and sort
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Limits List success">
-              <td class="test-id">53</td>
+              <td class="test-id">52</td>
               <td class="test-title">mongo tests Limits List should return empty array when skipping all the records
                   
               </td>
-              <td class="test-duration">4</td>
+              <td class="test-duration">2</td>
+          </tr>
+          <tr class="show mongo_tests Limits List success">
+              <td class="test-id">53</td>
+              <td class="test-title">mongo tests Limits List should return correct number of records if limit is too high
+                  
+              </td>
+              <td class="test-duration">1</td>
           </tr>
           <tr class="show mongo_tests Limits List success">
               <td class="test-id">54</td>
-              <td class="test-title">mongo tests Limits List should return correct number of records if limit is too high
+              <td class="test-title">mongo tests Limits List should ignore skip &lt; 0
                   
               </td>
               <td class="test-duration">2</td>
           </tr>
           <tr class="show mongo_tests Limits List success">
               <td class="test-id">55</td>
-              <td class="test-title">mongo tests Limits List should ignore skip &lt; 0
-                  
-              </td>
-              <td class="test-duration">3</td>
-          </tr>
-          <tr class="show mongo_tests Limits List success">
-              <td class="test-id">56</td>
               <td class="test-title">mongo tests Limits List should ignore limit &lt; 0
                   
               </td>
-              <td class="test-duration">2</td>
+              <td class="test-duration">9</td>
           </tr>
           <tr class="show mongo_tests Limits List success">
-              <td class="test-id">57</td>
+              <td class="test-id">56</td>
               <td class="test-title">mongo tests Limits List should ignore invalid qualifier values
                   
               </td>
               <td class="test-duration">3</td>
           </tr>
           <tr class="show mongo_tests Limits Remove success">
-              <td class="test-id">58</td>
+              <td class="test-id">57</td>
               <td class="test-title">mongo tests Limits Remove should support limit, skip and sort
                   
               </td>
-              <td class="test-duration">5</td>
+              <td class="test-duration">4</td>
           </tr>
           <tr class="show mongo_tests Limits Remove success">
-              <td class="test-id">59</td>
+              <td class="test-id">58</td>
               <td class="test-title">mongo tests Limits Remove should not be impacted by limit &gt; 1
                   
               </td>
-              <td class="test-duration">5</td>
+              <td class="test-duration">8</td>
           </tr>
           <tr class="show mongo_tests Limits Remove success">
-              <td class="test-id">60</td>
+              <td class="test-id">59</td>
               <td class="test-title">mongo tests Limits Remove should work with all$: true
                   
               </td>
               <td class="test-duration">4</td>
           </tr>
           <tr class="show mongo_tests Limits Remove success">
-              <td class="test-id">61</td>
+              <td class="test-id">60</td>
               <td class="test-title">mongo tests Limits Remove should not delete anyithing when skipping all the records
                   
               </td>
-              <td class="test-duration">5</td>
+              <td class="test-duration">4</td>
           </tr>
           <tr class="show mongo_tests Limits Remove success">
-              <td class="test-id">62</td>
+              <td class="test-id">61</td>
               <td class="test-title">mongo tests Limits Remove should delete correct number of records if limit is too high
                   
               </td>
               <td class="test-duration">6</td>
           </tr>
           <tr class="show mongo_tests Limits Remove success">
-              <td class="test-id">63</td>
+              <td class="test-id">62</td>
               <td class="test-title">mongo tests Limits Remove should ignore skip &lt; 0
                   
               </td>
-              <td class="test-duration">4</td>
+              <td class="test-duration">3</td>
           </tr>
           <tr class="show mongo_tests Limits Remove success">
-              <td class="test-id">64</td>
+              <td class="test-id">63</td>
               <td class="test-title">mongo tests Limits Remove should ignore limit &lt; 0
                   
               </td>
-              <td class="test-duration">5</td>
+              <td class="test-duration">3</td>
           </tr>
           <tr class="show mongo_tests Limits Remove success">
-              <td class="test-id">65</td>
+              <td class="test-id">64</td>
               <td class="test-title">mongo tests Limits Remove should ignore invalid qualifier values
                   
               </td>
               <td class="test-duration">4</td>
           </tr>
           <tr class="show mongo_tests Sorting Load success">
-              <td class="test-id">66</td>
+              <td class="test-id">65</td>
               <td class="test-title">mongo tests Sorting Load should support ascending order
-                  
-              </td>
-              <td class="test-duration">2</td>
-          </tr>
-          <tr class="show mongo_tests Sorting Load success">
-              <td class="test-id">67</td>
-              <td class="test-title">mongo tests Sorting Load should support descending order
                   
               </td>
               <td class="test-duration">1</td>
           </tr>
-          <tr class="show mongo_tests Sorting List success">
-              <td class="test-id">68</td>
-              <td class="test-title">mongo tests Sorting List should support ascending order
+          <tr class="show mongo_tests Sorting Load success">
+              <td class="test-id">66</td>
+              <td class="test-title">mongo tests Sorting Load should support descending order
                   
               </td>
-              <td class="test-duration">2</td>
+              <td class="test-duration">4</td>
           </tr>
           <tr class="show mongo_tests Sorting List success">
-              <td class="test-id">69</td>
-              <td class="test-title">mongo tests Sorting List should support descending order
+              <td class="test-id">67</td>
+              <td class="test-title">mongo tests Sorting List should support ascending order
                   
               </td>
               <td class="test-duration">3</td>
           </tr>
+          <tr class="show mongo_tests Sorting List success">
+              <td class="test-id">68</td>
+              <td class="test-title">mongo tests Sorting List should support descending order
+                  
+              </td>
+              <td class="test-duration">2</td>
+          </tr>
           <tr class="show mongo_tests Sorting Remove success">
-              <td class="test-id">70</td>
+              <td class="test-id">69</td>
               <td class="test-title">mongo tests Sorting Remove should support ascending order
                   
               </td>
               <td class="test-duration">4</td>
           </tr>
           <tr class="show mongo_tests Sorting Remove success">
-              <td class="test-id">71</td>
+              <td class="test-id">70</td>
               <td class="test-title">mongo tests Sorting Remove should support descending order
+                  
+              </td>
+              <td class="test-duration">4</td>
+          </tr>
+          <tr class="show mongo_tests extra_tests success">
+              <td class="test-id">71</td>
+              <td class="test-title">mongo tests extra tests extra test
+                  
+              </td>
+              <td class="test-duration">182</td>
+          </tr>
+          <tr class="show mongo_tests extra_tests #save$ creating_a_new_entity the_save$_query_includes_the_id$_field success">
+              <td class="test-id">72</td>
+              <td class="test-title">mongo tests extra tests #save$ creating a new entity the save$ query includes the id$ field creates a new entity with the given id
+                  
+              </td>
+              <td class="test-duration">6</td>
+          </tr>
+          <tr class="show mongo_tests extra_tests #save$ creating_a_new_entity the_save$_query_includes_the_id$_field success">
+              <td class="test-id">73</td>
+              <td class="test-title">mongo tests extra tests #save$ creating a new entity the save$ query includes the id$ field passes the new entitity to the save$ callback
+                  
+              </td>
+              <td class="test-duration">3</td>
+          </tr>
+          <tr class="show mongo_tests extra_tests #save$ creating_a_new_entity the_mongo_store_plugin_is_passed_the_&#x60;generate_id&#x60;_option success">
+              <td class="test-id">74</td>
+              <td class="test-title">mongo tests extra tests #save$ creating a new entity the mongo store plugin is passed the &#x60;generate_id&#x60; option creates a new entity with the given id
+                  
+              </td>
+              <td class="test-duration">5</td>
+          </tr>
+          <tr class="show mongo_tests extra_tests #save$ creating_a_new_entity the_mongo_store_plugin_is_passed_the_&#x60;generate_id&#x60;_option success">
+              <td class="test-id">75</td>
+              <td class="test-title">mongo tests extra tests #save$ creating a new entity the mongo store plugin is passed the &#x60;generate_id&#x60; option passes the new entitity to the save$ callback
+                  
+              </td>
+              <td class="test-duration">5</td>
+          </tr>
+          <tr class="show mongo_tests extra_tests #save$ creating_a_new_entity both_the_save$.id$_field_is_present_and_the_plugin_includes_the_&#x60;generate_id&#x60;_option success">
+              <td class="test-id">76</td>
+              <td class="test-title">mongo tests extra tests #save$ creating a new entity both the save$.id$ field is present and the plugin includes the &#x60;generate_id&#x60; option creates a new entity with the id in the save$ query
+                  
+              </td>
+              <td class="test-duration">5</td>
+          </tr>
+          <tr class="show mongo_tests extra_tests #save$ creating_a_new_entity both_the_save$.id$_field_is_present_and_the_plugin_includes_the_&#x60;generate_id&#x60;_option success">
+              <td class="test-id">77</td>
+              <td class="test-title">mongo tests extra tests #save$ creating a new entity both the save$.id$ field is present and the plugin includes the &#x60;generate_id&#x60; option passes the new entitity to the save$ callback
+                  
+              </td>
+              <td class="test-duration">2</td>
+          </tr>
+          <tr class="show mongo_tests extra_tests #save$ updating_an_existing_entity the_merge:false_option_is_passed_to_the_plugin success">
+              <td class="test-id">78</td>
+              <td class="test-title">mongo tests extra tests #save$ updating an existing entity the merge:false option is passed to the plugin replaces the existing entity
+                  
+              </td>
+              <td class="test-duration">7</td>
+          </tr>
+          <tr class="show mongo_tests extra_tests #save$ updating_an_existing_entity without_the_merge_option success">
+              <td class="test-id">79</td>
+              <td class="test-title">mongo tests extra tests #save$ updating an existing entity without the merge option updates the existing entity
                   
               </td>
               <td class="test-duration">5</td>
           </tr>
           <tr class="show mongo_regular_connection_test success">
-              <td class="test-id">72</td>
+              <td class="test-id">80</td>
               <td class="test-title">mongo regular connection test simple test
                   
               </td>
-              <td class="test-duration">22</td>
+              <td class="test-duration">13</td>
           </tr>
           </tbody>
       </table>
@@ -1097,10 +1171,10 @@
     </div>    <div id="coverage">
         <h1>Code Coverage Report</h1>
         <div class="stats high">
-            <div class="percentage">86.05%</div>
+            <div class="percentage">86.65%</div>
             <div class="sloc">337</div>
-            <div class="hits">290</div>
-            <div class="misses">47</div>
+            <div class="hits">292</div>
+            <div class="misses">45</div>
         </div>
         <div id="filters">
           <input type="checkbox" checked="" onchange="filter(this)" value="generated" id="show-generated">
@@ -1110,10 +1184,10 @@
             <div class="file ">
                 <h2 id="mongo-store.js">mongo-store.js </h2>
                 <div class="stats high">
-                    <div class="percentage">86.05%</div>
+                    <div class="percentage">86.65%</div>
                     <div class="sloc">337</div>
-                    <div class="hits">290</div>
-                    <div class="misses">47</div>
+                    <div class="hits">292</div>
+                    <div class="misses">45</div>
                 </div>
                 <table>
                     <thead>
@@ -1255,19 +1329,19 @@
                         </tr>            <tr id="mongo-store.js__22" class="hit">
                           <td class="line" data-tooltip>22</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>175</td>
+                          <td class="hits" data-tooltip>189</td>
                           <td class="source">  if (&#x27;string&#x27; &#x3D;&#x3D;&#x3D; typeof hexstr &amp;&amp; 24 &#x3D;&#x3D;&#x3D; hexstr.length) {</td>
                           
                         </tr>            <tr id="mongo-store.js__23" class="hit">
                           <td class="line" data-tooltip>23</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>11</td>
+                          <td class="hits" data-tooltip>21</td>
                           <td class="source">    try {</td>
                           
                         </tr>            <tr id="mongo-store.js__24" class="hit">
                           <td class="line" data-tooltip>24</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>11</td>
+                          <td class="hits" data-tooltip>21</td>
                           <td class="source">      return ObjectID.createFromHexString(hexstr)</td>
                           
                         </tr>            <tr id="mongo-store.js__25" class="hit">
@@ -1303,7 +1377,7 @@
                         </tr>            <tr id="mongo-store.js__30" class="hit">
                           <td class="line" data-tooltip>30</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>164</td>
+                          <td class="hits" data-tooltip>168</td>
                           <td class="source">  return hexstr</td>
                           
                         </tr>            <tr id="mongo-store.js__31" class="hit">
@@ -1327,7 +1401,7 @@
                         </tr>            <tr id="mongo-store.js__34" class="hit">
                           <td class="line" data-tooltip>34</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>196</td>
+                          <td class="hits" data-tooltip>319</td>
                           <td class="source">  var qq &#x3D; {}</td>
                           
                         </tr>            <tr id="mongo-store.js__35" class="hit">
@@ -1339,13 +1413,13 @@
                         </tr>            <tr id="mongo-store.js__36" class="hit">
                           <td class="line" data-tooltip>36</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>196</td>
+                          <td class="hits" data-tooltip>319</td>
                           <td class="source">  if (!q.native$) {</td>
                           
                         </tr>            <tr id="mongo-store.js__37" class="hit">
                           <td class="line" data-tooltip>37</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>195</td>
+                          <td class="hits" data-tooltip>318</td>
                           <td class="source">    if (&#x27;string&#x27; &#x3D;&#x3D;&#x3D; typeof q) {</td>
                           
                         </tr>            <tr id="mongo-store.js__38" class="hit">
@@ -1369,7 +1443,7 @@
                         </tr>            <tr id="mongo-store.js__41" class="hit">
                           <td class="line" data-tooltip>41</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>194</td>
+                          <td class="hits" data-tooltip>317</td>
                           <td class="source">    } else if (Array.isArray(q)) {</td>
                           
                         </tr>            <tr id="mongo-store.js__42" class="hit">
@@ -1423,13 +1497,13 @@
                         </tr>            <tr id="mongo-store.js__50" class="hit">
                           <td class="line" data-tooltip>50</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>192</td>
+                          <td class="hits" data-tooltip>315</td>
                           <td class="source">      if (q.id) {</td>
                           
                         </tr>            <tr id="mongo-store.js__51" class="hit">
                           <td class="line" data-tooltip>51</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>20</td>
+                          <td class="hits" data-tooltip>22</td>
                           <td class="source">        if (Array.isArray(q.id)) {</td>
                           
                         </tr>            <tr id="mongo-store.js__52" class="hit">
@@ -1471,7 +1545,7 @@
                         </tr>            <tr id="mongo-store.js__58" class="hit">
                           <td class="line" data-tooltip>58</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>19</td>
+                          <td class="hits" data-tooltip>21</td>
                           <td class="source">          qq._id &#x3D; makeid(q.id)</td>
                           
                         </tr>            <tr id="mongo-store.js__59" class="hit">
@@ -1501,7 +1575,7 @@
                         </tr>            <tr id="mongo-store.js__63" class="hit">
                           <td class="line" data-tooltip>63</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>172</td>
+                          <td class="hits" data-tooltip>293</td>
                           <td class="source">        for (var qp in q) {</td>
                           
                         </tr>            <tr id="mongo-store.js__64" class="chunks">
@@ -1591,7 +1665,7 @@
                         </tr>            <tr id="mongo-store.js__78" class="hit">
                           <td class="line" data-tooltip>78</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>196</td>
+                          <td class="hits" data-tooltip>319</td>
                           <td class="source">  return qq</td>
                           
                         </tr>            <tr id="mongo-store.js__79" class="hit">
@@ -1615,7 +1689,7 @@
                         </tr>            <tr id="mongo-store.js__82" class="hit">
                           <td class="line" data-tooltip>82</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>196</td>
+                          <td class="hits" data-tooltip>319</td>
                           <td class="source">  var mq &#x3D; {}</td>
                           
                         </tr>            <tr id="mongo-store.js__83" class="hit">
@@ -1627,13 +1701,13 @@
                         </tr>            <tr id="mongo-store.js__84" class="hit">
                           <td class="line" data-tooltip>84</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>196</td>
+                          <td class="hits" data-tooltip>319</td>
                           <td class="source">  if (!q.native$) {</td>
                           
                         </tr>            <tr id="mongo-store.js__85" class="hit">
                           <td class="line" data-tooltip>85</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>195</td>
+                          <td class="hits" data-tooltip>318</td>
                           <td class="source">    if (q.sort$) {</td>
                           
                         </tr>            <tr id="mongo-store.js__86" class="hit">
@@ -1669,7 +1743,7 @@
                         </tr>            <tr id="mongo-store.js__91" class="hit">
                           <td class="line" data-tooltip>91</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>195</td>
+                          <td class="hits" data-tooltip>318</td>
                           <td class="source">    if (q.limit$) {</td>
                           
                         </tr>            <tr id="mongo-store.js__92" class="hit">
@@ -1693,7 +1767,7 @@
                         </tr>            <tr id="mongo-store.js__95" class="hit">
                           <td class="line" data-tooltip>95</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>195</td>
+                          <td class="hits" data-tooltip>318</td>
                           <td class="source">    if (q.skip$) {</td>
                           
                         </tr>            <tr id="mongo-store.js__96" class="hit">
@@ -1759,7 +1833,7 @@
                         </tr>            <tr id="mongo-store.js__106" class="hit">
                           <td class="line" data-tooltip>106</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>196</td>
+                          <td class="hits" data-tooltip>319</td>
                           <td class="source">  return mq</td>
                           
                         </tr>            <tr id="mongo-store.js__107" class="hit">
@@ -1789,7 +1863,7 @@
                         </tr>            <tr id="mongo-store.js__111" class="hit">
                           <td class="line" data-tooltip>111</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">  var desc</td>
                           
                         </tr>            <tr id="mongo-store.js__112" class="hit">
@@ -1801,19 +1875,19 @@
                         </tr>            <tr id="mongo-store.js__113" class="hit">
                           <td class="line" data-tooltip>113</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">  var dbinst &#x3D; null</td>
                           
                         </tr>            <tr id="mongo-store.js__114" class="hit">
                           <td class="line" data-tooltip>114</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">  var dbclient &#x3D; null</td>
                           
                         </tr>            <tr id="mongo-store.js__115" class="hit">
                           <td class="line" data-tooltip>115</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">  var collmap &#x3D; {}</td>
                           
                         </tr>            <tr id="mongo-store.js__116" class="hit">
@@ -1855,7 +1929,7 @@
                         </tr>            <tr id="mongo-store.js__122" class="hit">
                           <td class="line" data-tooltip>122</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>1073</td>
+                          <td class="hits" data-tooltip>1491</td>
                           <td class="source">    } else return false</td>
                           
                         </tr>            <tr id="mongo-store.js__123" class="hit">
@@ -1927,7 +2001,7 @@
                         </tr>            <tr id="mongo-store.js__134" class="hit">
                           <td class="line" data-tooltip>134</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">    if (!conf.uri) {</td>
                           
                         </tr>            <tr id="mongo-store.js__135" class="hit">
@@ -1975,7 +2049,7 @@
                         </tr>            <tr id="mongo-store.js__142" class="hit">
                           <td class="line" data-tooltip>142</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">    conf.db &#x3D; conf.db || conf.name</td>
                           
                         </tr>            <tr id="mongo-store.js__143" class="hit">
@@ -1993,7 +2067,7 @@
                         </tr>            <tr id="mongo-store.js__145" class="hit">
                           <td class="line" data-tooltip>145</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">    MongoClient.connect(conf.uri, function (err, client) {</td>
                           
                         </tr>            <tr id="mongo-store.js__146" class="chunks">
@@ -2017,7 +2091,7 @@
                         </tr>            <tr id="mongo-store.js__149" class="hit">
                           <td class="line" data-tooltip>149</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">      dbclient &#x3D; client</td>
                           
                         </tr>            <tr id="mongo-store.js__150" class="hit">
@@ -2029,19 +2103,19 @@
                         </tr>            <tr id="mongo-store.js__151" class="hit">
                           <td class="line" data-tooltip>151</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">      dbinst &#x3D; client.db(conf.db)</td>
                           
                         </tr>            <tr id="mongo-store.js__152" class="hit">
                           <td class="line" data-tooltip>152</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">      seneca.log.debug(&#x27;init&#x27;, &#x27;db open&#x27;, conf.db)</td>
                           
                         </tr>            <tr id="mongo-store.js__153" class="hit">
                           <td class="line" data-tooltip>153</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">      cb(null)</td>
                           
                         </tr>            <tr id="mongo-store.js__154" class="hit">
@@ -2071,7 +2145,7 @@
                         </tr>            <tr id="mongo-store.js__158" class="hit">
                           <td class="line" data-tooltip>158</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>345</td>
+                          <td class="hits" data-tooltip>480</td>
                           <td class="source">    var canon &#x3D; ent.canon$({ object: true })</td>
                           
                         </tr>            <tr id="mongo-store.js__159" class="hit">
@@ -2083,7 +2157,7 @@
                         </tr>            <tr id="mongo-store.js__160" class="hit">
                           <td class="line" data-tooltip>160</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>345</td>
+                          <td class="hits" data-tooltip>480</td>
                           <td class="source">    var collname &#x3D; (canon.base ? canon.base + &#x27;_&#x27; : &#x27;&#x27;) + canon.name</td>
                           
                         </tr>            <tr id="mongo-store.js__161" class="hit">
@@ -2095,13 +2169,13 @@
                         </tr>            <tr id="mongo-store.js__162" class="hit">
                           <td class="line" data-tooltip>162</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>345</td>
+                          <td class="hits" data-tooltip>480</td>
                           <td class="source">    if (!collmap[collname]) {</td>
                           
                         </tr>            <tr id="mongo-store.js__163" class="hit">
                           <td class="line" data-tooltip>163</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>8</td>
+                          <td class="hits" data-tooltip>17</td>
                           <td class="source">      dbinst.collection(collname, function (err, coll) {</td>
                           
                         </tr>            <tr id="mongo-store.js__164" class="chunks">
@@ -2113,13 +2187,13 @@
                         </tr>            <tr id="mongo-store.js__165" class="hit">
                           <td class="line" data-tooltip>165</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>8</td>
+                          <td class="hits" data-tooltip>17</td>
                           <td class="source">          collmap[collname] &#x3D; coll</td>
                           
                         </tr>            <tr id="mongo-store.js__166" class="hit">
                           <td class="line" data-tooltip>166</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>8</td>
+                          <td class="hits" data-tooltip>17</td>
                           <td class="source">          cb(null, coll)</td>
                           
                         </tr>            <tr id="mongo-store.js__167" class="hit">
@@ -2143,7 +2217,7 @@
                         </tr>            <tr id="mongo-store.js__170" class="hit">
                           <td class="line" data-tooltip>170</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>337</td>
+                          <td class="hits" data-tooltip>463</td>
                           <td class="source">      cb(null, collmap[collname])</td>
                           
                         </tr>            <tr id="mongo-store.js__171" class="hit">
@@ -2167,7 +2241,7 @@
                         </tr>            <tr id="mongo-store.js__174" class="hit">
                           <td class="line" data-tooltip>174</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">  var store &#x3D; {</td>
                           
                         </tr>            <tr id="mongo-store.js__175" class="hit">
@@ -2239,7 +2313,7 @@
                         </tr>            <tr id="mongo-store.js__186" class="hit">
                           <td class="line" data-tooltip>186</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>149</td>
+                          <td class="hits" data-tooltip>161</td>
                           <td class="source">      var update &#x3D; !!ent.id</td>
                           
                         </tr>            <tr id="mongo-store.js__187" class="hit">
@@ -2251,7 +2325,7 @@
                         </tr>            <tr id="mongo-store.js__188" class="hit">
                           <td class="line" data-tooltip>188</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>149</td>
+                          <td class="hits" data-tooltip>161</td>
                           <td class="source">      getcoll(args, ent, function (err, coll) {</td>
                           
                         </tr>            <tr id="mongo-store.js__189" class="miss">
@@ -2269,7 +2343,7 @@
                         </tr>            <tr id="mongo-store.js__191" class="hit">
                           <td class="line" data-tooltip>191</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>149</td>
+                          <td class="hits" data-tooltip>161</td>
                           <td class="source">        var entp &#x3D; ent.data$(false)</td>
                           
                         </tr>            <tr id="mongo-store.js__192" class="hit">
@@ -2281,38 +2355,38 @@
                         </tr>            <tr id="mongo-store.js__193" class="hit">
                           <td class="line" data-tooltip>193</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>149</td>
+                          <td class="hits" data-tooltip>161</td>
                           <td class="source">        if (!update) {</td>
                           
                         </tr>            <tr id="mongo-store.js__194" class="hit">
                           <td class="line" data-tooltip>194</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>142</td>
+                          <td class="hits" data-tooltip>152</td>
                           <td class="source">          var id</td>
                           
                         </tr>            <tr id="mongo-store.js__195" class="hit">
                           <td class="line" data-tooltip>195</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>142</td>
+                          <td class="hits" data-tooltip>152</td>
                           <td class="source">          if (undefined !&#x3D;&#x3D; ent.id$) {</td>
                           
                         </tr>            <tr id="mongo-store.js__196" class="hit">
                           <td class="line" data-tooltip>196</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>34</td>
+                          <td class="hits" data-tooltip>38</td>
                           <td class="source">            id &#x3D; ent.id$</td>
                           
-                        </tr>            <tr id="mongo-store.js__197" class="chunks">
+                        </tr>            <tr id="mongo-store.js__197" class="hit">
                           <td class="line" data-tooltip>197</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip></td>
-                          <td class="source"><div>          } else if (</div><div class="miss false" data-tooltip>opts.generate_id</div><div>) {</div></td>
+                          <td class="hits" data-tooltip>114</td>
+                          <td class="source">          } else if (opts.generate_id) {</td>
                           
-                        </tr>            <tr id="mongo-store.js__198" class="miss">
+                        </tr>            <tr id="mongo-store.js__198" class="hit">
                           <td class="line" data-tooltip>198</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip></td>
-                          <td class="source" data-tooltip>            id &#x3D; opts.generate_id(ent)</td>
+                          <td class="hits" data-tooltip>2</td>
+                          <td class="source">            id &#x3D; opts.generate_id(ent)</td>
                           
                         </tr>            <tr id="mongo-store.js__199" class="hit">
                           <td class="line" data-tooltip>199</td>
@@ -2329,7 +2403,7 @@
                         </tr>            <tr id="mongo-store.js__201" class="hit">
                           <td class="line" data-tooltip>201</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>142</td>
+                          <td class="hits" data-tooltip>152</td>
                           <td class="source">          entp._id &#x3D; makeid(id)</td>
                           
                         </tr>            <tr id="mongo-store.js__202" class="hit">
@@ -2341,7 +2415,7 @@
                         </tr>            <tr id="mongo-store.js__203" class="hit">
                           <td class="line" data-tooltip>203</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>142</td>
+                          <td class="hits" data-tooltip>152</td>
                           <td class="source">          coll.insertOne(entp, function (err, inserts) {</td>
                           
                         </tr>            <tr id="mongo-store.js__204" class="chunks">
@@ -2353,13 +2427,13 @@
                         </tr>            <tr id="mongo-store.js__205" class="hit">
                           <td class="line" data-tooltip>205</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>142</td>
+                          <td class="hits" data-tooltip>152</td>
                           <td class="source">              var entu &#x3D; inserts.ops[0]</td>
                           
                         </tr>            <tr id="mongo-store.js__206" class="hit">
                           <td class="line" data-tooltip>206</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>142</td>
+                          <td class="hits" data-tooltip>152</td>
                           <td class="source">              var fent &#x3D; null</td>
                           
                         </tr>            <tr id="mongo-store.js__207" class="chunks">
@@ -2371,13 +2445,13 @@
                         </tr>            <tr id="mongo-store.js__208" class="hit">
                           <td class="line" data-tooltip>208</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>142</td>
+                          <td class="hits" data-tooltip>152</td>
                           <td class="source">                entu.id &#x3D; idstr(entu._id)</td>
                           
                         </tr>            <tr id="mongo-store.js__209" class="hit">
                           <td class="line" data-tooltip>209</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>142</td>
+                          <td class="hits" data-tooltip>152</td>
                           <td class="source">                delete entu._id</td>
                           
                         </tr>            <tr id="mongo-store.js__210" class="hit">
@@ -2389,7 +2463,7 @@
                         </tr>            <tr id="mongo-store.js__211" class="hit">
                           <td class="line" data-tooltip>211</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>142</td>
+                          <td class="hits" data-tooltip>152</td>
                           <td class="source">                fent &#x3D; ent.make$(seneca.util.deep(entu))</td>
                           
                         </tr>            <tr id="mongo-store.js__212" class="hit">
@@ -2401,13 +2475,13 @@
                         </tr>            <tr id="mongo-store.js__213" class="hit">
                           <td class="line" data-tooltip>213</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>142</td>
+                          <td class="hits" data-tooltip>152</td>
                           <td class="source">              seneca.log.debug(&#x27;save/insert&#x27;, ent, desc)</td>
                           
                         </tr>            <tr id="mongo-store.js__214" class="hit">
                           <td class="line" data-tooltip>214</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>142</td>
+                          <td class="hits" data-tooltip>152</td>
                           <td class="source">              cb(null, fent)</td>
                           
                         </tr>            <tr id="mongo-store.js__215" class="hit">
@@ -2431,13 +2505,13 @@
                         </tr>            <tr id="mongo-store.js__218" class="hit">
                           <td class="line" data-tooltip>218</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">          var q &#x3D; { _id: makeid(ent.id) }</td>
                           
                         </tr>            <tr id="mongo-store.js__219" class="hit">
                           <td class="line" data-tooltip>219</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">          delete entp.id</td>
                           
                         </tr>            <tr id="mongo-store.js__220" class="hit">
@@ -2449,13 +2523,13 @@
                         </tr>            <tr id="mongo-store.js__221" class="hit">
                           <td class="line" data-tooltip>221</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">          var shouldMerge &#x3D; true</td>
                           
                         </tr>            <tr id="mongo-store.js__222" class="hit">
                           <td class="line" data-tooltip>222</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">          if (opts.merge !&#x3D;&#x3D; false &amp;&amp; ent.merge$ &#x3D;&#x3D;&#x3D; false) {</td>
                           
                         </tr>            <tr id="mongo-store.js__223" class="hit">
@@ -2473,13 +2547,13 @@
                         </tr>            <tr id="mongo-store.js__225" class="hit">
                           <td class="line" data-tooltip>225</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">          if (opts.merge &#x3D;&#x3D;&#x3D; false &amp;&amp; ent.merge$ !&#x3D;&#x3D; true) {</td>
                           
                         </tr>            <tr id="mongo-store.js__226" class="hit">
                           <td class="line" data-tooltip>226</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>1</td>
+                          <td class="hits" data-tooltip>2</td>
                           <td class="source">            shouldMerge &#x3D; false</td>
                           
                         </tr>            <tr id="mongo-store.js__227" class="hit">
@@ -2497,13 +2571,13 @@
                         </tr>            <tr id="mongo-store.js__229" class="hit">
                           <td class="line" data-tooltip>229</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">          var set &#x3D; entp</td>
                           
                         </tr>            <tr id="mongo-store.js__230" class="hit">
                           <td class="line" data-tooltip>230</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">          var func &#x3D; &#x27;replaceOne&#x27;</td>
                           
                         </tr>            <tr id="mongo-store.js__231" class="hit">
@@ -2515,19 +2589,19 @@
                         </tr>            <tr id="mongo-store.js__232" class="hit">
                           <td class="line" data-tooltip>232</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">          if (shouldMerge) {</td>
                           
                         </tr>            <tr id="mongo-store.js__233" class="hit">
                           <td class="line" data-tooltip>233</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>5</td>
+                          <td class="hits" data-tooltip>6</td>
                           <td class="source">            set &#x3D; Dot.flatten(entp)</td>
                           
                         </tr>            <tr id="mongo-store.js__234" class="hit">
                           <td class="line" data-tooltip>234</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>5</td>
+                          <td class="hits" data-tooltip>6</td>
                           <td class="source">            func &#x3D; &#x27;updateOne&#x27;</td>
                           
                         </tr>            <tr id="mongo-store.js__235" class="hit">
@@ -2545,7 +2619,7 @@
                         </tr>            <tr id="mongo-store.js__237" class="hit">
                           <td class="line" data-tooltip>237</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">          coll[func](q, set, { upsert: true }, function (err) {</td>
                           
                         </tr>            <tr id="mongo-store.js__238" class="chunks">
@@ -2557,13 +2631,13 @@
                         </tr>            <tr id="mongo-store.js__239" class="hit">
                           <td class="line" data-tooltip>239</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">              seneca.log.debug(&#x27;save/update&#x27;, ent, desc)</td>
                           
                         </tr>            <tr id="mongo-store.js__240" class="hit">
                           <td class="line" data-tooltip>240</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">              coll.findOne(q, {}, function (err, entu) {</td>
                           
                         </tr>            <tr id="mongo-store.js__241" class="chunks">
@@ -2575,7 +2649,7 @@
                         </tr>            <tr id="mongo-store.js__242" class="hit">
                           <td class="line" data-tooltip>242</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">                  var fent &#x3D; null</td>
                           
                         </tr>            <tr id="mongo-store.js__243" class="chunks">
@@ -2587,13 +2661,13 @@
                         </tr>            <tr id="mongo-store.js__244" class="hit">
                           <td class="line" data-tooltip>244</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">                    entu.id &#x3D; idstr(entu._id)</td>
                           
                         </tr>            <tr id="mongo-store.js__245" class="hit">
                           <td class="line" data-tooltip>245</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">                    delete entu._id</td>
                           
                         </tr>            <tr id="mongo-store.js__246" class="hit">
@@ -2605,7 +2679,7 @@
                         </tr>            <tr id="mongo-store.js__247" class="hit">
                           <td class="line" data-tooltip>247</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">                    fent &#x3D; ent.make$(seneca.util.deep(entu))</td>
                           
                         </tr>            <tr id="mongo-store.js__248" class="hit">
@@ -2617,7 +2691,7 @@
                         </tr>            <tr id="mongo-store.js__249" class="hit">
                           <td class="line" data-tooltip>249</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>7</td>
+                          <td class="hits" data-tooltip>9</td>
                           <td class="source">                  cb(null, fent)</td>
                           
                         </tr>            <tr id="mongo-store.js__250" class="hit">
@@ -2683,7 +2757,7 @@
                         </tr>            <tr id="mongo-store.js__260" class="hit">
                           <td class="line" data-tooltip>260</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>29</td>
+                          <td class="hits" data-tooltip>31</td>
                           <td class="source">      var q &#x3D; args.q</td>
                           
                         </tr>            <tr id="mongo-store.js__261" class="hit">
@@ -2695,7 +2769,7 @@
                         </tr>            <tr id="mongo-store.js__262" class="hit">
                           <td class="line" data-tooltip>262</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>29</td>
+                          <td class="hits" data-tooltip>31</td>
                           <td class="source">      getcoll(args, qent, function (err, coll) {</td>
                           
                         </tr>            <tr id="mongo-store.js__263" class="chunks">
@@ -2707,13 +2781,13 @@
                         </tr>            <tr id="mongo-store.js__264" class="hit">
                           <td class="line" data-tooltip>264</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>29</td>
+                          <td class="hits" data-tooltip>31</td>
                           <td class="source">          var mq &#x3D; metaquery(qent, q)</td>
                           
                         </tr>            <tr id="mongo-store.js__265" class="hit">
                           <td class="line" data-tooltip>265</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>29</td>
+                          <td class="hits" data-tooltip>31</td>
                           <td class="source">          var qq &#x3D; fixquery(qent, q)</td>
                           
                         </tr>            <tr id="mongo-store.js__266" class="hit">
@@ -2725,7 +2799,7 @@
                         </tr>            <tr id="mongo-store.js__267" class="hit">
                           <td class="line" data-tooltip>267</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>29</td>
+                          <td class="hits" data-tooltip>31</td>
                           <td class="source">          coll.findOne(qq, mq, function (err, entp) {</td>
                           
                         </tr>            <tr id="mongo-store.js__268" class="chunks">
@@ -2737,31 +2811,31 @@
                         </tr>            <tr id="mongo-store.js__269" class="hit">
                           <td class="line" data-tooltip>269</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>29</td>
+                          <td class="hits" data-tooltip>31</td>
                           <td class="source">              var fent &#x3D; null</td>
                           
                         </tr>            <tr id="mongo-store.js__270" class="hit">
                           <td class="line" data-tooltip>270</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>29</td>
+                          <td class="hits" data-tooltip>31</td>
                           <td class="source">              if (entp) {</td>
                           
                         </tr>            <tr id="mongo-store.js__271" class="hit">
                           <td class="line" data-tooltip>271</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>26</td>
+                          <td class="hits" data-tooltip>28</td>
                           <td class="source">                entp.id &#x3D; idstr(entp._id)</td>
                           
                         </tr>            <tr id="mongo-store.js__272" class="hit">
                           <td class="line" data-tooltip>272</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>26</td>
+                          <td class="hits" data-tooltip>28</td>
                           <td class="source">                delete entp._id</td>
                           
                         </tr>            <tr id="mongo-store.js__273" class="hit">
                           <td class="line" data-tooltip>273</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>26</td>
+                          <td class="hits" data-tooltip>28</td>
                           <td class="source">                fent &#x3D; qent.make$(entp)</td>
                           
                         </tr>            <tr id="mongo-store.js__274" class="hit">
@@ -2773,13 +2847,13 @@
                         </tr>            <tr id="mongo-store.js__275" class="hit">
                           <td class="line" data-tooltip>275</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>29</td>
+                          <td class="hits" data-tooltip>31</td>
                           <td class="source">              seneca.log.debug(&#x27;load&#x27;, q, fent, desc)</td>
                           
                         </tr>            <tr id="mongo-store.js__276" class="hit">
                           <td class="line" data-tooltip>276</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>29</td>
+                          <td class="hits" data-tooltip>31</td>
                           <td class="source">              cb(null, fent)</td>
                           
                         </tr>            <tr id="mongo-store.js__277" class="hit">
@@ -2833,7 +2907,7 @@
                         </tr>            <tr id="mongo-store.js__285" class="hit">
                           <td class="line" data-tooltip>285</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>46</td>
+                          <td class="hits" data-tooltip>51</td>
                           <td class="source">      var q &#x3D; args.q</td>
                           
                         </tr>            <tr id="mongo-store.js__286" class="hit">
@@ -2845,7 +2919,7 @@
                         </tr>            <tr id="mongo-store.js__287" class="hit">
                           <td class="line" data-tooltip>287</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>46</td>
+                          <td class="hits" data-tooltip>51</td>
                           <td class="source">      getcoll(args, qent, function (err, coll) {</td>
                           
                         </tr>            <tr id="mongo-store.js__288" class="chunks">
@@ -2857,13 +2931,13 @@
                         </tr>            <tr id="mongo-store.js__289" class="hit">
                           <td class="line" data-tooltip>289</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>46</td>
+                          <td class="hits" data-tooltip>51</td>
                           <td class="source">          var mq &#x3D; metaquery(qent, q)</td>
                           
                         </tr>            <tr id="mongo-store.js__290" class="hit">
                           <td class="line" data-tooltip>290</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>46</td>
+                          <td class="hits" data-tooltip>51</td>
                           <td class="source">          var qq &#x3D; fixquery(qent, q)</td>
                           
                         </tr>            <tr id="mongo-store.js__291" class="hit">
@@ -2875,7 +2949,7 @@
                         </tr>            <tr id="mongo-store.js__292" class="hit">
                           <td class="line" data-tooltip>292</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>46</td>
+                          <td class="hits" data-tooltip>51</td>
                           <td class="source">          coll.find(qq, mq, function (err, cur) {</td>
                           
                         </tr>            <tr id="mongo-store.js__293" class="chunks">
@@ -2887,7 +2961,7 @@
                         </tr>            <tr id="mongo-store.js__294" class="hit">
                           <td class="line" data-tooltip>294</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>46</td>
+                          <td class="hits" data-tooltip>51</td>
                           <td class="source">              var list &#x3D; []</td>
                           
                         </tr>            <tr id="mongo-store.js__295" class="hit">
@@ -2899,7 +2973,7 @@
                         </tr>            <tr id="mongo-store.js__296" class="hit">
                           <td class="line" data-tooltip>296</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>46</td>
+                          <td class="hits" data-tooltip>51</td>
                           <td class="source">              cur.each(function (err, entp) {</td>
                           
                         </tr>            <tr id="mongo-store.js__297" class="chunks">
@@ -2911,37 +2985,37 @@
                         </tr>            <tr id="mongo-store.js__298" class="hit">
                           <td class="line" data-tooltip>298</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>123</td>
+                          <td class="hits" data-tooltip>135</td>
                           <td class="source">                  if (entp) {</td>
                           
                         </tr>            <tr id="mongo-store.js__299" class="hit">
                           <td class="line" data-tooltip>299</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>77</td>
+                          <td class="hits" data-tooltip>84</td>
                           <td class="source">                    var fent &#x3D; null</td>
                           
                         </tr>            <tr id="mongo-store.js__300" class="hit">
                           <td class="line" data-tooltip>300</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>77</td>
+                          <td class="hits" data-tooltip>84</td>
                           <td class="source">                    entp.id &#x3D; idstr(entp._id)</td>
                           
                         </tr>            <tr id="mongo-store.js__301" class="hit">
                           <td class="line" data-tooltip>301</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>77</td>
+                          <td class="hits" data-tooltip>84</td>
                           <td class="source">                    delete entp._id</td>
                           
                         </tr>            <tr id="mongo-store.js__302" class="hit">
                           <td class="line" data-tooltip>302</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>77</td>
+                          <td class="hits" data-tooltip>84</td>
                           <td class="source">                    fent &#x3D; qent.make$(entp)</td>
                           
                         </tr>            <tr id="mongo-store.js__303" class="hit">
                           <td class="line" data-tooltip>303</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>77</td>
+                          <td class="hits" data-tooltip>84</td>
                           <td class="source">                    list.push(fent)</td>
                           
                         </tr>            <tr id="mongo-store.js__304" class="hit">
@@ -2953,13 +3027,13 @@
                         </tr>            <tr id="mongo-store.js__305" class="hit">
                           <td class="line" data-tooltip>305</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>46</td>
+                          <td class="hits" data-tooltip>51</td>
                           <td class="source">                    seneca.log.debug(&#x27;list&#x27;, q, list.length, list[0], desc)</td>
                           
                         </tr>            <tr id="mongo-store.js__306" class="hit">
                           <td class="line" data-tooltip>306</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>46</td>
+                          <td class="hits" data-tooltip>51</td>
                           <td class="source">                    cb(null, list)</td>
                           
                         </tr>            <tr id="mongo-store.js__307" class="hit">
@@ -3031,7 +3105,7 @@
                         </tr>            <tr id="mongo-store.js__318" class="hit">
                           <td class="line" data-tooltip>318</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>121</td>
+                          <td class="hits" data-tooltip>237</td>
                           <td class="source">      var q &#x3D; args.q</td>
                           
                         </tr>            <tr id="mongo-store.js__319" class="hit">
@@ -3043,13 +3117,13 @@
                         </tr>            <tr id="mongo-store.js__320" class="hit">
                           <td class="line" data-tooltip>320</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>121</td>
+                          <td class="hits" data-tooltip>237</td>
                           <td class="source">      var all &#x3D; q.all$ // default false</td>
                           
                         </tr>            <tr id="mongo-store.js__321" class="hit">
                           <td class="line" data-tooltip>321</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>121</td>
+                          <td class="hits" data-tooltip>237</td>
                           <td class="source">      var load &#x3D; null &#x3D;&#x3D; q.load$ ? false : q.load$ // default false</td>
                           
                         </tr>            <tr id="mongo-store.js__322" class="hit">
@@ -3061,7 +3135,7 @@
                         </tr>            <tr id="mongo-store.js__323" class="hit">
                           <td class="line" data-tooltip>323</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>121</td>
+                          <td class="hits" data-tooltip>237</td>
                           <td class="source">      getcoll(args, qent, function (err, coll) {</td>
                           
                         </tr>            <tr id="mongo-store.js__324" class="chunks">
@@ -3073,13 +3147,13 @@
                         </tr>            <tr id="mongo-store.js__325" class="hit">
                           <td class="line" data-tooltip>325</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>121</td>
+                          <td class="hits" data-tooltip>237</td>
                           <td class="source">          var qq &#x3D; fixquery(qent, q)</td>
                           
                         </tr>            <tr id="mongo-store.js__326" class="hit">
                           <td class="line" data-tooltip>326</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>121</td>
+                          <td class="hits" data-tooltip>237</td>
                           <td class="source">          var mq &#x3D; metaquery(qent, q)</td>
                           
                         </tr>            <tr id="mongo-store.js__327" class="hit">
@@ -3091,13 +3165,13 @@
                         </tr>            <tr id="mongo-store.js__328" class="hit">
                           <td class="line" data-tooltip>328</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>121</td>
+                          <td class="hits" data-tooltip>237</td>
                           <td class="source">          if (all) {</td>
                           
                         </tr>            <tr id="mongo-store.js__329" class="hit">
                           <td class="line" data-tooltip>329</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>109</td>
+                          <td class="hits" data-tooltip>225</td>
                           <td class="source">            coll.find(qq, mq, function (err, cur) {</td>
                           
                         </tr>            <tr id="mongo-store.js__330" class="chunks">
@@ -3109,13 +3183,13 @@
                         </tr>            <tr id="mongo-store.js__331" class="hit">
                           <td class="line" data-tooltip>331</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>109</td>
+                          <td class="hits" data-tooltip>225</td>
                           <td class="source">                var list &#x3D; []</td>
                           
                         </tr>            <tr id="mongo-store.js__332" class="hit">
                           <td class="line" data-tooltip>332</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>109</td>
+                          <td class="hits" data-tooltip>225</td>
                           <td class="source">                var toDelete &#x3D; []</td>
                           
                         </tr>            <tr id="mongo-store.js__333" class="hit">
@@ -3127,7 +3201,7 @@
                         </tr>            <tr id="mongo-store.js__334" class="hit">
                           <td class="line" data-tooltip>334</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>109</td>
+                          <td class="hits" data-tooltip>225</td>
                           <td class="source">                cur.each(function (err, entp) {</td>
                           
                         </tr>            <tr id="mongo-store.js__335" class="chunks">
@@ -3139,13 +3213,13 @@
                         </tr>            <tr id="mongo-store.js__336" class="hit">
                           <td class="line" data-tooltip>336</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>241</td>
+                          <td class="hits" data-tooltip>366</td>
                           <td class="source">                    if (entp) {</td>
                           
                         </tr>            <tr id="mongo-store.js__337" class="hit">
                           <td class="line" data-tooltip>337</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>132</td>
+                          <td class="hits" data-tooltip>141</td>
                           <td class="source">                      var fent &#x3D; null</td>
                           
                         </tr>            <tr id="mongo-store.js__338" class="chunks">
@@ -3157,25 +3231,25 @@
                         </tr>            <tr id="mongo-store.js__339" class="hit">
                           <td class="line" data-tooltip>339</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>132</td>
+                          <td class="hits" data-tooltip>141</td>
                           <td class="source">                        toDelete.push(entp._id)</td>
                           
                         </tr>            <tr id="mongo-store.js__340" class="hit">
                           <td class="line" data-tooltip>340</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>132</td>
+                          <td class="hits" data-tooltip>141</td>
                           <td class="source">                        entp.id &#x3D; idstr(entp._id)</td>
                           
                         </tr>            <tr id="mongo-store.js__341" class="hit">
                           <td class="line" data-tooltip>341</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>132</td>
+                          <td class="hits" data-tooltip>141</td>
                           <td class="source">                        delete entp._id</td>
                           
                         </tr>            <tr id="mongo-store.js__342" class="hit">
                           <td class="line" data-tooltip>342</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>132</td>
+                          <td class="hits" data-tooltip>141</td>
                           <td class="source">                        fent &#x3D; qent.make$(entp)</td>
                           
                         </tr>            <tr id="mongo-store.js__343" class="hit">
@@ -3187,7 +3261,7 @@
                         </tr>            <tr id="mongo-store.js__344" class="hit">
                           <td class="line" data-tooltip>344</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>132</td>
+                          <td class="hits" data-tooltip>141</td>
                           <td class="source">                      list.push(fent)</td>
                           
                         </tr>            <tr id="mongo-store.js__345" class="hit">
@@ -3199,7 +3273,7 @@
                         </tr>            <tr id="mongo-store.js__346" class="hit">
                           <td class="line" data-tooltip>346</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>109</td>
+                          <td class="hits" data-tooltip>225</td>
                           <td class="source">                      coll.remove({ _id: { $in: toDelete } }, function (err) {</td>
                           
                         </tr>            <tr id="mongo-store.js__347" class="hit">
@@ -3211,7 +3285,7 @@
                         </tr>            <tr id="mongo-store.js__348" class="hit">
                           <td class="line" data-tooltip>348</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>109</td>
+                          <td class="hits" data-tooltip>225</td>
                           <td class="source">                        cb(err, null)</td>
                           
                         </tr>            <tr id="mongo-store.js__349" class="hit">
@@ -3457,13 +3531,13 @@
                         </tr>            <tr id="mongo-store.js__389" class="hit">
                           <td class="line" data-tooltip>389</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">  var meta &#x3D; seneca.store.init(seneca, opts, store)</td>
                           
                         </tr>            <tr id="mongo-store.js__390" class="hit">
                           <td class="line" data-tooltip>390</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">  desc &#x3D; meta.desc</td>
                           
                         </tr>            <tr id="mongo-store.js__391" class="hit">
@@ -3475,7 +3549,7 @@
                         </tr>            <tr id="mongo-store.js__392" class="hit">
                           <td class="line" data-tooltip>392</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">  seneca.add({ init: store.name, tag: meta.tag }, function (args, done) {</td>
                           
                         </tr>            <tr id="mongo-store.js__393" class="hit">
@@ -3499,7 +3573,7 @@
                         </tr>            <tr id="mongo-store.js__396" class="hit">
                           <td class="line" data-tooltip>396</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">      return done()</td>
                           
                         </tr>            <tr id="mongo-store.js__397" class="hit">
@@ -3523,7 +3597,7 @@
                         </tr>            <tr id="mongo-store.js__400" class="hit">
                           <td class="line" data-tooltip>400</td>
                           <td class="lint empty"></td>
-                          <td class="hits" data-tooltip>3</td>
+                          <td class="hits" data-tooltip>8</td>
                           <td class="source">  return {</td>
                           
                         </tr>            <tr id="mongo-store.js__401" class="hit">

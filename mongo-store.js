@@ -186,33 +186,98 @@ module.exports = function (opts) {
       var update = !!ent.id
 
       getcoll(args, ent, function (err, coll) {
-        if (error(args, err, cb)) return
+        if (error(args, err, cb)) {
+          // QUESTION: This looks like a bug, should we, perhaps, invoke
+          // `cb(err)` here prior to returning from the function?
+          //
+          return
+        }
 
         var entp = ent.data$(false)
 
         if (!update) {
-          var id
+          let base_id = undefined
           if (undefined !== ent.id$) {
-            id = ent.id$
+            base_id = ent.id$
           } else if (opts.generate_id) {
-            id = opts.generate_id(ent)
+            base_id = opts.generate_id(ent)
           }
 
-          entp._id = makeid(id)
+          const id = makeid(base_id)
+
+          if (id !== undefined) {
+            entp._id = id
+          }
+
+
+          const query_for_save = args.q
+
+          if (Array.isArray(query_for_save.upsert$)) {
+            const upsert_on = query_for_save.upsert$
+            const public_entdata = args.ent.data$(false)
+
+            if (upsert_on.length > 0 && upsert_on.every(p => p in public_entdata)) {
+              const filter_by = upsert_on
+                .reduce((acc, field) => {
+                  acc[field] = args.ent[field]
+                  return acc
+                }, {})
+
+              const replacement = { ...public_entdata }
+              if (id !== undefined) replacement._id = id
+
+              return coll.replaceOne(
+                filter_by,
+                replacement,
+                { upsert: true },
+
+                function (err /*, _upsert */) {
+                  if (error(args, err, cb)) {
+                    return cb(err)
+                  }
+
+                  return coll.findOne(public_entdata, function (err, entu) {
+                    if (error(args, err, cb)) {
+                      return cb(err)
+                    }
+
+                    // NOTE: If, at this point, for some reason the document
+                    // has been removed by a competing process, return null.
+                    //
+                    // TODO: Verify in tests that `entu` is null if not found.
+                    // 
+                    if (!entu) {
+                      return cb(null, null)
+                    }
+
+                    return cb(null, entu)
+                  })
+                }
+              )
+            }
+          }
 
           coll.insertOne(entp, function (err, inserts) {
-            if (!error(args, err, cb)) {
-              var entu = inserts.ops[0]
-              var fent = null
-              if (entu) {
-                entu.id = idstr(entu._id)
-                delete entu._id
-                //fent = ent.make$(_.cloneDeep(entu))
-                fent = ent.make$(seneca.util.deep(entu))
-              }
-              seneca.log.debug('save/insert', ent, desc)
-              cb(null, fent)
+            if (error(args, err, cb)) {
+              // QUESTION: This looks like a bug, should we, perhaps, invoke
+              // `cb(err)` here prior to returning from the function?
+              //
+              return
             }
+
+            var entu = inserts.ops[0]
+            var fent = null
+
+            if (entu) {
+              entu.id = idstr(entu._id)
+              delete entu._id
+              //fent = ent.make$(_.cloneDeep(entu))
+              fent = ent.make$(seneca.util.deep(entu))
+            }
+
+            seneca.log.debug('save/insert', ent, desc)
+
+            return cb(null, fent)
           })
         } else {
           var q = { _id: makeid(ent.id) }
@@ -237,6 +302,7 @@ module.exports = function (opts) {
           coll[func](q, set, { upsert: true }, function (err) {
             if (!error(args, err, cb)) {
               seneca.log.debug('save/update', ent, desc)
+
               coll.findOne(q, {}, function (err, entu) {
                 if (!error(args, err, cb)) {
                   var fent = null

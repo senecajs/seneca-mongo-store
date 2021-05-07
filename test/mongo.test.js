@@ -1,24 +1,24 @@
 /*
   MIT License,
-  Copyright (c) 2010-2020, Richard Rodger and other contributors.
+  Copyright (c) 2010-2021, Richard Rodger and other contributors.
 */
 
 'use strict'
 
 var Util = require('util')
-var Assert = require('assert')
+const Assert = require('assert')
+const SpecHelpers = require('./support/helpers')
 
 var Seneca = require('seneca')
 var Async = require('async')
 
 const Lab = require('@hapi/lab')
 const Code = require('@hapi/code')
-const lab = (exports.lab = Lab.script())
 const expect = Code.expect
 
-const describe = lab.describe
+const lab = (exports.lab = Lab.script())
+const { describe, before, beforeEach, afterEach } = lab
 const it = make_it(lab)
-const before = lab.before
 
 var Shared = require('seneca-store-test')
 
@@ -47,17 +47,22 @@ describe('mongo tests', function () {
   Shared.basictest({
     seneca: si,
     senecaMerge: senecaMerge,
-    script: lab,
+    script: lab
   })
 
   Shared.limitstest({
     seneca: si,
-    script: lab,
+    script: lab
   })
 
   Shared.sorttest({
     seneca: si,
-    script: lab,
+    script: lab
+  })
+
+  Shared.upserttest({
+    seneca: si,
+    script: lab
   })
 
   describe('extra tests', () => {
@@ -65,55 +70,455 @@ describe('mongo tests', function () {
       extratest(si, done)
     })
 
-    describe('creating a new entity', () => {
-      describe('the save$ query includes the id$ field', () => {
-        const si = makeSenecaForTest()
+    describe('#save$', () => {
+      describe('creating a new entity', () => {
+        describe('the save$ query includes the id$ field', () => {
+          const si = makeSenecaForTest()
 
-        beforeEach(clearDb)
+          beforeEach(() => waitOnSeneca(si))
 
-        afterEach(clearDb)
+          beforeEach(clearDb)
 
-        it('creates a new entity with the given id', fin => {
-          si.test(fin)
+          afterEach(clearDb)
 
-          const new_id = '6095a6f73a861890cc1f4e23'
 
-          si.make('user')
-            .data$({ first_name: 'Frank', last_name: 'Sinatra' })
-            .save$({ id$: new_id }, err => {
-              if (err) {
-                return fin(err)
-              }
+          const new_id = 'ffffa6f73a861890cc1f4e23'
 
-              si.make('user').list$({}, (err, users) => {
+          it('creates a new entity with the given id', fin => {
+            si.test(fin)
+
+            si.make('user')
+              .data$({ first_name: 'Frank', last_name: 'Sinatra' })
+              .save$({ id$: new_id }, err => {
                 if (err) {
                   return fin(err)
                 }
 
-                expect(users.length).to.equal(1)
+                si.make('user').list$({}, (err, users) => {
+                  if (err) {
+                    return fin(err)
+                  }
 
-                const user = users[0]
+                  expect(users.length).to.equal(1)
 
-                console.log(user.id) // dbg
+                  const user = users[0]
+
+                  expect(user.id).to.equal(new_id)
+
+                  return fin()
+                })
+              })
+          })
+
+          it('passes the new entitity to the save$ callback', fin => {
+            si.test(fin)
+
+            si.make('user')
+              .data$({ first_name: 'Frank', last_name: 'Sinatra' })
+              .save$({ id$: new_id }, (err, user) => {
+                if (err) {
+                  return fin(err)
+                }
+
+                expect(user).to.contain({
+                  id: new_id,
+                  first_name: 'Frank',
+                  last_name: 'Sinatra'
+                })
 
                 return fin()
               })
+          })
+
+          function clearDb() {
+            return new Promise((resolve, reject) => {
+              si.make('user').remove$({ all$: true }, err => {
+                if (err) {
+                  return reject(err)
+                }
+                
+                return resolve()
+              })
             })
+          }
         })
 
-        function clearDb() {
-          return new Promise((resolve, reject) => {
-            si.make('user').remove$({ all$: true }, err => {
-              if (err) {
-                return reject(err)
+        describe('the mongo store plugin is passed the `generate_id` option', () => {
+          const new_id = 'ffffa6f73a861890cc1f4e23'
+
+          const si = makeSenecaForTest({
+            mongo_store_opts: {
+              generate_id(_ent) {
+                return new_id
               }
-              
-              return resolve()
-            })
+            }
           })
-        }
+
+          beforeEach(() => waitOnSeneca(si))
+
+          beforeEach(clearDb)
+
+          afterEach(clearDb)
+
+          it('creates a new entity with the given id', fin => {
+            si.test(fin)
+
+            si.make('user')
+              .data$({ first_name: 'Frank', last_name: 'Sinatra' })
+              .save$(err => {
+                if (err) {
+                  return fin(err)
+                }
+
+                si.make('user').list$({}, (err, users) => {
+                  if (err) {
+                    return fin(err)
+                  }
+
+                  expect(users.length).to.equal(1)
+
+                  const user = users[0]
+
+                  expect(user.id).to.equal(new_id)
+
+                  return fin()
+                })
+              })
+          })
+
+          it('passes the new entitity to the save$ callback', fin => {
+            si.test(fin)
+
+            si.make('user')
+              .data$({ first_name: 'Frank', last_name: 'Sinatra' })
+              .save$((err, user) => {
+                if (err) {
+                  return fin(err)
+                }
+
+                expect(user).to.contain({
+                  id: new_id,
+                  first_name: 'Frank',
+                  last_name: 'Sinatra'
+                })
+
+                return fin()
+              })
+          })
+
+          function clearDb() {
+            return new Promise((resolve, reject) => {
+              si.make('user').remove$({ all$: true }, err => {
+                if (err) {
+                  return reject(err)
+                }
+                
+                return resolve()
+              })
+            })
+          }
+        })
+
+        describe('both the save$.id$ field is present and the plugin includes the `generate_id` option', () => {
+          const new_id_via_generate_id = 'ffffa6f73a861890cc1f4e23'
+          const new_id_via_save_query = 'bbbba6f73a861890cc1f4e23'
+
+          const si = makeSenecaForTest({
+            mongo_store_opts: {
+              generate_id(_ent) {
+                return new_id_via_generate_id
+              }
+            }
+          })
+
+          beforeEach(() => waitOnSeneca(si))
+
+          beforeEach(clearDb)
+
+          afterEach(clearDb)
+
+          it('creates a new entity with the id in the save$ query', fin => {
+            si.test(fin)
+
+            si.make('user')
+              .data$({ first_name: 'Frank', last_name: 'Sinatra' })
+              .save$({ id$: new_id_via_save_query }, err => {
+                if (err) {
+                  return fin(err)
+                }
+
+                si.make('user').list$({}, (err, users) => {
+                  if (err) {
+                    return fin(err)
+                  }
+
+                  expect(users.length).to.equal(1)
+
+                  const user = users[0]
+
+                  expect(user.id).to.equal(new_id_via_save_query)
+
+                  return fin()
+                })
+              })
+          })
+
+          it('passes the new entitity to the save$ callback', fin => {
+            si.test(fin)
+
+            si.make('user')
+              .data$({ first_name: 'Frank', last_name: 'Sinatra' })
+              .save$({ id$: new_id_via_save_query }, (err, user) => {
+                if (err) {
+                  return fin(err)
+                }
+
+                expect(user).to.contain({
+                  id: new_id_via_save_query,
+                  first_name: 'Frank',
+                  last_name: 'Sinatra'
+                })
+
+                return fin()
+              })
+          })
+
+          function clearDb() {
+            return new Promise((resolve, reject) => {
+              si.make('user').remove$({ all$: true }, err => {
+                if (err) {
+                  return reject(err)
+                }
+                
+                return resolve()
+              })
+            })
+          }
+        })
+      })
+
+      describe('updating an existing entity', () => {
+        describe('the merge:false option is passed to the plugin', () => {
+          const si = makeSenecaForTest({
+            mongo_store_opts: {
+              merge: false
+            }
+          })
+
+          beforeEach(() => waitOnSeneca(si))
+
+          beforeEach(clearDb)
+
+          beforeEach(() => new Promise((resolve, reject) => {
+            si.make('user')
+              .data$({ first_name: 'Frank', last_name: 'Sinatra' })
+              .save$(err => {
+                if (err) {
+                  return reject(err)
+                }
+
+                return resolve()
+              })
+          }))
+
+
+          let target_user_id
+
+          beforeEach(() => new Promise((resolve, reject) => {
+            si.make('user')
+              .data$({ first_name: 'Elvis', last_name: 'Presley' })
+              .save$((err, user) => {
+                if (err) {
+                  return reject(err)
+                }
+
+                Assert.ok(user, 'user')
+                target_user_id = SpecHelpers.fetchProp(user, 'id')
+
+                return resolve()
+              })
+          }))
+
+
+          let target_user
+
+          beforeEach(() => new Promise((resolve, reject) => {
+            // Do a fresh fetch from the db.
+            //
+            si.make('user')
+              .load$(target_user_id, (err, user) => {
+                if (err) {
+                  return reject(err)
+                }
+
+                Assert.ok(user, 'user')
+                target_user = user
+
+                return resolve()
+              })
+          }))
+
+          afterEach(clearDb)
+
+
+          it('replaces the existing entity', fin => {
+            si.test(fin)
+
+            target_user
+              .data$({ first_name: 'ELVIS' })
+              .save$(err => {
+                if (err) {
+                  return fin(err)
+                }
+
+                si.make('user').list$({}, (err, users) => {
+                  if (err) {
+                    return fin(err)
+                  }
+
+                  expect(users.length).to.equal(2)
+
+                  expect(users[0]).to.contain({
+                    first_name: 'Frank',
+                    last_name: 'Sinatra'
+                  })
+
+                  expect(users[1]).to.contain({
+                    id: target_user_id,
+                    first_name: 'ELVIS',
+                    last_name: 'Presley'
+                  })
+
+                  return fin()
+                })
+              })
+          })
+
+          function clearDb() {
+            return new Promise((resolve, reject) => {
+              si.make('user').remove$({ all$: true }, err => {
+                if (err) {
+                  return reject(err)
+                }
+                
+                return resolve()
+              })
+            })
+          }
+        })
+
+        describe('without the merge option', () => {
+          const si = makeSenecaForTest()
+
+          beforeEach(() => waitOnSeneca(si))
+
+          beforeEach(clearDb)
+
+          beforeEach(() => new Promise((resolve, reject) => {
+            si.make('user')
+              .data$({ first_name: 'Frank', last_name: 'Sinatra' })
+              .save$(err => {
+                if (err) {
+                  return reject(err)
+                }
+
+                return resolve()
+              })
+          }))
+
+
+          let target_user_id
+
+          beforeEach(() => new Promise((resolve, reject) => {
+            si.make('user')
+              .data$({ first_name: 'Elvis', last_name: 'Presley' })
+              .save$((err, user) => {
+                if (err) {
+                  return reject(err)
+                }
+
+                Assert.ok(user, 'user')
+                target_user_id = SpecHelpers.fetchProp(user, 'id')
+
+                return resolve()
+              })
+          }))
+
+
+          let target_user
+
+          beforeEach(() => new Promise((resolve, reject) => {
+            // Do a fresh fetch from the db.
+            //
+            si.make('user')
+              .load$(target_user_id, (err, user) => {
+                if (err) {
+                  return reject(err)
+                }
+
+                Assert.ok(user, 'user')
+                target_user = user
+
+                return resolve()
+              })
+          }))
+
+          afterEach(clearDb)
+
+
+          it('updates the existing entity', fin => {
+            si.test(fin)
+
+            target_user
+              .data$({ first_name: 'ELVIS' })
+              .save$(err => {
+                if (err) {
+                  return fin(err)
+                }
+
+                si.make('user').list$({}, (err, users) => {
+                  if (err) {
+                    return fin(err)
+                  }
+
+                  expect(users.length).to.equal(2)
+
+                  expect(users[0]).to.contain({
+                    first_name: 'Frank',
+                    last_name: 'Sinatra'
+                  })
+
+                  expect(users[1]).to.contain({
+                    id: target_user_id,
+                    first_name: 'ELVIS',
+                    last_name: 'Presley'
+                  })
+
+                  return fin()
+                })
+              })
+          })
+
+          function clearDb() {
+            return new Promise((resolve, reject) => {
+              si.make('user').remove$({ all$: true }, err => {
+                if (err) {
+                  return reject(err)
+                }
+                
+                return resolve()
+              })
+            })
+          }
+        })
       })
     })
+
+    function waitOnSeneca(seneca) {
+      return new Promise(fin => {
+        return si.ready(fin)
+      })
+    }
   })
 })
 
@@ -377,3 +782,24 @@ function make_it(lab) {
     )
   }
 }
+
+function makeSenecaForTest(opts = {}) {
+  const seneca = Seneca({ log: 'test' })
+
+  if (seneca.version >= '2.0.0') {
+    seneca.use('entity')
+  }
+
+
+  const { mongo_store_opts } = opts
+
+  seneca.use(require('..'), {
+    uri: 'mongodb://127.0.0.1:27017',
+    db: 'senecatest',
+    ...mongo_store_opts
+  })
+
+
+  return seneca
+}
+

@@ -60,8 +60,60 @@ describe('mongo tests', function () {
     script: lab,
   })
 
-  it('extra test', function (done) {
-    extratest(si, done)
+  describe('extra tests', () => {
+    it('extra test', function (done) {
+      extratest(si, done)
+    })
+
+    describe('creating a new entity', () => {
+      describe('the save$ query includes the id$ field', () => {
+        const si = makeSenecaForTest()
+
+        beforeEach(clearDb)
+
+        afterEach(clearDb)
+
+        it('creates a new entity with the given id', fin => {
+          si.test(fin)
+
+          const new_id = '6095a6f73a861890cc1f4e23'
+
+          si.make('user')
+            .data$({ first_name: 'Frank', last_name: 'Sinatra' })
+            .save$({ id$: new_id }, err => {
+              if (err) {
+                return fin(err)
+              }
+
+              si.make('user').list$({}, (err, users) => {
+                if (err) {
+                  return fin(err)
+                }
+
+                expect(users.length).to.equal(1)
+
+                const user = users[0]
+
+                console.log(user.id) // dbg
+
+                return fin()
+              })
+            })
+        })
+
+        function clearDb() {
+          return new Promise((resolve, reject) => {
+            si.make('user').remove$({ all$: true }, err => {
+              if (err) {
+                return reject(err)
+              }
+              
+              return resolve()
+            })
+          })
+        }
+      })
+    })
   })
 })
 

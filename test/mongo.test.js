@@ -646,6 +646,151 @@ describe('mongo tests', function () {
         })
 
         describe('plugin options include the "generate_id" function', () => {
+          describe('matching entity exists', () => {
+            const new_id = 'bbbba6f73a861890cc1f4e23'
+
+            const si = makeSenecaForTest({
+              mongo_store_opts: {
+                generate_id(ent) {
+                  if ('age' in ent) {
+                    return new_id
+                  }
+
+                  return null
+                }
+              }
+            })
+
+            beforeEach(() => waitOnSeneca(si))
+
+            beforeEach(clearDb)
+
+
+            let target_user_id
+
+            beforeEach(() => new Promise((resolve, reject) => {
+              si.make('user')
+                .data$({ first_name: 'Elvis', last_name: 'Presley' })
+                .save$((err, user) => {
+                  if (err) {
+                    return reject(err)
+                  }
+
+                  Assert.ok(user, 'user')
+                  target_user_id = SpecHelpers.fetchProp(user, 'id')
+
+                  return resolve()
+                })
+            }))
+
+
+            let target_user
+
+            beforeEach(() => new Promise((resolve, reject) => {
+              // Do a fresh fetch from the db.
+              //
+              si.make('user')
+                .load$(target_user_id, (err, user) => {
+                  if (err) {
+                    return reject(err)
+                  }
+
+                  Assert.ok(user, 'user')
+                  target_user = user
+
+                  return resolve()
+                })
+            }))
+
+
+            afterEach(clearDb)
+
+            it('updates the fields and ignores the generate_id option', fin => {
+              si.test(fin)
+
+              si.make('user')
+                .data$({ first_name: 'Elvis', last_name: 'PRESLEY', age: 25 })
+                .save$({ upsert$: ['first_name'] }, err => {
+                  if (err) {
+                    return fin(err)
+                  }
+
+                  si.make('user').list$({}, (err, users) => {
+                    if (err) {
+                      return fin(err)
+                    }
+
+                    expect(users.length).to.equal(1)
+
+                    expect(users[0]).to.contain({
+                      first_name: 'Elvis',
+                      last_name: 'PRESLEY',
+                      age: 25
+                    })
+
+                    expect(users[0].id).not.to.equal(new_id)
+
+                    return fin()
+                  })
+                })
+            })
+          })
+
+          describe('matching entity does not exist', () => {
+            const new_id = 'ffffa6f73a861890cc1f4e23'
+
+            const si = makeSenecaForTest({
+              mongo_store_opts: {
+                generate_id(_ent) {
+                  return new_id
+                }
+              }
+            })
+
+            beforeEach(() => waitOnSeneca(si))
+
+            beforeEach(clearDb)
+
+            afterEach(clearDb)
+
+            it('creates a new entity with the given id', fin => {
+              si.test(fin)
+
+              si.make('user')
+                .data$({ first_name: 'Frank', last_name: 'Sinatra' })
+                .save$({ upsert$: ['first_name'] }, err => {
+                  if (err) {
+                    return fin(err)
+                  }
+
+                  si.make('user').list$({}, (err, users) => {
+                    if (err) {
+                      return fin(err)
+                    }
+
+                    expect(users.length).to.equal(1)
+
+                    const user = users[0]
+
+                    expect(user.id).to.equal(new_id)
+
+                    return fin()
+                  })
+                })
+            })
+          })
+
+          function clearDb() {
+            return new Promise((resolve, reject) => {
+              si.make('user').remove$({ all$: true }, err => {
+                if (err) {
+                  return reject(err)
+                }
+                
+                return resolve()
+              })
+            })
+          }
         })
       })
     })

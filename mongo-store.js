@@ -240,7 +240,7 @@ module.exports = function (opts) {
                 replacement,
                 { upsert: true },
 
-                function (err /*, _upsert */) {
+                function (err /*, _upsert*/) {
                   if (error(args, err, cb)) {
                     return cb(err)
                   }

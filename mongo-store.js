@@ -263,8 +263,6 @@ module.exports = function (opts) {
                       // NOTE: If, at this point, for some reason the document
                       // has been removed by a competing process, return null.
                       //
-                      // TODO: Verify in tests that `entu` is null if not found.
-                      // 
                       if (!entu) {
                         return cb(null, { upsert_requested: true, out: null })
                       }

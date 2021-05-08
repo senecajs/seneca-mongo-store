@@ -183,6 +183,8 @@ module.exports = function (opts) {
     save: function (args, cb) {
       var ent = args.ent
 
+      console.log(ent) // dbg
+
       var update = !!ent.id
 
       getcoll(args, ent, function (err, coll) {
@@ -223,10 +225,17 @@ module.exports = function (opts) {
                   return acc
                 }, {})
 
-              const replacement = Object.assign({}, public_entdata)
-              if (id !== undefined) replacement._id = id
+              const replacement = (() => {
+                const o = Dot.flatten(Object.assign({}, public_entdata))
 
-              return coll.replaceOne(
+                if (id !== undefined) {
+                  o.$setOnInsert = { _id: id }
+                }
+
+                return o
+              })()
+
+              return coll.updateOne(
                 filter_by,
                 replacement,
                 { upsert: true },

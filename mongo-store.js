@@ -183,8 +183,6 @@ module.exports = function (opts) {
     save: function (args, cb) {
       var ent = args.ent
 
-      console.log(ent) // dbg
-
       var update = !!ent.id
 
       getcoll(args, ent, function (err, coll) {

@@ -223,7 +223,7 @@ module.exports = function (opts) {
                   return acc
                 }, {})
 
-              const replacement = { ...public_entdata }
+              const replacement = Object.assign({}, public_entdata)
               if (id !== undefined) replacement._id = id
 
               return coll.replaceOne(

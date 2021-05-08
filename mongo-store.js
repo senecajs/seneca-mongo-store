@@ -117,6 +117,10 @@ module.exports = function (opts) {
   function error(args, err, cb) {
     if (err) {
       seneca.log.error('entity', err, { store: name })
+
+      // TODO: The callback should probably be invoked through
+      // process.nextTick.
+      //
       cb(err)
       return true
     } else return false
@@ -181,35 +185,30 @@ module.exports = function (opts) {
     },
 
     save: function (args, cb) {
-      var ent = args.ent
+      const is_update = Boolean(args.ent.id)
 
-      var update = !!ent.id
+      if (is_update) {
+        return updateExisting(args, cb)
+      }
 
-      getcoll(args, ent, function (err, coll) {
-        if (error(args, err, cb)) {
-          // QUESTION: This looks like a bug, should we, perhaps, invoke
-          // `cb(err)` here prior to returning from the function?
-          //
-          return
-        }
+      return createAndSave(args, cb)
 
-        var entp = ent.data$(false)
 
-        if (!update) {
-          let base_id = undefined
-          if (undefined !== ent.id$) {
-            base_id = ent.id$
-          } else if (opts.generate_id) {
-            base_id = opts.generate_id(ent)
+      function createAndSave(args, cb) {
+        return upsertIfRequested(args, function (err, upsert) {
+          if (error(args, err, cb)) {
+            return
           }
 
-          const id = makeid(base_id)
-
-          if (id !== undefined) {
-            entp._id = id
+          if (upsert.upsert_requested) {
+            return cb(null, upsert.out)
           }
 
+          return createNew(args, cb)
+        })
 
+
+        function upsertIfRequested(args, cb) {
           const query_for_save = args.q
 
           if (Array.isArray(query_for_save.upsert$)) {
@@ -226,67 +225,138 @@ module.exports = function (opts) {
               const replacement = (() => {
                 const o = Dot.flatten(Object.assign({}, public_entdata))
 
-                if (id !== undefined) {
+
+                const NO_SPECIFIC_ID_REQUESTED = {}
+
+                const id = tryMakeIdIfRequested(args, {
+                  when_no_specific_id_requested: NO_SPECIFIC_ID_REQUESTED
+                })
+
+
+                if (id !== NO_SPECIFIC_ID_REQUESTED) {
                   o.$setOnInsert = { _id: id }
                 }
 
                 return o
               })()
 
-              return coll.updateOne(
-                filter_by,
-                replacement,
-                { upsert: true },
-
-                function (err /*, _upsert*/) {
-                  if (error(args, err, cb)) {
-                    return cb(err)
-                  }
-
-                  return coll.findOne(public_entdata, function (err, entu) {
-                    if (error(args, err, cb)) {
-                      return cb(err)
-                    }
-
-                    // NOTE: If, at this point, for some reason the document
-                    // has been removed by a competing process, return null.
-                    //
-                    // TODO: Verify in tests that `entu` is null if not found.
-                    // 
-                    if (!entu) {
-                      return cb(null, null)
-                    }
-
-                    return cb(null, entu)
-                  })
+              return getcoll(args, args.ent, function (err, coll) {
+                if (error(args, err, cb)) {
+                  return
                 }
-              )
+
+                return coll.updateOne(
+                  filter_by,
+                  replacement,
+                  { upsert: true },
+
+                  function (err /*, _upsert*/) {
+                    if (error(args, err, cb)) {
+                      return
+                    }
+
+                    return coll.findOne(public_entdata, function (err, entu) {
+                      if (error(args, err, cb)) {
+                        return
+                      }
+
+                      // NOTE: If, at this point, for some reason the document
+                      // has been removed by a competing process, return null.
+                      //
+                      // TODO: Verify in tests that `entu` is null if not found.
+                      // 
+                      if (!entu) {
+                        return cb(null, { upsert_requested: true, out: null })
+                      }
+
+                      return cb(null, { upsert_requested: true, out: entu })
+                    })
+                  }
+                )
+              })
             }
           }
 
-          coll.insertOne(entp, function (err, inserts) {
+          return cb(null, { upsert_requested: false, out: null })
+        }
+
+
+        function createNew(args, cb) {
+          return getcoll(args, args.ent, function (err, coll) {
             if (error(args, err, cb)) {
-              // QUESTION: This looks like a bug, should we, perhaps, invoke
-              // `cb(err)` here prior to returning from the function?
-              //
               return
             }
 
-            var entu = inserts.ops[0]
-            var fent = null
 
-            if (entu) {
-              entu.id = idstr(entu._id)
-              delete entu._id
-              //fent = ent.make$(_.cloneDeep(entu))
-              fent = ent.make$(seneca.util.deep(entu))
-            }
+            const new_doc = (function () {
+              const public_entdata = args.ent.data$(false)
 
-            seneca.log.debug('save/insert', ent, desc)
 
-            return cb(null, fent)
+              const NO_SPECIFIC_ID_REQUESTED = {}
+
+              const id = tryMakeIdIfRequested(args, {
+                when_no_specific_id_requested: NO_SPECIFIC_ID_REQUESTED
+              })
+
+
+              const new_doc = Object.assign({}, public_entdata)
+
+              if (id !== NO_SPECIFIC_ID_REQUESTED) {
+                new_doc._id = id
+              }
+
+              return new_doc
+            })()
+
+
+            return coll.insertOne(new_doc, function (err, inserts) {
+              if (error(args, err, cb)) {
+                return
+              }
+
+              const entu = inserts.ops[0]
+              let fent = null
+
+              if (entu) {
+                entu.id = idstr(entu._id)
+                delete entu._id
+                //fent = args.ent.make$(_.cloneDeep(entu))
+                fent = args.ent.make$(seneca.util.deep(entu))
+              }
+
+              seneca.log.debug('save/insert', args.ent, desc)
+
+              return cb(null, fent)
+            })
           })
-        } else {
+        }
+
+
+        function tryMakeIdIfRequested(args, { when_no_specific_id_requested }) {
+          const ent = args.ent
+
+          if (undefined !== ent.id$) {
+            return makeid(ent.id$)
+          }
+
+          if (opts.generate_id) {
+            return makeid(opts.generate_id(ent))
+          }
+
+          return when_no_specific_id_requested
+        }
+      }
+
+
+      function updateExisting(args, cb) {
+        return getcoll(args, args.ent, function (err, coll) {
+          if (error(args, err, cb)) {
+            return
+          }
+
+          var ent = args.ent
+          var entp = ent.data$(false)
+
           var q = { _id: makeid(ent.id) }
           delete entp.id
 
@@ -324,8 +394,8 @@ module.exports = function (opts) {
               })
             }
           })
-        }
-      })
+        })
+      }
     },
 
     load: function (args, cb) {

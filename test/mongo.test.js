@@ -17,7 +17,7 @@ const Code = require('@hapi/code')
 const expect = Code.expect
 
 const lab = (exports.lab = Lab.script())
-const { describe, before, beforeEach, afterEach } = lab
+const { describe, before, beforeEach, after, afterEach } = lab
 const it = make_it(lab)
 
 var Shared = require('seneca-store-test')
@@ -60,9 +60,45 @@ describe('mongo tests', function () {
     script: lab
   })
 
-  Shared.upserttest({
-    seneca: si,
-    script: lab
+  describe('upsert tests', () => {
+    before(() => new Promise((resolve, reject) => {
+      return si.make('users').native$((err, db) => {
+        if (err) {
+          return reject(err)
+        }
+
+        return db.collection('users')
+          .createIndex({ email: 1 }, { unique: true }, err => {
+            if (err) {
+              return reject(err)
+            }
+
+            return resolve()
+          })
+      })
+    }))
+
+    after(() => new Promise((resolve, reject) => {
+      return si.make('users').native$((err, db) => {
+        if (err) {
+          return reject(err)
+        }
+
+        return db.collection('users')
+          .dropIndex({ email: 1 }, err => {
+            if (err) {
+              return reject(err)
+            }
+
+            return resolve()
+          })
+      })
+    }))
+
+    Shared.upserttest({
+      seneca: si,
+      script: lab
+    })
   })
 
   describe('extra tests', () => {

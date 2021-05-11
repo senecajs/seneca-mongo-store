@@ -245,30 +245,17 @@ module.exports = function (opts) {
                   return
                 }
 
-                return coll.updateOne(
+                return coll.findOneAndUpdate(
                   filter_by,
                   replacement,
-                  { upsert: true },
+                  { upsert: true, returnNewDocument: true },
 
-                  function (err /*, _upsert*/) {
+                  function (err, entu) {
                     if (error(args, err, cb)) {
                       return
                     }
 
-                    return coll.findOne(public_entdata, function (err, entu) {
-                      if (error(args, err, cb)) {
-                        return
-                      }
-
-                      // NOTE: If, at this point, for some reason the document
-                      // has been removed by a competing process, return null.
-                      //
-                      if (!entu) {
-                        return cb(null, { upsert_requested: true, out: null })
-                      }
-
-                      return cb(null, { upsert_requested: true, out: entu })
-                    })
+                    return cb(null, { upsert_requested: true, out: entu })
                   }
                 )
               })

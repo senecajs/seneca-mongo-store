@@ -44,61 +44,84 @@ describe('mongo tests', function () {
     si.ready(done)
   })
 
-  Shared.basictest({
-    seneca: si,
-    senecaMerge: senecaMerge,
-    script: lab
+  describe('basic tests', () => {
+    Shared.basictest({
+      seneca: si,
+      senecaMerge: senecaMerge,
+      script: lab
+    })
   })
 
-  Shared.limitstest({
-    seneca: si,
-    script: lab
+  describe('limit tests', () => {
+    Shared.limitstest({
+      seneca: si,
+      script: lab
+    })
   })
 
-  Shared.sorttest({
-    seneca: si,
-    script: lab
+  describe('sort tests', () => {
+    Shared.sorttest({
+      seneca: si,
+      script: lab
+    })
   })
 
   describe('upsert tests', () => {
-    before(() => new Promise((resolve, reject) => {
-      return si.make('users').native$((err, db) => {
-        if (err) {
-          return reject(err)
-        }
+    before(prepareForRaceConditionTesting)
 
-        return db.collection('users')
-          .createIndex({ email: 1 }, { unique: true }, err => {
-            if (err) {
-              return reject(err)
-            }
-
-            return resolve()
-          })
-      })
-    }))
-
-    after(() => new Promise((resolve, reject) => {
-      return si.make('users').native$((err, db) => {
-        if (err) {
-          return reject(err)
-        }
-
-        return db.collection('users')
-          .dropIndex({ email: 1 }, err => {
-            if (err) {
-              return reject(err)
-            }
-
-            return resolve()
-          })
-      })
-    }))
+    after(unprepareAfterRaceConditionTesting)
 
     Shared.upserttest({
       seneca: si,
       script: lab
     })
+
+    // NOTE: WARNING: The reason we need a unique index on the users.email
+    // field is for Mongo to be able to avert race conditions. Without it,
+    // the plugin will fail the race condition tests.
+    //
+    // It is a case of a leaky abstraction that we "know" what collection
+    // and what field will be used in a race condition test in seneca-store-test.
+    // We may want to come up with a better alternative in the future.
+    //
+    function prepareForRaceConditionTesting() {
+      return new Promise((resolve, reject) => {
+        return si.make('users').native$((err, db) => {
+          if (err) {
+            return reject(err)
+          }
+
+          return db.collection('users')
+            .createIndex({ email: 1 }, { unique: true }, err => {
+              if (err) {
+                return reject(err)
+              }
+
+              return resolve()
+            })
+        })
+      })
+    }
+
+    function unprepareAfterRaceConditionTesting() {
+      return new Promise((resolve, reject) => {
+        return si.make('users').native$((err, db) => {
+          if (err) {
+            return reject(err)
+          }
+
+          return db.collection('users')
+            .dropIndex({ email: 1 }, err => {
+              if (err) {
+                return reject(err)
+              }
+
+              return resolve()
+            })
+        })
+      })
+    }
+
   })
 
   describe('extra tests', () => {

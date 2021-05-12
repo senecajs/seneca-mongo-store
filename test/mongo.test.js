@@ -720,6 +720,133 @@ describe('mongo tests', function () {
             })
           }
         })
+
+        describe('many matching entities exist', () => {
+          describe('matches on 1 upsert$ field', () => {
+            beforeEach(() => new Promise(fin => {
+              si.make('products')
+                .data$({ label: 'a toothbrush', price: '3.95' })
+                .save$(fin)
+            }))
+
+            beforeEach(() => new Promise(fin => {
+              si.make('products')
+                .data$({ label: 'a toothbrush', price: '3.70' })
+                .save$(fin)
+            }))
+
+            beforeEach(() => new Promise(fin => {
+              si.make('products')
+                .data$({ label: 'bbs tires', price: '4.10' })
+                .save$(fin)
+            }))
+
+            it('updates a single matching entity', fin => {
+              si.test(fin)
+
+              si.ready(() => {
+                console.log('---------------------------') // dbg
+
+                si.make('products')
+                  .data$({ label: 'a toothbrush', price: '4.95' })
+                  .save$({ upsert$: ['label'] }, err => {
+                    if (err) {
+                      return fin(err)
+                    }
+
+                    si.make('products').list$({}, (err, products) => {
+                      if (err) {
+                        return fin(err)
+                      }
+
+                      console.log(products) // dbg
+
+                      expect(products.length).to.equal(3)
+
+                      expect(products[0]).to.contain({
+                        label: 'a toothbrush',
+                        price: '4.95'
+                      })
+
+                      expect(products[1]).to.contain({
+                        label: 'a toothbrush',
+                        price: '3.70'
+                      })
+
+                      expect(products[2]).to.contain({
+                        label: 'bbs tires',
+                        price: '4.10'
+                      })
+
+                      return fin()
+                    })
+                  })
+              })
+            })
+          })
+
+          describe('matches on 2 upsert$ fields', () => {
+            beforeEach(() => new Promise(fin => {
+              si.make('products')
+                .data$({ label: 'a toothbrush', price: '3.95', coolness_factor: 2 })
+                .save$(fin)
+            }))
+
+            beforeEach(() => new Promise(fin => {
+              si.make('products')
+                .data$({ label: 'a toothbrush', price: '3.70', coolness_factor: 3 })
+                .save$(fin)
+            }))
+
+            beforeEach(() => new Promise(fin => {
+              si.make('products')
+                .data$({ label: 'bbs tires', price: '4.10', coolness_factor: 7 })
+                .save$(fin)
+            }))
+
+            it('updates a single matching entity', fin => {
+              si.test(fin)
+
+              si.ready(() => {
+                si.make('products')
+                  .data$({ label: 'a toothbrush', price: '3.95', coolness_factor: 4 })
+                  .save$({ upsert$: ['label', 'price'] }, err => {
+                    if (err) {
+                      return fin(err)
+                    }
+
+                    si.make('products').list$({}, (err, products) => {
+                      if (err) {
+                        return fin(err)
+                      }
+
+                      expect(products.length).to.equal(3)
+
+                      expect(products[0]).to.contain({
+                        label: 'a toothbrush',
+                        price: '3.95',
+                        coolness_factor: 4
+                      })
+
+                      expect(products[1]).to.contain({
+                        label: 'a toothbrush',
+                        price: '3.70',
+                        coolness_factor: 3
+                      })
+
+                      expect(products[2]).to.contain({
+                        label: 'bbs tires',
+                        price: '4.10',
+                        coolness_factor: 7
+                      })
+
+                      return fin()
+                    })
+                  })
+              })
+            })
+          })
+        })
       })
     })
 

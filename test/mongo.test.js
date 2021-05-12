@@ -121,7 +121,6 @@ describe('mongo tests', function () {
         })
       })
     }
-
   })
 
   describe('extra tests', () => {
@@ -722,6 +721,14 @@ describe('mongo tests', function () {
         })
 
         describe('many matching entities exist', () => {
+          const si = makeSenecaForTest()
+
+          beforeEach(() => waitOnSeneca(si))
+
+          beforeEach(clearDb)
+
+          afterEach(clearDb)
+
           describe('matches on 1 upsert$ field', () => {
             beforeEach(() => new Promise(fin => {
               si.make('products')
@@ -745,8 +752,6 @@ describe('mongo tests', function () {
               si.test(fin)
 
               si.ready(() => {
-                console.log('---------------------------') // dbg
-
                 si.make('products')
                   .data$({ label: 'a toothbrush', price: '4.95' })
                   .save$({ upsert$: ['label'] }, err => {
@@ -758,8 +763,6 @@ describe('mongo tests', function () {
                       if (err) {
                         return fin(err)
                       }
-
-                      console.log(products) // dbg
 
                       expect(products.length).to.equal(3)
 
@@ -846,6 +849,18 @@ describe('mongo tests', function () {
               })
             })
           })
+
+          function clearDb() {
+            return new Promise((resolve, reject) => {
+              si.make('products').remove$({ all$: true }, err => {
+                if (err) {
+                  return reject(err)
+                }
+                
+                return resolve()
+              })
+            })
+          }
         })
       })
     })

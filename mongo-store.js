@@ -83,9 +83,11 @@ function metaquery(qent, q) {
 
   if (!q.native$) {
     if (q.sort$) {
-      for (var sf in q.sort$) break
-      var sd = q.sort$[sf] < 0 ? 'descending' : 'ascending'
-      mq.sort = [[sf, sd]]
+      mq.sort = []
+      for (var sf in q.sort$)  {
+        var sd = q.sort$[sf] < 0 ? 'descending' : 'ascending'
+        mq.sort.push([sf,sd])
+      }
     }
 
     if (q.limit$) {

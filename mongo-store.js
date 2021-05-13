@@ -185,30 +185,42 @@ module.exports = function (opts) {
     },
 
     save: function (args, cb) {
-      const is_update = Boolean(args.ent.id)
+      return getcoll(args, args.ent, function (err, coll) {
+        if (error(args, err, cb)) {
+          return
+        }
 
-      if (is_update) {
-        return updateExisting(args, cb)
-      }
+        const is_update = Boolean(args.ent.id)
 
-      return createAndSave(args, cb)
+        if (is_update) {
+          return updateExisting(args, coll, cb)
+        }
+
+        return createAndSave(args, coll, cb)
+      })
 
 
-      function createAndSave(args, cb) {
-        return upsertIfRequested(args, function (err, upsert) {
+      function createAndSave(args, coll, cb) {
+        return getcoll(args, args.ent, function (err, coll) {
           if (error(args, err, cb)) {
             return
           }
 
-          if (upsert.upsert_requested) {
-            return cb(null, upsert.out)
-          }
+          return upsertIfRequested(args, coll, function (err, upsert) {
+            if (error(args, err, cb)) {
+              return
+            }
 
-          return createNew(args, cb)
+            if (upsert.upsert_requested) {
+              return cb(null, upsert.out)
+            }
+
+            return createNew(args, coll, cb)
+          })
         })
 
 
-        function upsertIfRequested(args, cb) {
+        function upsertIfRequested(args, coll, cb) {
           const query_for_save = args.q
 
           if (Array.isArray(query_for_save.upsert$)) {
@@ -240,25 +252,19 @@ module.exports = function (opts) {
                 return o
               })()
 
-              return getcoll(args, args.ent, function (err, coll) {
-                if (error(args, err, cb)) {
-                  return
-                }
+              return coll.findOneAndUpdate(
+                filter_by,
+                replacement,
+                { upsert: true, returnNewDocument: true },
 
-                return coll.findOneAndUpdate(
-                  filter_by,
-                  replacement,
-                  { upsert: true, returnNewDocument: true },
-
-                  function (err, entu) {
-                    if (error(args, err, cb)) {
-                      return
-                    }
-
-                    return cb(null, { upsert_requested: true, out: entu })
+                function (err, entu) {
+                  if (error(args, err, cb)) {
+                    return
                   }
-                )
-              })
+
+                  return cb(null, { upsert_requested: true, out: entu })
+                }
+              )
             }
           }
 
@@ -266,53 +272,46 @@ module.exports = function (opts) {
         }
 
 
-        function createNew(args, cb) {
-          return getcoll(args, args.ent, function (err, coll) {
+        function createNew(args, coll, cb) {
+          const new_doc = (function () {
+            const public_entdata = args.ent.data$(false)
+
+
+            const NO_SPECIFIC_ID_REQUESTED = {}
+
+            const id = tryMakeIdIfRequested(args, {
+              when_no_specific_id_requested: NO_SPECIFIC_ID_REQUESTED
+            })
+
+
+            const new_doc = Object.assign({}, public_entdata)
+
+            if (id !== NO_SPECIFIC_ID_REQUESTED) {
+              new_doc._id = id
+            }
+
+            return new_doc
+          })()
+
+
+          return coll.insertOne(new_doc, function (err, inserts) {
             if (error(args, err, cb)) {
               return
             }
 
+            const entu = inserts.ops[0]
+            let fent = null
 
-            const new_doc = (function () {
-              const public_entdata = args.ent.data$(false)
+            if (entu) {
+              entu.id = idstr(entu._id)
+              delete entu._id
+              //fent = args.ent.make$(_.cloneDeep(entu))
+              fent = args.ent.make$(seneca.util.deep(entu))
+            }
 
+            seneca.log.debug('save/insert', args.ent, desc)
 
-              const NO_SPECIFIC_ID_REQUESTED = {}
-
-              const id = tryMakeIdIfRequested(args, {
-                when_no_specific_id_requested: NO_SPECIFIC_ID_REQUESTED
-              })
-
-
-              const new_doc = Object.assign({}, public_entdata)
-
-              if (id !== NO_SPECIFIC_ID_REQUESTED) {
-                new_doc._id = id
-              }
-
-              return new_doc
-            })()
-
-
-            return coll.insertOne(new_doc, function (err, inserts) {
-              if (error(args, err, cb)) {
-                return
-              }
-
-              const entu = inserts.ops[0]
-              let fent = null
-
-              if (entu) {
-                entu.id = idstr(entu._id)
-                delete entu._id
-                //fent = args.ent.make$(_.cloneDeep(entu))
-                fent = args.ent.make$(seneca.util.deep(entu))
-              }
-
-              seneca.log.debug('save/insert', args.ent, desc)
-
-              return cb(null, fent)
-            })
+            return cb(null, fent)
           })
         }
 
@@ -333,52 +332,46 @@ module.exports = function (opts) {
       }
 
 
-      function updateExisting(args, cb) {
-        return getcoll(args, args.ent, function (err, coll) {
-          if (error(args, err, cb)) {
-            return
-          }
+      function updateExisting(args, coll, cb) {
+        var ent = args.ent
+        var entp = ent.data$(false)
 
-          var ent = args.ent
-          var entp = ent.data$(false)
+        var q = { _id: makeid(ent.id) }
+        delete entp.id
 
-          var q = { _id: makeid(ent.id) }
-          delete entp.id
+        var shouldMerge = true
+        if (opts.merge !== false && ent.merge$ === false) {
+          shouldMerge = false
+        }
+        if (opts.merge === false && ent.merge$ !== true) {
+          shouldMerge = false
+        }
 
-          var shouldMerge = true
-          if (opts.merge !== false && ent.merge$ === false) {
-            shouldMerge = false
-          }
-          if (opts.merge === false && ent.merge$ !== true) {
-            shouldMerge = false
-          }
+        var set = entp
+        var func = 'replaceOne'
 
-          var set = entp
-          var func = 'replaceOne'
+        if (shouldMerge) {
+          set = Dot.flatten(entp)
+          func = 'updateOne'
+        }
 
-          if (shouldMerge) {
-            set = Dot.flatten(entp)
-            func = 'updateOne'
-          }
+        coll[func](q, set, { upsert: true }, function (err) {
+          if (!error(args, err, cb)) {
+            seneca.log.debug('save/update', ent, desc)
 
-          coll[func](q, set, { upsert: true }, function (err) {
-            if (!error(args, err, cb)) {
-              seneca.log.debug('save/update', ent, desc)
-
-              coll.findOne(q, {}, function (err, entu) {
-                if (!error(args, err, cb)) {
-                  var fent = null
-                  if (entu) {
-                    entu.id = idstr(entu._id)
-                    delete entu._id
-                    //fent = ent.make$(_.cloneDeep(entu))
-                    fent = ent.make$(seneca.util.deep(entu))
-                  }
-                  cb(null, fent)
+            coll.findOne(q, {}, function (err, entu) {
+              if (!error(args, err, cb)) {
+                var fent = null
+                if (entu) {
+                  entu.id = idstr(entu._id)
+                  delete entu._id
+                  //fent = ent.make$(_.cloneDeep(entu))
+                  fent = ent.make$(seneca.util.deep(entu))
                 }
-              })
-            }
-          })
+                cb(null, fent)
+              }
+            })
+          }
         })
       }
     },

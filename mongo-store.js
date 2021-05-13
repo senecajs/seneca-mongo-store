@@ -319,7 +319,7 @@ module.exports = function (opts) {
         function tryMakeIdIfRequested(args, { when_no_specific_id_requested }) {
           const ent = args.ent
 
-          if (undefined !== ent.id$) {
+          if (null != ent.id$) {
             return makeid(ent.id$)
           }
 

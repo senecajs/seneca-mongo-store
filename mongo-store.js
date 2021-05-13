@@ -118,9 +118,6 @@ module.exports = function (opts) {
     if (err) {
       seneca.log.error('entity', err, { store: name })
 
-      // TODO: The callback should probably be invoked through
-      // process.nextTick.
-      //
       cb(err)
       return true
     } else return false

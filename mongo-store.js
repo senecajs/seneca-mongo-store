@@ -184,53 +184,53 @@ module.exports = function (opts) {
       } else return cb()
     },
 
-    save: function (args, cb) {
-      return getcoll(args, args.ent, function (err, coll) {
-        if (error(args, err, cb)) {
+    save: function (msg, done) {
+      return getcoll(msg, msg.ent, function (err, coll) {
+        if (error(msg, err, done)) {
           return
         }
 
-        const is_update = Boolean(args.ent.id)
+        const is_update = Boolean(msg.ent.id)
 
         if (is_update) {
-          return updateExisting(args, coll, cb)
+          return updateExisting(msg, coll, done)
         }
 
-        return createAndSave(args, coll, cb)
+        return createAndSave(msg, coll, done)
       })
 
 
-      function createAndSave(args, coll, cb) {
-        return getcoll(args, args.ent, function (err, coll) {
-          if (error(args, err, cb)) {
+      function createAndSave(msg, coll, done) {
+        return getcoll(msg, msg.ent, function (err, coll) {
+          if (error(msg, err, done)) {
             return
           }
 
-          return upsertIfRequested(args, coll, function (err, upsert) {
-            if (error(args, err, cb)) {
+          return upsertIfRequested(msg, coll, function (err, upsert) {
+            if (error(msg, err, done)) {
               return
             }
 
             if (upsert.upsert_requested) {
-              return cb(null, upsert.out)
+              return done(null, upsert.out)
             }
 
-            return createNew(args, coll, cb)
+            return createNew(msg, coll, done)
           })
         })
 
 
-        function upsertIfRequested(args, coll, cb) {
-          const query_for_save = args.q
+        function upsertIfRequested(msg, coll, done) {
+          const query_for_save = msg.q
 
           if (Array.isArray(query_for_save.upsert$)) {
             const upsert_on = query_for_save.upsert$
-            const public_entdata = args.ent.data$(false)
+            const public_entdata = msg.ent.data$(false)
 
             if (upsert_on.length > 0 && upsert_on.every(p => p in public_entdata)) {
               const filter_by = upsert_on
                 .reduce((acc, field) => {
-                  acc[field] = args.ent[field]
+                  acc[field] = msg.ent[field]
                   return acc
                 }, {})
 
@@ -240,7 +240,7 @@ module.exports = function (opts) {
 
                 const NO_SPECIFIC_ID_REQUESTED = {}
 
-                const id = tryMakeIdIfRequested(args, {
+                const id = tryMakeIdIfRequested(msg, {
                   when_no_specific_id_requested: NO_SPECIFIC_ID_REQUESTED
                 })
 
@@ -258,28 +258,28 @@ module.exports = function (opts) {
                 { upsert: true, returnNewDocument: true },
 
                 function (err, entu) {
-                  if (error(args, err, cb)) {
+                  if (error(msg, err, done)) {
                     return
                   }
 
-                  return cb(null, { upsert_requested: true, out: entu })
+                  return done(null, { upsert_requested: true, out: entu })
                 }
               )
             }
           }
 
-          return cb(null, { upsert_requested: false, out: null })
+          return done(null, { upsert_requested: false, out: null })
         }
 
 
-        function createNew(args, coll, cb) {
+        function createNew(msg, coll, done) {
           const new_doc = (function () {
-            const public_entdata = args.ent.data$(false)
+            const public_entdata = msg.ent.data$(false)
 
 
             const NO_SPECIFIC_ID_REQUESTED = {}
 
-            const id = tryMakeIdIfRequested(args, {
+            const id = tryMakeIdIfRequested(msg, {
               when_no_specific_id_requested: NO_SPECIFIC_ID_REQUESTED
             })
 
@@ -295,7 +295,7 @@ module.exports = function (opts) {
 
 
           return coll.insertOne(new_doc, function (err, inserts) {
-            if (error(args, err, cb)) {
+            if (error(msg, err, done)) {
               return
             }
 
@@ -305,19 +305,19 @@ module.exports = function (opts) {
             if (entu) {
               entu.id = idstr(entu._id)
               delete entu._id
-              //fent = args.ent.make$(_.cloneDeep(entu))
-              fent = args.ent.make$(seneca.util.deep(entu))
+              //fent = msg.ent.make$(_.cloneDeep(entu))
+              fent = msg.ent.make$(seneca.util.deep(entu))
             }
 
-            seneca.log.debug('save/insert', args.ent, desc)
+            seneca.log.debug('save/insert', msg.ent, desc)
 
-            return cb(null, fent)
+            return done(null, fent)
           })
         }
 
 
-        function tryMakeIdIfRequested(args, { when_no_specific_id_requested }) {
-          const ent = args.ent
+        function tryMakeIdIfRequested(msg, { when_no_specific_id_requested }) {
+          const ent = msg.ent
 
           if (null != ent.id$) {
             return makeid(ent.id$)
@@ -332,8 +332,8 @@ module.exports = function (opts) {
       }
 
 
-      function updateExisting(args, coll, cb) {
-        var ent = args.ent
+      function updateExisting(msg, coll, done) {
+        var ent = msg.ent
         var entp = ent.data$(false)
 
         var q = { _id: makeid(ent.id) }
@@ -356,11 +356,11 @@ module.exports = function (opts) {
         }
 
         coll[func](q, set, { upsert: true }, function (err) {
-          if (!error(args, err, cb)) {
+          if (!error(msg, err, done)) {
             seneca.log.debug('save/update', ent, desc)
 
             coll.findOne(q, {}, function (err, entu) {
-              if (!error(args, err, cb)) {
+              if (!error(msg, err, done)) {
                 var fent = null
                 if (entu) {
                   entu.id = idstr(entu._id)
@@ -368,7 +368,7 @@ module.exports = function (opts) {
                   //fent = ent.make$(_.cloneDeep(entu))
                   fent = ent.make$(seneca.util.deep(entu))
                 }
-                cb(null, fent)
+                done(null, fent)
               }
             })
           }

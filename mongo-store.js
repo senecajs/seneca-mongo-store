@@ -190,7 +190,7 @@ module.exports = function (opts) {
           return
         }
 
-        const is_update = Boolean(msg.ent.id)
+        const is_update = null != msg.ent.id
 
         if (is_update) {
           return updateExisting(msg, coll, done)

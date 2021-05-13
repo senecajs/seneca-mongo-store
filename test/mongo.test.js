@@ -7,7 +7,6 @@
 
 var Util = require('util')
 const Assert = require('assert')
-const SpecHelpers = require('./support/helpers')
 
 var Seneca = require('seneca')
 var Async = require('async')
@@ -390,8 +389,7 @@ describe('mongo tests', function () {
                   return reject(err)
                 }
 
-                Assert.ok(user, 'user')
-                target_user_id = SpecHelpers.fetchProp(user, 'id')
+                target_user_id = user.id
 
                 return resolve()
               })
@@ -495,8 +493,7 @@ describe('mongo tests', function () {
                   return reject(err)
                 }
 
-                Assert.ok(user, 'user')
-                target_user_id = SpecHelpers.fetchProp(user, 'id')
+                target_user_id = user.id
 
                 return resolve()
               })
@@ -603,8 +600,7 @@ describe('mongo tests', function () {
                     return reject(err)
                   }
 
-                  Assert.ok(user, 'user')
-                  target_user_id = SpecHelpers.fetchProp(user, 'id')
+                  target_user_id = user.id
 
                   return resolve()
                 })

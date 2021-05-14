@@ -198,17 +198,11 @@ module.exports = function (opts) {
 
 
       function createAndSave(msg, coll, done) {
-        return getcoll(msg, msg.ent, function (err, coll) {
-          if (error(msg, err, done)) {
-            return
-          }
+        if (isUpsertRequested(msg)) {
+          return doUpsert(msg, coll, done)
+        }
 
-          if (isUpsertRequested(msg)) {
-            return doUpsert(msg, coll, done)
-          }
-
-          return createNew(msg, coll, done)
-        })
+        return createNew(msg, coll, done)
 
 
         function isUpsertRequested(msg) {

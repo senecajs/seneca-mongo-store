@@ -219,8 +219,9 @@ module.exports = function (opts) {
 
         function upsertIfRequested(msg, coll, done) {
           const query_for_save = msg.q
+          const should_upsert = Array.isArray(query_for_save.upsert$)
 
-          if (Array.isArray(query_for_save.upsert$)) {
+          if (should_upsert) {
             const upsert_on = query_for_save.upsert$
             const public_entdata = msg.ent.data$(false)
 

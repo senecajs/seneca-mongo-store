@@ -203,70 +203,68 @@ module.exports = function (opts) {
             return
           }
 
-          return upsertIfRequested(msg, coll, function (err, upsert) {
-            if (error(msg, err, done)) {
-              return
-            }
+          if (isUpsertRequested(msg)) {
+            return doUpsert(msg, coll, done)
+          }
 
-            if (upsert.upsert_requested) {
-              return done(null, upsert.out)
-            }
-
-            return createNew(msg, coll, done)
-          })
+          return createNew(msg, coll, done)
         })
 
 
-        function upsertIfRequested(msg, coll, done) {
-          const query_for_save = msg.q
-          const should_upsert = Array.isArray(query_for_save.upsert$)
-
-          if (should_upsert) {
-            const upsert_on = query_for_save.upsert$
-            const public_entdata = msg.ent.data$(false)
-
-            if (upsert_on.length > 0 && upsert_on.every(p => p in public_entdata)) {
-              const filter_by = upsert_on
-                .reduce((acc, field) => {
-                  acc[field] = msg.ent[field]
-                  return acc
-                }, {})
-
-              const replacement = (() => {
-                const o = Dot.flatten(Object.assign({}, public_entdata))
-
-
-                const NO_SPECIFIC_ID_REQUESTED = {}
-
-                const id = tryMakeIdIfRequested(msg, {
-                  when_no_specific_id_requested: NO_SPECIFIC_ID_REQUESTED
-                })
-
-
-                if (id !== NO_SPECIFIC_ID_REQUESTED) {
-                  o.$setOnInsert = { _id: id }
-                }
-
-                return o
-              })()
-
-              return coll.findOneAndUpdate(
-                filter_by,
-                replacement,
-                { upsert: true, returnNewDocument: true },
-
-                function (err, entu) {
-                  if (error(msg, err, done)) {
-                    return
-                  }
-
-                  return done(null, { upsert_requested: true, out: entu })
-                }
-              )
-            }
+        function isUpsertRequested(msg) {
+          if (null == msg.q) {
+            return false
           }
 
-          return done(null, { upsert_requested: false, out: null })
+          const public_entdata = msg.ent.data$(false)
+          const upsert_on = msg.q.upsert$
+
+          return Array.isArray(upsert_on) &&
+            upsert_on.length > 0 &&
+            upsert_on.every(p => p in public_entdata)
+        }
+
+        function doUpsert(msg, coll, done) {
+          const upsert_on = msg.q.upsert$
+          const public_entdata = msg.ent.data$(false)
+
+          const filter_by = upsert_on
+            .reduce((acc, field) => {
+              acc[field] = msg.ent[field]
+              return acc
+            }, {})
+
+          const replacement = (() => {
+            const o = Dot.flatten(Object.assign({}, public_entdata))
+
+
+            const NO_SPECIFIC_ID_REQUESTED = {}
+
+            const id = tryMakeIdIfRequested(msg, {
+              when_no_specific_id_requested: NO_SPECIFIC_ID_REQUESTED
+            })
+
+
+            if (id !== NO_SPECIFIC_ID_REQUESTED) {
+              o.$setOnInsert = { _id: id }
+            }
+
+            return o
+          })()
+
+          return coll.findOneAndUpdate(
+            filter_by,
+            replacement,
+            { upsert: true, returnNewDocument: true },
+
+            function (err, entu) {
+              if (error(msg, err, done)) {
+                return
+              }
+
+              return done(null, entu)
+            }
+          )
         }
 
 

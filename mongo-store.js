@@ -5,9 +5,10 @@
 var Mongo = require('mongodb')
 var Dot = require('mongo-dot-notation')
 var MongoClient = Mongo.MongoClient
-var ObjectID = Mongo.ObjectID
 
 var name = 'mongo-store'
+
+const { ensure_id, makeid } = require('./lib/common')
 
 /*
 native$ = object => use object as query, no meta settings
@@ -16,18 +17,6 @@ native$ = array => use first elem as query, second elem as meta settings
 
 function idstr(obj) {
   return obj && obj.toHexString ? obj.toHexString() : '' + obj
-}
-
-function makeid(hexstr) {
-  if ('string' === typeof hexstr && 24 === hexstr.length) {
-    try {
-      return ObjectID.createFromHexString(hexstr)
-    } catch (e) {
-      return hexstr
-    }
-  }
-
-  return hexstr
 }
 
 function fixquery(qent, q) {
@@ -230,16 +219,9 @@ module.exports = function (opts) {
 
           const replacement = (() => {
             const o = Dot.flatten(Object.assign({}, public_entdata))
+            const id = ensure_id(msg.ent, opts)
 
-
-            const NO_SPECIFIC_ID_REQUESTED = {}
-
-            const id = tryMakeIdIfRequested(msg, {
-              when_no_specific_id_requested: NO_SPECIFIC_ID_REQUESTED
-            })
-
-
-            if (id !== NO_SPECIFIC_ID_REQUESTED) {
+            if (null != id) {
               o.$setOnInsert = { _id: id }
             }
 
@@ -265,18 +247,12 @@ module.exports = function (opts) {
         function createNew(msg, coll, done) {
           const new_doc = (function () {
             const public_entdata = msg.ent.data$(false)
-
-
-            const NO_SPECIFIC_ID_REQUESTED = {}
-
-            const id = tryMakeIdIfRequested(msg, {
-              when_no_specific_id_requested: NO_SPECIFIC_ID_REQUESTED
-            })
+            const id = ensure_id(msg.ent, opts)
 
 
             const new_doc = Object.assign({}, public_entdata)
 
-            if (id !== NO_SPECIFIC_ID_REQUESTED) {
+            if (null != id) {
               new_doc._id = id
             }
 
@@ -303,21 +279,6 @@ module.exports = function (opts) {
 
             return done(null, fent)
           })
-        }
-
-
-        function tryMakeIdIfRequested(msg, { when_no_specific_id_requested }) {
-          const ent = msg.ent
-
-          if (null != ent.id$) {
-            return makeid(ent.id$)
-          }
-
-          if (opts.generate_id) {
-            return makeid(opts.generate_id(ent))
-          }
-
-          return when_no_specific_id_requested
         }
       }
 

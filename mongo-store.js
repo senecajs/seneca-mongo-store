@@ -266,14 +266,7 @@ module.exports = function (opts) {
             }
 
             const entu = inserts.ops[0]
-            let fent = null
-
-            if (entu) {
-              entu.id = idstr(entu._id)
-              delete entu._id
-              //fent = msg.ent.make$(_.cloneDeep(entu))
-              fent = msg.ent.make$(seneca.util.deep(entu))
-            }
+            const fent = makeEntityOfDocument(entu, msg.ent)
 
             seneca.log.debug('save/insert', msg.ent, desc)
 
@@ -312,18 +305,22 @@ module.exports = function (opts) {
 
             coll.findOne(q, {}, function (err, entu) {
               if (!error(msg, err, done)) {
-                var fent = null
-                if (entu) {
-                  entu.id = idstr(entu._id)
-                  delete entu._id
-                  //fent = ent.make$(_.cloneDeep(entu))
-                  fent = ent.make$(seneca.util.deep(entu))
-                }
-                done(null, fent)
+                return done(null, makeEntityOfDocument(entu, ent))
               }
             })
           }
         })
+      }
+
+      function makeEntityOfDocument(doc, ent) {
+        if (null == doc) {
+          return null
+        }
+
+        doc.id = idstr(doc._id)
+        delete doc._id
+
+        return ent.make$(seneca.util.deep(doc))
       }
     },
 

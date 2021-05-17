@@ -233,12 +233,12 @@ module.exports = function (opts) {
             replacement,
             { upsert: true, returnNewDocument: true },
 
-            function (err, entu) {
+            function (err, doc) {
               if (error(msg, err, done)) {
                 return
               }
 
-              return done(null, entu)
+              return done(null, doc)
             }
           )
         }
@@ -265,8 +265,8 @@ module.exports = function (opts) {
               return
             }
 
-            const entu = inserts.ops[0]
-            const fent = makeEntityOfDocument(entu, msg.ent)
+            const doc = inserts.ops[0]
+            const fent = makeEntityOfDocument(doc, msg.ent)
 
             seneca.log.debug('save/insert', msg.ent, desc)
 
@@ -303,9 +303,9 @@ module.exports = function (opts) {
           if (!error(msg, err, done)) {
             seneca.log.debug('save/update', ent, desc)
 
-            coll.findOne(q, {}, function (err, entu) {
+            coll.findOne(q, {}, function (err, doc) {
               if (!error(msg, err, done)) {
-                return done(null, makeEntityOfDocument(entu, ent))
+                return done(null, makeEntityOfDocument(doc, ent))
               }
             })
           }

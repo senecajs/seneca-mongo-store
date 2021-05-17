@@ -8,92 +8,12 @@ var MongoClient = Mongo.MongoClient
 
 var name = 'mongo-store'
 
-const { ensure_id, makeid } = require('./lib/common')
+const { ensure_id, makeid, idstr, fixquery, metaquery } = require('./lib/common')
 
 /*
 native$ = object => use object as query, no meta settings
 native$ = array => use first elem as query, second elem as meta settings
 */
-
-function idstr(obj) {
-  return obj && obj.toHexString ? obj.toHexString() : '' + obj
-}
-
-function fixquery(qent, q) {
-  var qq = {}
-
-  if (!q.native$) {
-    if ('string' === typeof q) {
-      qq = {
-        _id: makeid(q),
-      }
-    } else if (Array.isArray(q)) {
-      qq = {
-        _id: {
-          $in: q.map((id) => {
-            return makeid(id)
-          }),
-        },
-      }
-    } else {
-      if (q.id) {
-        if (Array.isArray(q.id)) {
-          qq._id = {
-            $in: q.id.map((id) => {
-              return makeid(id)
-            }),
-          }
-        } else {
-          qq._id = makeid(q.id)
-        }
-
-        //delete q.id
-      } else {
-        for (var qp in q) {
-          if ('id' !== qp && !qp.match(/\$$/)) {
-            if (Array.isArray(q[qp])) {
-              qq[qp] = { $in: q[qp] }
-            } else {
-              qq[qp] = q[qp]
-            }
-          }
-        }
-      }
-    }
-  } else {
-    qq = Array.isArray(q.native$) ? q.native$[0] : q.native$
-  }
-
-  return qq
-}
-
-function metaquery(qent, q) {
-  var mq = {}
-
-  if (!q.native$) {
-    if (q.sort$) {
-      for (var sf in q.sort$) break
-      var sd = q.sort$[sf] < 0 ? 'descending' : 'ascending'
-      mq.sort = [[sf, sd]]
-    }
-
-    if (q.limit$) {
-      mq.limit = q.limit$ >= 0 ? q.limit$ : 0
-    }
-
-    if (q.skip$) {
-      mq.skip = q.skip$ >= 0 ? q.skip$ : 0
-    }
-
-    if (q.fields$) {
-      mq.fields = q.fields$
-    }
-  } else {
-    mq = Array.isArray(q.native$) ? q.native$[1] : mq
-  }
-
-  return mq
-}
 
 module.exports = function (opts) {
   var seneca = this

@@ -167,7 +167,7 @@ describe('mongo tests', function () {
               })
           })
 
-          it('passes the new entitity to the save$ callback', fin => {
+          it('passes the new entity to the save$ callback', fin => {
             si.test(fin)
 
             si.make('user')
@@ -243,7 +243,7 @@ describe('mongo tests', function () {
               })
           })
 
-          it('passes the new entitity to the save$ callback', fin => {
+          it('passes the new entity to the save$ callback', fin => {
             si.test(fin)
 
             si.make('user')
@@ -320,7 +320,7 @@ describe('mongo tests', function () {
               })
           })
 
-          it('passes the new entitity to the save$ callback', fin => {
+          it('passes the new entity to the save$ callback', fin => {
             si.test(fin)
 
             si.make('user')

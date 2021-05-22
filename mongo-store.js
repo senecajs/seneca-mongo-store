@@ -161,6 +161,8 @@ module.exports = function (opts) {
               const doc = update.value
               const fent = makeEntityOfDocument(doc, msg.ent)
 
+              seneca.log.debug('save/upsert', msg.ent, desc)
+
               return done(null, fent)
             }
           )

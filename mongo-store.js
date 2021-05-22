@@ -8,7 +8,14 @@ var MongoClient = Mongo.MongoClient
 
 var name = 'mongo-store'
 
-const { ensure_id, makeid, idstr, fixquery, metaquery } = require('./lib/common')
+const {
+  ensure_id,
+  makeid,
+  idstr,
+  fixquery,
+  metaquery,
+  clean_array
+} = require('./lib/common')
 
 /*
 native$ = object => use object as query, no meta settings
@@ -119,16 +126,19 @@ module.exports = function (opts) {
             return false
           }
 
-          const public_entdata = msg.ent.data$(false)
-          const upsert_on = msg.q.upsert$
+          if (!Array.isArray(msg.q.upsert$)) {
+            return false
+          }
 
-          return Array.isArray(upsert_on) &&
-            upsert_on.length > 0 &&
+          const upsert_on = clean_array(msg.q.upsert$)
+          const public_entdata = msg.ent.data$(false)
+
+          return upsert_on.length > 0 &&
             upsert_on.every(p => p in public_entdata)
         }
 
         function doUpsert(msg, coll, done) {
-          const upsert_on = msg.q.upsert$
+          const upsert_on = clean_array(msg.q.upsert$)
           const public_entdata = msg.ent.data$(false)
 
           const filter_by = upsert_on

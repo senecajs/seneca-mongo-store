@@ -153,12 +153,15 @@ module.exports = function (opts) {
             replacement,
             { upsert: true, returnNewDocument: true },
 
-            function (err, doc) {
+            function (err, update) {
               if (error(msg, err, done)) {
                 return
               }
 
-              return done(null, doc)
+              const doc = update.value
+              const fent = makeEntityOfDocument(doc, msg.ent)
+
+              return done(null, fent)
             }
           )
         }

@@ -130,18 +130,18 @@ module.exports = function (opts) {
             return false
           }
 
-          const upsert_on = clean_array(msg.q.upsert$)
+          const upsert_fields = clean_array(msg.q.upsert$)
           const public_entdata = msg.ent.data$(false)
 
-          return upsert_on.length > 0 &&
-            upsert_on.every(p => p in public_entdata)
+          return upsert_fields.length > 0 &&
+            upsert_fields.every(p => p in public_entdata)
         }
 
         function doUpsert(msg, coll, done) {
-          const upsert_on = clean_array(msg.q.upsert$)
+          const upsert_fields = clean_array(msg.q.upsert$)
           const public_entdata = msg.ent.data$(false)
 
-          const filter_by = upsert_on
+          const filter_by = upsert_fields
             .reduce((acc, field) => {
               acc[field] = msg.ent[field]
               return acc

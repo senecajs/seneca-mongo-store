@@ -161,7 +161,7 @@ module.exports = function (opts) {
           return coll.findOneAndUpdate(
             filter_by,
             replacement,
-            { upsert: true, returnNewDocument: true },
+            { upsert: true, returnOriginal: false },
 
             function (err, update) {
               if (error(msg, err, done)) {

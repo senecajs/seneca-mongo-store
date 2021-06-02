@@ -13,7 +13,8 @@ const {
   makeid,
   idstr,
   fixquery,
-  metaquery
+  metaquery,
+  makeent
 } = require('./lib/common')
 
 /*
@@ -171,7 +172,7 @@ module.exports = function (opts) {
               }
 
               const doc = update.value
-              const fent = makeEntityOfDocument(doc, msg.ent)
+              const fent = makeent(doc, msg.ent, seneca)
 
               seneca.log.debug('save/upsert', msg.ent, desc)
 
@@ -203,7 +204,7 @@ module.exports = function (opts) {
             }
 
             const doc = inserts.ops[0]
-            const fent = makeEntityOfDocument(doc, msg.ent)
+            const fent = makeent(doc, msg.ent, seneca)
 
             seneca.log.debug('save/insert', msg.ent, desc)
 
@@ -242,22 +243,11 @@ module.exports = function (opts) {
 
             coll.findOne(q, {}, function (err, doc) {
               if (!error(msg, err, done)) {
-                return done(null, makeEntityOfDocument(doc, ent))
+                return done(null, makeent(doc, ent, seneca))
               }
             })
           }
         })
-      }
-
-      function makeEntityOfDocument(doc, ent) {
-        if (null == doc) {
-          return null
-        }
-
-        doc.id = idstr(doc._id)
-        delete doc._id
-
-        return ent.make$(seneca.util.deep(doc))
       }
     },
 

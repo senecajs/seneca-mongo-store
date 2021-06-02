@@ -14,7 +14,8 @@ const {
   idstr,
   fixquery,
   metaquery,
-  makeent
+  makeent,
+  should_merge
 } = require('./lib/common')
 
 /*
@@ -221,18 +222,10 @@ module.exports = function (opts) {
         var q = { _id: makeid(ent.id) }
         delete entp.id
 
-        var shouldMerge = true
-        if (opts.merge !== false && ent.merge$ === false) {
-          shouldMerge = false
-        }
-        if (opts.merge === false && ent.merge$ !== true) {
-          shouldMerge = false
-        }
-
         var set = entp
         var func = 'replaceOne'
 
-        if (shouldMerge) {
+        if (should_merge(ent, opts)) {
           set = Dot.flatten(entp)
           func = 'updateOne'
         }

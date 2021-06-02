@@ -43,26 +43,20 @@ describe('mongo tests', function () {
     si.ready(done)
   })
 
-  describe('basic tests', () => {
-    Shared.basictest({
-      seneca: si,
-      senecaMerge: senecaMerge,
-      script: lab
-    })
+  Shared.basictest({
+    seneca: si,
+    senecaMerge: senecaMerge,
+    script: lab
   })
 
-  describe('limit tests', () => {
-    Shared.limitstest({
-      seneca: si,
-      script: lab
-    })
+  Shared.limitstest({
+    seneca: si,
+    script: lab
   })
 
-  describe('sort tests', () => {
-    Shared.sorttest({
-      seneca: si,
-      script: lab
-    })
+  Shared.sorttest({
+    seneca: si,
+    script: lab
   })
 
   describe('upsert tests', () => {

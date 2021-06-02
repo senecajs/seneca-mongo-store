@@ -113,7 +113,7 @@ module.exports = function (opts) {
 
 
       function create(msg, coll, done) {
-        const upsert_fields = isUpsertRequested(msg)
+        const upsert_fields = isUpsert(msg)
 
         if (null == upsert_fields) {
           return createNew(msg, coll, done)
@@ -122,7 +122,7 @@ module.exports = function (opts) {
         return doUpsert(upsert_fields, msg, coll, done)
 
 
-        function isUpsertRequested(msg) {
+        function isUpsert(msg) {
           if (null == msg.q) {
             return null
           }

@@ -30,7 +30,7 @@ module.exports = function (opts) {
   var dbclient = null
   var collmap = {}
 
-  function error(args, err, cb) {
+  function error(_args, err, cb) {
     if (err) {
       seneca.log.error('entity', err, { store: name })
 
@@ -114,31 +114,34 @@ module.exports = function (opts) {
 
 
       function createAndSave(msg, coll, done) {
-        if (isUpsertRequested(msg)) {
-          return doUpsert(msg, coll, done)
+        const upsert_fields = isUpsertRequested(msg)
+
+        if (null == upsert_fields) {
+          return createNew(msg, coll, done)
         }
 
-        return createNew(msg, coll, done)
+        return doUpsert(upsert_fields, msg, coll, done)
 
 
         function isUpsertRequested(msg) {
           if (null == msg.q) {
-            return false
+            return null
           }
 
           if (!Array.isArray(msg.q.upsert$)) {
-            return false
+            return null
           }
 
           const upsert_fields = clean_array(msg.q.upsert$)
           const public_entdata = msg.ent.data$(false)
 
-          return upsert_fields.length > 0 &&
+          const is_upsert = upsert_fields.length > 0 &&
             upsert_fields.every(p => p in public_entdata)
+
+          return is_upsert ? upsert_fields : null
         }
 
-        function doUpsert(msg, coll, done) {
-          const upsert_fields = clean_array(msg.q.upsert$)
+        function doUpsert(upsert_fields, msg, coll, done) {
           const public_entdata = msg.ent.data$(false)
 
           const filter_by = upsert_fields

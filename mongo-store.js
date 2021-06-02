@@ -105,14 +105,14 @@ module.exports = function (opts) {
         const is_update = null != msg.ent.id
 
         if (is_update) {
-          return updateExisting(msg, coll, done)
+          return update(msg, coll, done)
         }
 
-        return createAndSave(msg, coll, done)
+        return create(msg, coll, done)
       })
 
 
-      function createAndSave(msg, coll, done) {
+      function create(msg, coll, done) {
         const upsert_fields = isUpsertRequested(msg)
 
         if (null == upsert_fields) {
@@ -213,7 +213,7 @@ module.exports = function (opts) {
       }
 
 
-      function updateExisting(msg, coll, done) {
+      function update(msg, coll, done) {
         var ent = msg.ent
         var entp = ent.data$(false)
 

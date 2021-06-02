@@ -13,8 +13,7 @@ const {
   makeid,
   idstr,
   fixquery,
-  metaquery,
-  clean_array
+  metaquery
 } = require('./lib/common')
 
 /*
@@ -132,7 +131,7 @@ module.exports = function (opts) {
             return null
           }
 
-          const upsert_fields = clean_array(msg.q.upsert$)
+          const upsert_fields = msg.q.upsert$.filter(p => !p.includes('$'))
           const public_entdata = msg.ent.data$(false)
 
           const is_upsert = upsert_fields.length > 0 &&

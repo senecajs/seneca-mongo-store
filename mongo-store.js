@@ -1,12 +1,11 @@
 /* Copyright (c) 2010-2020 Richard Rodger and other contributors, MIT License */
 'use strict'
 
-//var _ = require('lodash')
-var Mongo = require('mongodb')
-var Dot = require('mongo-dot-notation')
-var MongoClient = Mongo.MongoClient
+const Mongo = require('mongodb')
+const Dot = require('mongo-dot-notation')
+const MongoClient = Mongo.MongoClient
 
-var name = 'mongo-store'
+const name = 'mongo-store'
 
 const {
   ensure_id,
@@ -24,12 +23,12 @@ native$ = array => use first elem as query, second elem as meta settings
 */
 
 module.exports = function (opts) {
-  var seneca = this
-  var desc
+  const seneca = this
+  let desc
 
-  var dbinst = null
-  var dbclient = null
-  var collmap = {}
+  let dbinst = null
+  let dbclient = null
+  let collmap = {}
 
   function error(_args, err, cb) {
     if (err) {
@@ -73,9 +72,8 @@ module.exports = function (opts) {
   }
 
   function getcoll(args, ent, cb) {
-    var canon = ent.canon$({ object: true })
-
-    var collname = (canon.base ? canon.base + '_' : '') + canon.name
+    const canon = ent.canon$({ object: true })
+    const collname = (canon.base ? canon.base + '_' : '') + canon.name
 
     if (!collmap[collname]) {
       dbinst.collection(collname, function (err, coll) {
@@ -89,7 +87,7 @@ module.exports = function (opts) {
     }
   }
 
-  var store = {
+  const store = {
     name: name,
 
     close: function (args, cb) {
@@ -216,14 +214,14 @@ module.exports = function (opts) {
 
 
       function update(msg, coll, done) {
-        var ent = msg.ent
-        var entp = ent.data$(false)
+        const ent = msg.ent
+        const entp = ent.data$(false)
 
-        var q = { _id: makeid(ent.id) }
+        const q = { _id: makeid(ent.id) }
         delete entp.id
 
-        var set = entp
-        var func = 'replaceOne'
+        let set = entp
+        let func = 'replaceOne'
 
         if (should_merge(ent, opts)) {
           set = Dot.flatten(entp)
@@ -245,17 +243,17 @@ module.exports = function (opts) {
     },
 
     load: function (args, cb) {
-      var qent = args.qent
-      var q = args.q
+      const qent = args.qent
+      const q = args.q
 
-      getcoll(args, qent, function (err, coll) {
+      return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          var mq = metaquery(qent, q)
-          var qq = fixquery(qent, q)
+          const mq = metaquery(qent, q)
+          const qq = fixquery(qent, q)
 
-          coll.findOne(qq, mq, function (err, entp) {
+          return coll.findOne(qq, mq, function (err, entp) {
             if (!error(args, err, cb)) {
-              var fent = null
+              let fent = null
               if (entp) {
                 entp.id = idstr(entp._id)
                 delete entp._id
@@ -270,22 +268,22 @@ module.exports = function (opts) {
     },
 
     list: function (args, cb) {
-      var qent = args.qent
-      var q = args.q
+      const qent = args.qent
+      const q = args.q
 
-      getcoll(args, qent, function (err, coll) {
+      return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          var mq = metaquery(qent, q)
-          var qq = fixquery(qent, q)
+          const mq = metaquery(qent, q)
+          const qq = fixquery(qent, q)
 
-          coll.find(qq, mq, function (err, cur) {
+          return coll.find(qq, mq, function (err, cur) {
             if (!error(args, err, cb)) {
-              var list = []
+              const list = []
 
               cur.each(function (err, entp) {
                 if (!error(args, err, cb)) {
                   if (entp) {
-                    var fent = null
+                    let fent = null
                     entp.id = idstr(entp._id)
                     delete entp._id
                     fent = qent.make$(entp)
@@ -303,27 +301,27 @@ module.exports = function (opts) {
     },
 
     remove: function (args, cb) {
-      var qent = args.qent
-      var q = args.q
+      const qent = args.qent
+      const q = args.q
 
-      var all = q.all$ // default false
-      var load = null == q.load$ ? false : q.load$ // default false
+      const all = q.all$ // default false
+      const load = null == q.load$ ? false : q.load$ // default false
 
       getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          var qq = fixquery(qent, q)
-          var mq = metaquery(qent, q)
+          const qq = fixquery(qent, q)
+          const mq = metaquery(qent, q)
 
           if (all) {
-            coll.find(qq, mq, function (err, cur) {
+            return coll.find(qq, mq, function (err, cur) {
               if (!error(args, err, cb)) {
-                var list = []
-                var toDelete = []
+                const list = []
+                const toDelete = []
 
                 cur.each(function (err, entp) {
                   if (!error(args, err, cb)) {
                     if (entp) {
-                      var fent = null
+                      let fent = null
                       if (entp) {
                         toDelete.push(entp._id)
                         entp.id = idstr(entp._id)
@@ -342,12 +340,12 @@ module.exports = function (opts) {
               }
             })
           } else {
-            coll.findOne(qq, mq, function (err, entp) {
+            return coll.findOne(qq, mq, function (err, entp) {
               if (!error(args, err, cb)) {
                 if (entp) {
-                  coll.deleteOne({ _id: entp._id }, {}, function (err) {
+                  return coll.deleteOne({ _id: entp._id }, {}, function (err) {
                     seneca.log.debug('remove/one', q, entp, desc)
-                    var ent = load ? entp : null
+                    const ent = load ? entp : null
                     cb(err, ent)
                   })
                 } else cb(null)
@@ -375,13 +373,15 @@ module.exports = function (opts) {
     },
   }
 
-  var meta = seneca.store.init(seneca, opts, store)
+  const meta = seneca.store.init(seneca, opts, store)
   desc = meta.desc
 
   seneca.add({ init: store.name, tag: meta.tag }, function (args, done) {
     configure(opts, function (err) {
-      if (err)
+      if (err) {
         return seneca.die('store', err, { store: store.name, desc: desc })
+      }
+
       return done()
     })
   })
@@ -391,6 +391,6 @@ module.exports = function (opts) {
     tag: meta.tag,
     export: {
       mongo: () => dbinst,
-    },
+    }
   }
 }

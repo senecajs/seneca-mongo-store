@@ -5,11 +5,11 @@
 
 'use strict'
 
-var Util = require('util')
+const Util = require('util')
 const Assert = require('assert')
 
-var Seneca = require('seneca')
-var Async = require('async')
+const Seneca = require('seneca')
+const Async = require('async')
 
 const Lab = require('@hapi/lab')
 const Code = require('@hapi/code')
@@ -19,33 +19,27 @@ const lab = (exports.lab = Lab.script())
 const { describe, before, beforeEach, after, afterEach } = lab
 const it = make_it(lab)
 
-var Shared = require('seneca-store-test')
+const Shared = require('seneca-store-test')
 
-var si = Seneca().test()
+const si = makeSenecaForTest()
 
-var senecaMerge = Seneca().test()
+const si_no_merge = makeSenecaForTest({
+  mongo_store_opts: {
+    merge: false
+  }
+})
 
 describe('mongo tests', function () {
-  before({}, function (done) {
-    if (si.version >= '2.0.0') {
-      si.use('entity')
-      senecaMerge.use('entity')
-    }
-    senecaMerge.use(require('..'), {
-      uri: 'mongodb://127.0.0.1:27017',
-      db: 'senecatest',
-      merge: false,
-    })
-    si.use(require('..'), {
-      uri: 'mongodb://127.0.0.1:27017',
-      db: 'senecatest',
-    })
-    si.ready(done)
+  before({}, () => {
+    return Promise.all([
+      waitOnSeneca(si),
+      waitOnSeneca(si_no_merge)
+    ])
   })
 
   Shared.basictest({
     seneca: si,
-    senecaMerge: senecaMerge,
+    senecaMerge: si_no_merge,
     script: lab
   })
 
@@ -850,14 +844,15 @@ describe('mongo tests', function () {
         })
       })
     })
-
-    function waitOnSeneca(seneca) {
-      return new Promise(fin => {
-        return si.ready(fin)
-      })
-    }
   })
 })
+
+
+function waitOnSeneca(seneca) {
+  return new Promise(fin => {
+    return si.ready(fin)
+  })
+}
 
 // describe('mongo tests', function () {
 

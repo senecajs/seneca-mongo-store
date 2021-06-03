@@ -741,40 +741,38 @@ describe('mongo tests', function () {
             it('updates a single matching entity', fin => {
               si.test(fin)
 
-              si.ready(() => {
-                si.make('products')
-                  .data$({ label: 'a toothbrush', price: '4.95' })
-                  .save$({ upsert$: ['label'] }, err => {
+              si.make('products')
+                .data$({ label: 'a toothbrush', price: '4.95' })
+                .save$({ upsert$: ['label'] }, err => {
+                  if (err) {
+                    return fin(err)
+                  }
+
+                  si.make('products').list$({}, (err, products) => {
                     if (err) {
                       return fin(err)
                     }
 
-                    si.make('products').list$({}, (err, products) => {
-                      if (err) {
-                        return fin(err)
-                      }
+                    expect(products.length).to.equal(3)
 
-                      expect(products.length).to.equal(3)
-
-                      expect(products[0]).to.contain({
-                        label: 'a toothbrush',
-                        price: '4.95'
-                      })
-
-                      expect(products[1]).to.contain({
-                        label: 'a toothbrush',
-                        price: '3.70'
-                      })
-
-                      expect(products[2]).to.contain({
-                        label: 'bbs tires',
-                        price: '4.10'
-                      })
-
-                      return fin()
+                    expect(products[0]).to.contain({
+                      label: 'a toothbrush',
+                      price: '4.95'
                     })
+
+                    expect(products[1]).to.contain({
+                      label: 'a toothbrush',
+                      price: '3.70'
+                    })
+
+                    expect(products[2]).to.contain({
+                      label: 'bbs tires',
+                      price: '4.10'
+                    })
+
+                    return fin()
                   })
-              })
+                })
             })
           })
 
@@ -800,43 +798,41 @@ describe('mongo tests', function () {
             it('updates a single matching entity', fin => {
               si.test(fin)
 
-              si.ready(() => {
-                si.make('products')
-                  .data$({ label: 'a toothbrush', price: '3.95', coolness_factor: 4 })
-                  .save$({ upsert$: ['label', 'price'] }, err => {
+              si.make('products')
+                .data$({ label: 'a toothbrush', price: '3.95', coolness_factor: 4 })
+                .save$({ upsert$: ['label', 'price'] }, err => {
+                  if (err) {
+                    return fin(err)
+                  }
+
+                  si.make('products').list$({}, (err, products) => {
                     if (err) {
                       return fin(err)
                     }
 
-                    si.make('products').list$({}, (err, products) => {
-                      if (err) {
-                        return fin(err)
-                      }
+                    expect(products.length).to.equal(3)
 
-                      expect(products.length).to.equal(3)
-
-                      expect(products[0]).to.contain({
-                        label: 'a toothbrush',
-                        price: '3.95',
-                        coolness_factor: 4
-                      })
-
-                      expect(products[1]).to.contain({
-                        label: 'a toothbrush',
-                        price: '3.70',
-                        coolness_factor: 3
-                      })
-
-                      expect(products[2]).to.contain({
-                        label: 'bbs tires',
-                        price: '4.10',
-                        coolness_factor: 7
-                      })
-
-                      return fin()
+                    expect(products[0]).to.contain({
+                      label: 'a toothbrush',
+                      price: '3.95',
+                      coolness_factor: 4
                     })
+
+                    expect(products[1]).to.contain({
+                      label: 'a toothbrush',
+                      price: '3.70',
+                      coolness_factor: 3
+                    })
+
+                    expect(products[2]).to.contain({
+                      label: 'bbs tires',
+                      price: '4.10',
+                      coolness_factor: 7
+                    })
+
+                    return fin()
                   })
-              })
+                })
             })
           })
 

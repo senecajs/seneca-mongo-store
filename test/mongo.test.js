@@ -844,7 +844,7 @@ function extratest(si, done) {
   Async.series(
     {
       native: function (cb) {
-        var foo = si.make$('foo')
+        const foo = si.make$('foo')
         foo.native$(function (err, db) {
           if (err) return cb(err)
 
@@ -866,7 +866,7 @@ function extratest(si, done) {
       },
 
       native_query: function (cb) {
-        var nat = si.make$('nat')
+        const nat = si.make$('nat')
         nat.remove$({ all$: true }, function (err) {
           if (err) return cb(err)
 
@@ -902,7 +902,7 @@ function extratest(si, done) {
       },
 
       remove: function (cb) {
-        var cl = si.make$('lmt')
+        const cl = si.make$('lmt')
         cl.remove$({ all$: true }, function (err, foo) {
           if (err) return cb(err)
           cb()
@@ -910,7 +910,7 @@ function extratest(si, done) {
       },
 
       insert1st: function (cb) {
-        var cl = si.make$('lmt')
+        const cl = si.make$('lmt')
         cl.p1 = 'v1'
         cl.save$(function (err, foo) {
           if (err) return cb(err)
@@ -919,7 +919,7 @@ function extratest(si, done) {
       },
 
       insert2nd: function (cb) {
-        var cl = si.make$('lmt')
+        const cl = si.make$('lmt')
         cl.p1 = 'v2'
         cl.save$(function (err, foo) {
           if (err) return cb(err)
@@ -928,7 +928,7 @@ function extratest(si, done) {
       },
 
       insert3rd: function (cb) {
-        var cl = si.make$('lmt')
+        const cl = si.make$('lmt')
         cl.p1 = 'v3'
         cl.save$(function (err, foo) {
           if (err) return cb(err)
@@ -937,7 +937,7 @@ function extratest(si, done) {
       },
 
       listall: function (cb) {
-        var cl = si.make({ name$: 'lmt' })
+        const cl = si.make({ name$: 'lmt' })
         cl.list$({}, function (err, lst) {
           if (err) return cb(err)
           Assert.equal(3, lst.length)
@@ -946,7 +946,7 @@ function extratest(si, done) {
       },
 
       listlimit1skip1: function (cb) {
-        var cl = si.make({ name$: 'lmt' })
+        const cl = si.make({ name$: 'lmt' })
         cl.list$({ limit$: 1, skip$: 1 }, function (err, lst) {
           if (err) return cb(err)
           Assert.equal(1, lst.length)
@@ -955,7 +955,7 @@ function extratest(si, done) {
       },
 
       listlimit2skip3: function (cb) {
-        var cl = si.make({ name$: 'lmt' })
+        const cl = si.make({ name$: 'lmt' })
         cl.list$({ limit$: 2, skip$: 3 }, function (err, lst) {
           if (err) return cb(err)
           Assert.equal(0, lst.length)
@@ -964,7 +964,7 @@ function extratest(si, done) {
       },
 
       listlimit5skip2: function (cb) {
-        var cl = si.make({ name$: 'lmt' })
+        const cl = si.make({ name$: 'lmt' })
         cl.list$({ limit$: 5, skip$: 2 }, function (err, lst) {
           if (err) return cb(err)
           Assert.equal(1, lst.length)
@@ -973,7 +973,7 @@ function extratest(si, done) {
       },
 
       insertUpdate: function (cb) {
-        var cl = si.make$('lmt')
+        const cl = si.make$('lmt')
         cl.p1 = 'value1'
         cl.p2 = 2
         cl.save$(function (err, foo) {
@@ -1018,7 +1018,7 @@ function extratest(si, done) {
                 //console.log(list)
                 expect(list.length).equal(3)
 
-                var ids = list.map((ent) => ent.id)
+                const ids = list.map((ent) => ent.id)
                 si.make('zed').list$({ id: ids }, function (err, list) {
                   //console.log(list)
                   expect(list.length).equal(3)
@@ -1038,7 +1038,7 @@ function extratest(si, done) {
   )
 }
 
-var si2 = Seneca()
+const si2 = Seneca()
 
 describe('mongo regular connection test', function () {
   before({}, function (done) {
@@ -1055,7 +1055,7 @@ describe('mongo regular connection test', function () {
   })
 
   it('simple test', function (done) {
-    var foo = si2.make('foo')
+    const foo = si2.make('foo')
     foo.p1 = 'v1'
     foo.p2 = 'v2'
 

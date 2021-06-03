@@ -30,9 +30,9 @@ module.exports = function (opts) {
   let dbclient = null
   let collmap = {}
 
-  function error(_args, err, cb) {
+  function error(args, err, cb) {
     if (err) {
-      seneca.log.error('entity', err, { store: name })
+      seneca.log.error('entity', err, args, { store: name })
 
       cb(err)
       return true
@@ -248,8 +248,8 @@ module.exports = function (opts) {
 
       return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          const mq = metaquery(qent, q)
-          const qq = fixquery(qent, q)
+          const mq = metaquery(q)
+          const qq = fixquery(q)
 
           return coll.findOne(qq, mq, function (err, entp) {
             if (!error(args, err, cb)) {
@@ -273,8 +273,8 @@ module.exports = function (opts) {
 
       return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          const mq = metaquery(qent, q)
-          const qq = fixquery(qent, q)
+          const mq = metaquery(q)
+          const qq = fixquery(q)
 
           return coll.find(qq, mq, function (err, cur) {
             if (!error(args, err, cb)) {
@@ -309,8 +309,8 @@ module.exports = function (opts) {
 
       getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          const qq = fixquery(qent, q)
-          const mq = metaquery(qent, q)
+          const qq = fixquery(q)
+          const mq = metaquery(q)
 
           if (all) {
             return coll.find(qq, mq, function (err, cur) {

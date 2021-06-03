@@ -23,7 +23,7 @@ const Shared = require('seneca-store-test')
 
 const si = makeSenecaForTest()
 
-const si_no_merge = makeSenecaForTest({
+const si_merge = makeSenecaForTest({
   mongo_store_opts: {
     merge: false
   }
@@ -33,13 +33,13 @@ describe('mongo tests', function () {
   before({}, () => {
     return Promise.all([
       waitOnSeneca(si),
-      waitOnSeneca(si_no_merge)
+      waitOnSeneca(si_merge)
     ])
   })
 
   Shared.basictest({
     seneca: si,
-    senecaMerge: si_no_merge,
+    senecaMerge: si_merge,
     script: lab
   })
 
@@ -118,10 +118,6 @@ describe('mongo tests', function () {
     describe('#save$', () => {
       describe('creating a new entity', () => {
         describe('the save$ query includes the id$ field', () => {
-          const si = makeSenecaForTest()
-
-          beforeEach(() => waitOnSeneca(si))
-
           beforeEach(clearDb)
 
           afterEach(clearDb)
@@ -344,18 +340,10 @@ describe('mongo tests', function () {
 
       describe('updating an existing entity', () => {
         describe('the merge:false option is passed to the plugin', () => {
-          const si = makeSenecaForTest({
-            mongo_store_opts: {
-              merge: false
-            }
-          })
-
-          beforeEach(() => waitOnSeneca(si))
-
           beforeEach(clearDb)
 
           beforeEach(() => new Promise((resolve, reject) => {
-            si.make('user')
+            si_merge.make('user')
               .data$({ first_name: 'Frank', last_name: 'Sinatra' })
               .save$(err => {
                 if (err) {
@@ -370,7 +358,7 @@ describe('mongo tests', function () {
           let target_user_id
 
           beforeEach(() => new Promise((resolve, reject) => {
-            si.make('user')
+            si_merge.make('user')
               .data$({ first_name: 'Elvis', last_name: 'Presley' })
               .save$((err, user) => {
                 if (err) {
@@ -389,7 +377,7 @@ describe('mongo tests', function () {
           beforeEach(() => new Promise((resolve, reject) => {
             // Do a fresh fetch from the db.
             //
-            si.make('user')
+            si_merge.make('user')
               .load$(target_user_id, (err, user) => {
                 if (err) {
                   return reject(err)
@@ -406,7 +394,7 @@ describe('mongo tests', function () {
 
 
           it('replaces the existing entity', fin => {
-            si.test(fin)
+            si_merge.test(fin)
 
             target_user
               .data$({ first_name: 'ELVIS' })
@@ -415,7 +403,7 @@ describe('mongo tests', function () {
                   return fin(err)
                 }
 
-                si.make('user').list$({}, (err, users) => {
+                return si_merge.make('user').list$((err, users) => {
                   if (err) {
                     return fin(err)
                   }
@@ -452,10 +440,6 @@ describe('mongo tests', function () {
         })
 
         describe('without the merge option', () => {
-          const si = makeSenecaForTest()
-
-          beforeEach(() => waitOnSeneca(si))
-
           beforeEach(clearDb)
 
           beforeEach(() => new Promise((resolve, reject) => {
@@ -705,10 +689,6 @@ describe('mongo tests', function () {
         })
 
         describe('many matching entities exist', () => {
-          const si = makeSenecaForTest()
-
-          beforeEach(() => waitOnSeneca(si))
-
           beforeEach(clearDb)
 
           afterEach(clearDb)

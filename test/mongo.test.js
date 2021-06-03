@@ -195,8 +195,6 @@ describe('mongo tests', function () {
             }
           })
 
-          beforeEach(() => waitOnSeneca(si))
-
           beforeEach(clearDb)
 
           afterEach(clearDb)
@@ -272,7 +270,7 @@ describe('mongo tests', function () {
             }
           })
 
-          beforeEach(() => waitOnSeneca(si))
+          before(() => waitOnSeneca(si))
 
           beforeEach(clearDb)
 
@@ -557,7 +555,7 @@ describe('mongo tests', function () {
               }
             })
 
-            beforeEach(() => waitOnSeneca(si))
+            before(() => waitOnSeneca(si))
 
             beforeEach(clearDb)
 
@@ -642,7 +640,7 @@ describe('mongo tests', function () {
               }
             })
 
-            beforeEach(() => waitOnSeneca(si))
+            before(() => waitOnSeneca(si))
 
             beforeEach(clearDb)
 

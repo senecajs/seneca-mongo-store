@@ -828,7 +828,7 @@ describe('mongo tests', function () {
 
 function waitOnSeneca(seneca) {
   return new Promise(fin => {
-    return si.ready(fin)
+    return seneca.ready(fin)
   })
 }
 

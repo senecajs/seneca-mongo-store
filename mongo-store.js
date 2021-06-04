@@ -1,122 +1,39 @@
 /* Copyright (c) 2010-2020 Richard Rodger and other contributors, MIT License */
 'use strict'
 
-//var _ = require('lodash')
-var Mongo = require('mongodb')
-var Dot = require('mongo-dot-notation')
-var MongoClient = Mongo.MongoClient
-var ObjectID = Mongo.ObjectID
+const Mongo = require('mongodb')
+const Dot = require('mongo-dot-notation')
+const MongoClient = Mongo.MongoClient
 
-var name = 'mongo-store'
+const name = 'mongo-store'
+
+const {
+  ensure_id,
+  makeid,
+  idstr,
+  fixquery,
+  metaquery,
+  makeent,
+  should_merge
+} = require('./lib/common')
 
 /*
 native$ = object => use object as query, no meta settings
 native$ = array => use first elem as query, second elem as meta settings
 */
 
-function idstr(obj) {
-  return obj && obj.toHexString ? obj.toHexString() : '' + obj
-}
-
-function makeid(hexstr) {
-  if ('string' === typeof hexstr && 24 === hexstr.length) {
-    try {
-      return ObjectID.createFromHexString(hexstr)
-    } catch (e) {
-      return hexstr
-    }
-  }
-
-  return hexstr
-}
-
-function fixquery(qent, q) {
-  var qq = {}
-
-  if (!q.native$) {
-    if ('string' === typeof q) {
-      qq = {
-        _id: makeid(q),
-      }
-    } else if (Array.isArray(q)) {
-      qq = {
-        _id: {
-          $in: q.map((id) => {
-            return makeid(id)
-          }),
-        },
-      }
-    } else {
-      if (q.id) {
-        if (Array.isArray(q.id)) {
-          qq._id = {
-            $in: q.id.map((id) => {
-              return makeid(id)
-            }),
-          }
-        } else {
-          qq._id = makeid(q.id)
-        }
-
-        //delete q.id
-      } else {
-        for (var qp in q) {
-          if ('id' !== qp && !qp.match(/\$$/)) {
-            if (Array.isArray(q[qp])) {
-              qq[qp] = { $in: q[qp] }
-            } else {
-              qq[qp] = q[qp]
-            }
-          }
-        }
-      }
-    }
-  } else {
-    qq = Array.isArray(q.native$) ? q.native$[0] : q.native$
-  }
-
-  return qq
-}
-
-function metaquery(qent, q) {
-  var mq = {}
-
-  if (!q.native$) {
-    if (q.sort$) {
-      for (var sf in q.sort$) break
-      var sd = q.sort$[sf] < 0 ? 'descending' : 'ascending'
-      mq.sort = [[sf, sd]]
-    }
-
-    if (q.limit$) {
-      mq.limit = q.limit$ >= 0 ? q.limit$ : 0
-    }
-
-    if (q.skip$) {
-      mq.skip = q.skip$ >= 0 ? q.skip$ : 0
-    }
-
-    if (q.fields$) {
-      mq.fields = q.fields$
-    }
-  } else {
-    mq = Array.isArray(q.native$) ? q.native$[1] : mq
-  }
-
-  return mq
-}
-
 module.exports = function (opts) {
-  var seneca = this
-  var desc
+  const seneca = this
+  let desc
 
-  var dbinst = null
-  var dbclient = null
-  var collmap = {}
+  let dbinst = null
+  let dbclient = null
+  let collmap = {}
 
   function error(args, err, cb) {
     if (err) {
-      seneca.log.error('entity', err, { store: name })
+      seneca.log.error('entity', err, args, { store: name })
+
       cb(err)
       return true
     } else return false
@@ -155,9 +72,8 @@ module.exports = function (opts) {
   }
 
   function getcoll(args, ent, cb) {
-    var canon = ent.canon$({ object: true })
-
-    var collname = (canon.base ? canon.base + '_' : '') + canon.name
+    const canon = ent.canon$({ object: true })
+    const collname = (canon.base ? canon.base + '_' : '') + canon.name
 
     if (!collmap[collname]) {
       dbinst.collection(collname, function (err, coll) {
@@ -171,7 +87,7 @@ module.exports = function (opts) {
     }
   }
 
-  var store = {
+  const store = {
     name: name,
 
     close: function (args, cb) {
@@ -180,93 +96,164 @@ module.exports = function (opts) {
       } else return cb()
     },
 
-    save: function (args, cb) {
-      var ent = args.ent
+    save: function (msg, done) {
+      return getcoll(msg, msg.ent, function (err, coll) {
+        if (error(msg, err, done)) {
+          return
+        }
 
-      var update = !!ent.id
+        const is_update = null != msg.ent.id
 
-      getcoll(args, ent, function (err, coll) {
-        if (error(args, err, cb)) return
+        if (is_update) {
+          return update(msg, coll, done)
+        }
 
-        var entp = ent.data$(false)
+        return create(msg, coll, done)
+      })
 
-        if (!update) {
-          var id
-          if (undefined !== ent.id$) {
-            id = ent.id$
-          } else if (opts.generate_id) {
-            id = opts.generate_id(ent)
+
+      function create(msg, coll, done) {
+        const upsert_fields = isUpsert(msg)
+
+        if (null == upsert_fields) {
+          return createNew(msg, coll, done)
+        }
+
+        return doUpsert(upsert_fields, msg, coll, done)
+
+
+        function isUpsert(msg) {
+          if (null == msg.q) {
+            return null
           }
 
-          entp._id = makeid(id)
+          if (!Array.isArray(msg.q.upsert$)) {
+            return null
+          }
 
-          coll.insertOne(entp, function (err, inserts) {
-            if (!error(args, err, cb)) {
-              var entu = inserts.ops[0]
-              var fent = null
-              if (entu) {
-                entu.id = idstr(entu._id)
-                delete entu._id
-                //fent = ent.make$(_.cloneDeep(entu))
-                fent = ent.make$(seneca.util.deep(entu))
+          const upsert_fields = msg.q.upsert$.filter(p => !p.includes('$'))
+          const public_entdata = msg.ent.data$(false)
+
+          const is_upsert = upsert_fields.length > 0 &&
+            upsert_fields.every(p => p in public_entdata)
+
+          return is_upsert ? upsert_fields : null
+        }
+
+        function doUpsert(upsert_fields, msg, coll, done) {
+          const public_entdata = msg.ent.data$(false)
+
+          const filter_by = upsert_fields
+            .reduce((acc, field) => {
+              acc[field] = msg.ent[field]
+              return acc
+            }, {})
+
+          const replacement = (() => {
+            const o = Dot.flatten(Object.assign({}, public_entdata))
+            const id = ensure_id(msg.ent, opts)
+
+            if (null != id) {
+              o.$setOnInsert = { _id: id }
+            }
+
+            return o
+          })()
+
+          return coll.findOneAndUpdate(
+            filter_by,
+            replacement,
+            { upsert: true, returnOriginal: false },
+
+            function (err, update) {
+              if (error(msg, err, done)) {
+                return
               }
-              seneca.log.debug('save/insert', ent, desc)
-              cb(null, fent)
+
+              const doc = update.value
+              const fent = makeent(doc, msg.ent, seneca)
+
+              seneca.log.debug('save/upsert', msg.ent, desc)
+
+              return done(null, fent)
             }
-          })
-        } else {
-          var q = { _id: makeid(ent.id) }
-          delete entp.id
+          )
+        }
 
-          var shouldMerge = true
-          if (opts.merge !== false && ent.merge$ === false) {
-            shouldMerge = false
-          }
-          if (opts.merge === false && ent.merge$ !== true) {
-            shouldMerge = false
-          }
 
-          var set = entp
-          var func = 'replaceOne'
+        function createNew(msg, coll, done) {
+          const new_doc = (function () {
+            const public_entdata = msg.ent.data$(false)
+            const id = ensure_id(msg.ent, opts)
 
-          if (shouldMerge) {
-            set = Dot.flatten(entp)
-            func = 'updateOne'
-          }
 
-          coll[func](q, set, { upsert: true }, function (err) {
-            if (!error(args, err, cb)) {
-              seneca.log.debug('save/update', ent, desc)
-              coll.findOne(q, {}, function (err, entu) {
-                if (!error(args, err, cb)) {
-                  var fent = null
-                  if (entu) {
-                    entu.id = idstr(entu._id)
-                    delete entu._id
-                    //fent = ent.make$(_.cloneDeep(entu))
-                    fent = ent.make$(seneca.util.deep(entu))
-                  }
-                  cb(null, fent)
-                }
-              })
+            const new_doc = Object.assign({}, public_entdata)
+
+            if (null != id) {
+              new_doc._id = id
             }
+
+            return new_doc
+          })()
+
+
+          return coll.insertOne(new_doc, function (err, inserts) {
+            if (error(msg, err, done)) {
+              return
+            }
+
+            const doc = inserts.ops[0]
+            const fent = makeent(doc, msg.ent, seneca)
+
+            seneca.log.debug('save/insert', msg.ent, desc)
+
+            return done(null, fent)
           })
         }
-      })
+      }
+
+
+      function update(msg, coll, done) {
+        const ent = msg.ent
+        const entp = ent.data$(false)
+
+        const q = { _id: makeid(ent.id) }
+        delete entp.id
+
+        let set = entp
+        let func = 'replaceOne'
+
+        if (should_merge(ent, opts)) {
+          set = Dot.flatten(entp)
+          func = 'updateOne'
+        }
+
+        coll[func](q, set, { upsert: true }, function (err) {
+          if (!error(msg, err, done)) {
+            seneca.log.debug('save/update', ent, desc)
+
+            coll.findOne(q, {}, function (err, doc) {
+              if (!error(msg, err, done)) {
+                return done(null, makeent(doc, ent, seneca))
+              }
+            })
+          }
+        })
+      }
     },
 
     load: function (args, cb) {
-      var qent = args.qent
-      var q = args.q
+      const qent = args.qent
+      const q = args.q
 
-      getcoll(args, qent, function (err, coll) {
+      return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          var mq = metaquery(qent, q)
-          var qq = fixquery(qent, q)
+          const mq = metaquery(q)
+          const qq = fixquery(q)
 
-          coll.findOne(qq, mq, function (err, entp) {
+          return coll.findOne(qq, mq, function (err, entp) {
             if (!error(args, err, cb)) {
-              var fent = null
+              let fent = null
               if (entp) {
                 entp.id = idstr(entp._id)
                 delete entp._id
@@ -281,22 +268,22 @@ module.exports = function (opts) {
     },
 
     list: function (args, cb) {
-      var qent = args.qent
-      var q = args.q
+      const qent = args.qent
+      const q = args.q
 
-      getcoll(args, qent, function (err, coll) {
+      return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          var mq = metaquery(qent, q)
-          var qq = fixquery(qent, q)
+          const mq = metaquery(q)
+          const qq = fixquery(q)
 
-          coll.find(qq, mq, function (err, cur) {
+          return coll.find(qq, mq, function (err, cur) {
             if (!error(args, err, cb)) {
-              var list = []
+              const list = []
 
               cur.each(function (err, entp) {
                 if (!error(args, err, cb)) {
                   if (entp) {
-                    var fent = null
+                    let fent = null
                     entp.id = idstr(entp._id)
                     delete entp._id
                     fent = qent.make$(entp)
@@ -314,27 +301,27 @@ module.exports = function (opts) {
     },
 
     remove: function (args, cb) {
-      var qent = args.qent
-      var q = args.q
+      const qent = args.qent
+      const q = args.q
 
-      var all = q.all$ // default false
-      var load = null == q.load$ ? false : q.load$ // default false
+      const all = q.all$ // default false
+      const load = null == q.load$ ? false : q.load$ // default false
 
       getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          var qq = fixquery(qent, q)
-          var mq = metaquery(qent, q)
+          const qq = fixquery(q)
+          const mq = metaquery(q)
 
           if (all) {
-            coll.find(qq, mq, function (err, cur) {
+            return coll.find(qq, mq, function (err, cur) {
               if (!error(args, err, cb)) {
-                var list = []
-                var toDelete = []
+                const list = []
+                const toDelete = []
 
                 cur.each(function (err, entp) {
                   if (!error(args, err, cb)) {
                     if (entp) {
-                      var fent = null
+                      let fent = null
                       if (entp) {
                         toDelete.push(entp._id)
                         entp.id = idstr(entp._id)
@@ -353,12 +340,12 @@ module.exports = function (opts) {
               }
             })
           } else {
-            coll.findOne(qq, mq, function (err, entp) {
+            return coll.findOne(qq, mq, function (err, entp) {
               if (!error(args, err, cb)) {
                 if (entp) {
-                  coll.deleteOne({ _id: entp._id }, {}, function (err) {
+                  return coll.deleteOne({ _id: entp._id }, {}, function (err) {
                     seneca.log.debug('remove/one', q, entp, desc)
-                    var ent = load ? entp : null
+                    const ent = load ? entp : null
                     cb(err, ent)
                   })
                 } else cb(null)
@@ -386,13 +373,15 @@ module.exports = function (opts) {
     },
   }
 
-  var meta = seneca.store.init(seneca, opts, store)
+  const meta = seneca.store.init(seneca, opts, store)
   desc = meta.desc
 
   seneca.add({ init: store.name, tag: meta.tag }, function (args, done) {
     configure(opts, function (err) {
-      if (err)
+      if (err) {
         return seneca.die('store', err, { store: store.name, desc: desc })
+      }
+
       return done()
     })
   })
@@ -402,6 +391,6 @@ module.exports = function (opts) {
     tag: meta.tag,
     export: {
       mongo: () => dbinst,
-    },
+    }
   }
 }

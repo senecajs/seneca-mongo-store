@@ -44,10 +44,11 @@ npm install seneca-mongo-store
 
 ```js
 var seneca = require('seneca')()
-seneca.use("entity")
-.use('mongo-store', {
-  uri: 'mongodb://120.0.0.1:27017/dbname'
-})
+seneca
+  .use("entity")
+  .use('mongo-store', {
+    uri: 'mongodb://120.0.0.1:27017/dbname'
+  })
 
 seneca.ready(function () {
   var apple = seneca.make$('fruit')

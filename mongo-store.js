@@ -146,24 +146,21 @@ module.exports = function (opts) {
         }
 
         function doUpsert(upsert_fields, msg, coll, done) {
-          const public_entdata = msg.ent.data$(false)
-
           const filter_by = upsert_fields
             .reduce((acc, field) => {
               acc[field] = msg.ent[field]
               return acc
             }, {})
 
-          const replacement = (() => {
-            const o = Dot.flatten(Object.assign({}, public_entdata))
-            const id = ensure_id(msg.ent, opts)
 
-            if (null != id) {
-              o.$setOnInsert = { _id: id }
-            }
+          const public_entdata = msg.ent.data$(false)
+          const replacement = Dot.flatten(public_entdata)
+          const new_id = ensure_id(msg.ent, opts)
 
-            return o
-          })()
+          if (null != new_id) {
+            replacement.$setOnInsert = { _id: new_id }
+          }
+
 
           return coll.findOneAndUpdate(
             filter_by,

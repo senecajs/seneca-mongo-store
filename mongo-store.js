@@ -59,16 +59,21 @@ module.exports = function (opts) {
     conf.db = conf.db || conf.name
 
     // Connect using the URI
-    MongoClient.connect(conf.uri, function (err, client) {
-      if (err) {
-        return seneca.die('connect', err, conf)
-      }
-      dbclient = client
-      // Set the instance to use throughout the plugin
-      dbinst = client.db(conf.db)
-      seneca.log.debug('init', 'db open', conf.db)
-      cb(null)
-    })
+    return MongoClient.connect(
+      conf.uri,
+
+      { useUnifiedTopology: true },
+
+      function (err, client) {
+        if (err) {
+          return seneca.die('connect', err, conf)
+        }
+        dbclient = client
+        // Set the instance to use throughout the plugin
+        dbinst = client.db(conf.db)
+        seneca.log.debug('init', 'db open', conf.db)
+        cb(null)
+      })
   }
 
   function getcoll(args, ent, cb) {

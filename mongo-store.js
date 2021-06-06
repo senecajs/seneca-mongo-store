@@ -335,7 +335,7 @@ module.exports = function (opts) {
                       }
                       list.push(fent)
                     } else {
-                      coll.remove({ _id: { $in: toDelete } }, function (err) {
+                      coll.deleteMany({ _id: { $in: toDelete } }, function (err) {
                         seneca.log.debug('remove/all', q, desc)
                         cb(err, null)
                       })

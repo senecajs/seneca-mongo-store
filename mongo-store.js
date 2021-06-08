@@ -14,7 +14,7 @@ const {
   fixquery,
   metaquery,
   makeent,
-  should_merge
+  should_merge,
 } = require('./lib/common')
 
 /*
@@ -73,7 +73,8 @@ module.exports = function (opts) {
         dbinst = client.db(conf.db)
         seneca.log.debug('init', 'db open', conf.db)
         cb(null)
-      })
+      }
+    )
   }
 
   function getcoll(args, ent, cb) {
@@ -116,7 +117,6 @@ module.exports = function (opts) {
         return create(msg, coll, done)
       })
 
-
       function create(msg, coll, done) {
         const upsert_fields = isUpsert(msg)
 
@@ -125,7 +125,6 @@ module.exports = function (opts) {
         }
 
         return doUpsert(upsert_fields, msg, coll, done)
-
 
         function isUpsert(msg) {
           if (null == msg.q) {
@@ -136,22 +135,21 @@ module.exports = function (opts) {
             return null
           }
 
-          const upsert_fields = msg.q.upsert$.filter(p => !p.includes('$'))
+          const upsert_fields = msg.q.upsert$.filter((p) => !p.includes('$'))
           const public_entdata = msg.ent.data$(false)
 
-          const is_upsert = upsert_fields.length > 0 &&
-            upsert_fields.every(p => p in public_entdata)
+          const is_upsert =
+            upsert_fields.length > 0 &&
+            upsert_fields.every((p) => p in public_entdata)
 
           return is_upsert ? upsert_fields : null
         }
 
         function doUpsert(upsert_fields, msg, coll, done) {
-          const filter_by = upsert_fields
-            .reduce((acc, field) => {
-              acc[field] = msg.ent[field]
-              return acc
-            }, {})
-
+          const filter_by = upsert_fields.reduce((acc, field) => {
+            acc[field] = msg.ent[field]
+            return acc
+          }, {})
 
           const public_entdata = msg.ent.data$(false)
           const replacement = Dot.flatten(public_entdata)
@@ -160,7 +158,6 @@ module.exports = function (opts) {
           if (null != new_id) {
             replacement.$setOnInsert = { _id: new_id }
           }
-
 
           return coll.findOneAndUpdate(
             filter_by,
@@ -182,12 +179,10 @@ module.exports = function (opts) {
           )
         }
 
-
         function createNew(msg, coll, done) {
           const new_doc = (function () {
             const public_entdata = msg.ent.data$(false)
             const id = ensure_id(msg.ent, opts)
-
 
             const new_doc = Object.assign({}, public_entdata)
 
@@ -197,7 +192,6 @@ module.exports = function (opts) {
 
             return new_doc
           })()
-
 
           return coll.insertOne(new_doc, function (err, inserts) {
             if (error(msg, err, done)) {
@@ -213,7 +207,6 @@ module.exports = function (opts) {
           })
         }
       }
-
 
       function update(msg, coll, done) {
         const ent = msg.ent
@@ -332,7 +325,9 @@ module.exports = function (opts) {
                       }
                       list.push(fent)
                     } else {
-                      coll.deleteMany({ _id: { $in: toDelete } }, function (err) {
+                      coll.deleteMany({ _id: { $in: toDelete } }, function (
+                        err
+                      ) {
                         seneca.log.debug('remove/all', q, desc)
                         cb(err, null)
                       })
@@ -393,6 +388,6 @@ module.exports = function (opts) {
     tag: meta.tag,
     export: {
       mongo: () => dbinst,
-    }
+    },
   }
 }

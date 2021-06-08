@@ -59,16 +59,21 @@ module.exports = function (opts) {
     conf.db = conf.db || conf.name
 
     // Connect using the URI
-    MongoClient.connect(conf.uri, function (err, client) {
-      if (err) {
-        return seneca.die('connect', err, conf)
-      }
-      dbclient = client
-      // Set the instance to use throughout the plugin
-      dbinst = client.db(conf.db)
-      seneca.log.debug('init', 'db open', conf.db)
-      cb(null)
-    })
+    return MongoClient.connect(
+      conf.uri,
+
+      { useUnifiedTopology: true },
+
+      function (err, client) {
+        if (err) {
+          return seneca.die('connect', err, conf)
+        }
+        dbclient = client
+        // Set the instance to use throughout the plugin
+        dbinst = client.db(conf.db)
+        seneca.log.debug('init', 'db open', conf.db)
+        cb(null)
+      })
   }
 
   function getcoll(args, ent, cb) {
@@ -141,24 +146,21 @@ module.exports = function (opts) {
         }
 
         function doUpsert(upsert_fields, msg, coll, done) {
-          const public_entdata = msg.ent.data$(false)
-
           const filter_by = upsert_fields
             .reduce((acc, field) => {
               acc[field] = msg.ent[field]
               return acc
             }, {})
 
-          const replacement = (() => {
-            const o = Dot.flatten(Object.assign({}, public_entdata))
-            const id = ensure_id(msg.ent, opts)
 
-            if (null != id) {
-              o.$setOnInsert = { _id: id }
-            }
+          const public_entdata = msg.ent.data$(false)
+          const replacement = Dot.flatten(public_entdata)
+          const new_id = ensure_id(msg.ent, opts)
 
-            return o
-          })()
+          if (null != new_id) {
+            replacement.$setOnInsert = { _id: new_id }
+          }
+
 
           return coll.findOneAndUpdate(
             filter_by,
@@ -330,7 +332,7 @@ module.exports = function (opts) {
                       }
                       list.push(fent)
                     } else {
-                      coll.remove({ _id: { $in: toDelete } }, function (err) {
+                      coll.deleteMany({ _id: { $in: toDelete } }, function (err) {
                         seneca.log.debug('remove/all', q, desc)
                         cb(err, null)
                       })

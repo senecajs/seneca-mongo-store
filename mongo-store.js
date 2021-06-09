@@ -108,6 +108,7 @@ module.exports = function (opts) {
         return create(msg, coll, done)
       })
 
+
       function create(msg, coll, done) {
         const upsert_fields = isUpsert(msg)
 
@@ -116,6 +117,7 @@ module.exports = function (opts) {
         }
 
         return doUpsert(upsert_fields, msg, coll, done)
+
 
         function isUpsert(msg) {
           if (!Array.isArray(msg.q.upsert$)) {
@@ -157,11 +159,9 @@ module.exports = function (opts) {
               }
 
               const doc = update.value
-              const fent = intern.makeent(doc, msg.ent, seneca)
+              const { ent } = msg
 
-              seneca.log.debug('save/upsert', msg.ent, desc)
-
-              return done(null, fent)
+              return finalizeSave('save/upsert', doc, ent, seneca, done)
             }
           )
         }
@@ -186,11 +186,9 @@ module.exports = function (opts) {
             }
 
             const doc = inserts.ops[0]
-            const fent = intern.makeent(doc, msg.ent, seneca)
+            const { ent } = msg
 
-            seneca.log.debug('save/insert', msg.ent, desc)
-
-            return done(null, fent)
+            return finalizeSave('save/insert', doc, ent, seneca, done)
           })
         }
       }
@@ -216,12 +214,18 @@ module.exports = function (opts) {
           }
 
           const doc = update.value
-          const fent = intern.makeent(doc, msg.ent, seneca)
+          const { ent } = msg
 
-          seneca.log.debug('save/update', ent, desc)
-
-          return done(null, fent)
+          return finalizeSave('save/update', doc, ent, seneca, done)
         })
+      }
+
+      function finalizeSave(operation_name, doc, ent, seneca, done) {
+        const fent = intern.makeent(doc, ent, seneca)
+
+        seneca.log.debug(operation_name, ent, desc)
+
+        return done(null, fent)
       }
     },
 

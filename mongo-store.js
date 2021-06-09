@@ -4,7 +4,6 @@
 const Mongo = require('mongodb')
 const MongoClient = Mongo.MongoClient
 
-const Dot = require('mongo-dot-notation')
 const { intern } = require('./lib/intern')
 
 const name = 'mongo-store'
@@ -140,7 +139,7 @@ module.exports = function (opts) {
           }, {})
 
           const public_entdata = msg.ent.data$(false)
-          const replacement = Dot.flatten(public_entdata)
+          const replacement = { $set: public_entdata }
           const new_id = intern.ensure_id(msg.ent, opts)
 
           if (null != new_id) {
@@ -207,7 +206,7 @@ module.exports = function (opts) {
         let func = 'findOneAndReplace'
 
         if (intern.should_merge(ent, opts)) {
-          set = Dot.flatten(entp)
+          set = { $set: entp }
           func = 'findOneAndUpdate'
         }
 

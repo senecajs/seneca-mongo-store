@@ -52,7 +52,7 @@ describe('shared tests', function () {
 
   Shared.upserttest({
     seneca: si,
-    script: lab,
+    script: lab
   })
 
   // NOTE: WARNING: The reason we need a unique index on the users.email

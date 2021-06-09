@@ -12,7 +12,7 @@ const it = make_it(lab)
 const Util = require('util')
 
 const { intern } = require('../../lib/intern')
-const { fixquery, metaquery, makeid, makeent } = intern
+const { fixquery, metaquery, makeid, makeent, idstr } = intern
 
 
 describe('fixquery', () => {
@@ -289,10 +289,44 @@ describe('makeent', () => {
     return done()
   })
 
+  it('constructs a new entity', (done) => {
+    const ent = si.make('products')
+    const result = makeent({ _id: 'myPreciousId' }, ent, si)
+
+    const expected_result = ent.make$({ id: 'myPreciousId' })
+    expect(result).to.equal(expected_result)
+
+    return done()
+  })
+
   function makeSenecaForTest() {
     return Seneca({ log: 'test' })
       .use('entity')
   }
+})
+
+describe('idstr', () => {
+  it('converts the arg to string', (done) => {
+    const result = idstr(123)
+
+    expect(result).to.equal('123')
+
+    return done()
+  })
+
+  it('converts the arg to hex-string, when the arg supports it', (done) => {
+    const hexable = {
+      toHexString() {
+        return 'lolwat'
+      }
+    }
+
+    const result = idstr(hexable)
+
+    expect(result).to.equal('lolwat')
+
+    return done()
+  })
 })
 
 // TODO: Move this under ./test/support/helpers.js

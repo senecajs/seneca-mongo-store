@@ -7,7 +7,7 @@ const { describe, before, beforeEach, after, afterEach } = lab
 const it = make_it(lab)
 
 const Util = require('util')
-const { fixquery } = require('../../lib/common')
+const { fixquery } = require('../../lib/intern')
 
 describe('fixquery', () => {
   it('handles the native$-qualifier', (done) => {

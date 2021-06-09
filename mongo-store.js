@@ -15,7 +15,7 @@ const {
   metaquery,
   makeent,
   should_merge,
-} = require('./lib/common')
+} = require('./lib/intern')
 
 /*
 native$ = object => use object as query, no meta settings

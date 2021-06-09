@@ -3,7 +3,7 @@
 
 # seneca-mongo-store
 [![npm version][npm-badge]][npm-url]
-[![Build Status][travis-badge]][travis-url]
+[![Build](https://github.com/senecajs/seneca-mongo-store/workflows/build/badge.svg)][https://github.com/senecajs/seneca-mongo-store/actions/workflows/build.yml]
 [![Coveralls][BadgeCoveralls]][Coveralls]
 [![Dependency Status][david-badge]][david-url]
 [![Maintainability](https://api.codeclimate.com/v1/badges/5948324b4b0c8fbc6471/maintainability)](https://codeclimate.com/github/senecajs/seneca-mongo-store/maintainability)

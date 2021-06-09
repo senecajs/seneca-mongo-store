@@ -21,21 +21,15 @@ const it = make_it(lab)
 
 const Shared = require('seneca-store-test')
 
-// TODO: Seneca must be initialized inside a describe block, else it will
-// litter the terminal with log output.
-//
-const si = makeSenecaForTest()
-
-// TODO: Seneca must be initialized inside a describe block, else it will
-// litter the terminal with log output.
-//
-const si_merge = makeSenecaForTest({
-  mongo_store_opts: {
-    merge: false,
-  }
-})
-
 describe('mongo tests', function () {
+  const si = makeSenecaForTest()
+
+  const si_merge = makeSenecaForTest({
+    mongo_store_opts: {
+      merge: false
+    }
+  })
+
   before({}, () => {
     return Promise.all([waitOnSeneca(si), waitOnSeneca(si_merge)])
   })
@@ -43,17 +37,17 @@ describe('mongo tests', function () {
   Shared.basictest({
     seneca: si,
     senecaMerge: si_merge,
-    script: lab,
+    script: lab
   })
 
   Shared.limitstest({
     seneca: si,
-    script: lab,
+    script: lab
   })
 
   Shared.sorttest({
     seneca: si,
-    script: lab,
+    script: lab
   })
 
   describe('upsert tests', () => {

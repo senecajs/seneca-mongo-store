@@ -1,3 +1,5 @@
+const Seneca = require('seneca')
+
 const Lab = require('@hapi/lab')
 const Code = require('@hapi/code')
 const expect = Code.expect
@@ -10,7 +12,7 @@ const it = make_it(lab)
 const Util = require('util')
 
 const { intern } = require('../../lib/intern')
-const { fixquery, metaquery, makeid } = intern
+const { fixquery, metaquery, makeid, makeent } = intern
 
 
 describe('fixquery', () => {
@@ -273,6 +275,24 @@ describe('makeid', () => {
 
     return done()
   })
+})
+
+describe('makeent', () => {
+  const si = makeSenecaForTest()
+
+  it('returns null when the doc is null', (done) => {
+    const ent = si.make('products')
+    const result = makeent(null, ent, si)
+
+    expect(result).to.equal(null)
+
+    return done()
+  })
+
+  function makeSenecaForTest() {
+    return Seneca({ log: 'test' })
+      .use('entity')
+  }
 })
 
 // TODO: Move this under ./test/support/helpers.js

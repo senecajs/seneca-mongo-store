@@ -204,23 +204,24 @@ module.exports = function (opts) {
         delete entp.id
 
         let set = entp
-        let func = 'replaceOne'
+        let func = 'findOneAndReplace'
 
         if (intern.should_merge(ent, opts)) {
           set = Dot.flatten(entp)
-          func = 'updateOne'
+          func = 'findOneAndUpdate'
         }
 
-        coll[func](q, set, { upsert: true }, function (err) {
-          if (!error(msg, err, done)) {
-            seneca.log.debug('save/update', ent, desc)
-
-            coll.findOne(q, {}, function (err, doc) {
-              if (!error(msg, err, done)) {
-                return done(null, intern.makeent(doc, ent, seneca))
-              }
-            })
+        coll[func](q, set, { upsert: true, returnOriginal: false }, function (err, update) {
+          if (error(msg, err, done)) {
+            return
           }
+
+          const doc = update.value
+          const fent = intern.makeent(doc, msg.ent, seneca)
+
+          seneca.log.debug('save/update', ent, desc)
+
+          return done(null, fent)
         })
       }
     },

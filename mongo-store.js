@@ -2,20 +2,12 @@
 'use strict'
 
 const Mongo = require('mongodb')
-const Dot = require('mongo-dot-notation')
 const MongoClient = Mongo.MongoClient
 
-const name = 'mongo-store'
+const Dot = require('mongo-dot-notation')
+const { intern } = require('./lib/intern')
 
-const {
-  ensure_id,
-  makeid,
-  idstr,
-  fixquery,
-  metaquery,
-  makeent,
-  should_merge,
-} = require('./lib/intern')
+const name = 'mongo-store'
 
 /*
 native$ = object => use object as query, no meta settings
@@ -153,7 +145,7 @@ module.exports = function (opts) {
 
           const public_entdata = msg.ent.data$(false)
           const replacement = Dot.flatten(public_entdata)
-          const new_id = ensure_id(msg.ent, opts)
+          const new_id = intern.ensure_id(msg.ent, opts)
 
           if (null != new_id) {
             replacement.$setOnInsert = { _id: new_id }
@@ -170,7 +162,7 @@ module.exports = function (opts) {
               }
 
               const doc = update.value
-              const fent = makeent(doc, msg.ent, seneca)
+              const fent = intern.makeent(doc, msg.ent, seneca)
 
               seneca.log.debug('save/upsert', msg.ent, desc)
 
@@ -182,7 +174,7 @@ module.exports = function (opts) {
         function createNew(msg, coll, done) {
           const new_doc = (function () {
             const public_entdata = msg.ent.data$(false)
-            const id = ensure_id(msg.ent, opts)
+            const id = intern.ensure_id(msg.ent, opts)
 
             const new_doc = Object.assign({}, public_entdata)
 
@@ -199,7 +191,7 @@ module.exports = function (opts) {
             }
 
             const doc = inserts.ops[0]
-            const fent = makeent(doc, msg.ent, seneca)
+            const fent = intern.makeent(doc, msg.ent, seneca)
 
             seneca.log.debug('save/insert', msg.ent, desc)
 
@@ -212,13 +204,13 @@ module.exports = function (opts) {
         const ent = msg.ent
         const entp = ent.data$(false)
 
-        const q = { _id: makeid(ent.id) }
+        const q = { _id: intern.makeid(ent.id) }
         delete entp.id
 
         let set = entp
         let func = 'replaceOne'
 
-        if (should_merge(ent, opts)) {
+        if (intern.should_merge(ent, opts)) {
           set = Dot.flatten(entp)
           func = 'updateOne'
         }
@@ -229,7 +221,7 @@ module.exports = function (opts) {
 
             coll.findOne(q, {}, function (err, doc) {
               if (!error(msg, err, done)) {
-                return done(null, makeent(doc, ent, seneca))
+                return done(null, intern.makeent(doc, ent, seneca))
               }
             })
           }
@@ -243,14 +235,14 @@ module.exports = function (opts) {
 
       return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          const mq = metaquery(q)
-          const qq = fixquery(q, opts)
+          const mq = intern.metaquery(q)
+          const qq = intern.fixquery(q, opts)
 
           return coll.findOne(qq, mq, function (err, entp) {
             if (!error(args, err, cb)) {
               let fent = null
               if (entp) {
-                entp.id = idstr(entp._id)
+                entp.id = intern.idstr(entp._id)
                 delete entp._id
                 fent = qent.make$(entp)
               }
@@ -268,8 +260,8 @@ module.exports = function (opts) {
 
       return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          const mq = metaquery(q)
-          const qq = fixquery(q, opts)
+          const mq = intern.metaquery(q)
+          const qq = intern.fixquery(q, opts)
 
           return coll.find(qq, mq, function (err, cur) {
             if (!error(args, err, cb)) {
@@ -279,7 +271,7 @@ module.exports = function (opts) {
                 if (!error(args, err, cb)) {
                   if (entp) {
                     let fent = null
-                    entp.id = idstr(entp._id)
+                    entp.id = intern.idstr(entp._id)
                     delete entp._id
                     fent = qent.make$(entp)
                     list.push(fent)
@@ -304,8 +296,8 @@ module.exports = function (opts) {
 
       getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          const qq = fixquery(q, opts)
-          const mq = metaquery(q)
+          const qq = intern.fixquery(q, opts)
+          const mq = intern.metaquery(q)
 
           if (all) {
             return coll.find(qq, mq, function (err, cur) {
@@ -319,7 +311,7 @@ module.exports = function (opts) {
                       let fent = null
                       if (entp) {
                         toDelete.push(entp._id)
-                        entp.id = idstr(entp._id)
+                        entp.id = intern.idstr(entp._id)
                         delete entp._id
                         fent = qent.make$(entp)
                       }

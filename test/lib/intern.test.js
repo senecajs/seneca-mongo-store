@@ -10,7 +10,7 @@ const it = make_it(lab)
 const Util = require('util')
 
 const { intern } = require('../../lib/intern')
-const { fixquery } = intern
+const { fixquery, metaquery } = intern
 
 
 describe('fixquery', () => {
@@ -126,6 +126,138 @@ describe('fixquery', () => {
 
     expect(result).to.equal({
       foo: 'abc'
+    })
+
+    return done()
+  })
+})
+
+describe('metaquery', () => {
+  it('handles the native$-qualifier of object type', (done) => {
+    const q = {
+      native$: {
+        $or: [{ name: 'cherry' }, { price: 200 }]
+      }
+    }
+
+    const result = metaquery(q)
+
+    expect(result).to.equal({})
+
+    return done()
+  })
+
+  it('handles the native$-qualifier of array type', (done) => {
+    const q = {
+      native$: [{}, 'foobarbaz']
+    }
+
+    const result = metaquery(q)
+
+    expect(result).to.equal('foobarbaz')
+
+    return done()
+  })
+
+  it('handles the sort$-qualifier', (done) => {
+    const q = {
+      sort$: { email: 1 }
+    }
+
+    const result = metaquery(q)
+
+    expect(result).to.equal({ sort: [['email', 'ascending']] })
+
+    return done()
+  })
+
+  it('handles the sort$-qualifier', (done) => {
+    const q = {
+      sort$: { email: -1 }
+    }
+
+    const result = metaquery(q)
+
+    expect(result).to.equal({ sort: [['email', 'descending']] })
+
+    return done()
+  })
+
+  // NOTE: This has been the default behavior in seneca-mongo-store@4.0.0.
+  //
+  it('given the sort$-qualifier, only sorts by one field', (done) => {
+    const q = {
+      sort$: { email: 1, age: 1 }
+    }
+
+    const result = metaquery(q)
+
+    expect(result).to.equal({ sort: [['email', 'ascending']] })
+
+    return done()
+  })
+
+  it('handles the limit$-qualifier', (done) => {
+    const q = { limit$: 5 } 
+    const result = metaquery(q)
+
+    expect(result).to.equal({ limit: 5 })
+
+    return done()
+  })
+
+  it('handles a negative limit$', (done) => {
+    const q = { limit$: -5 }
+
+    const result = metaquery(q)
+
+    expect(result).to.equal({ limit: 0 })
+
+    return done()
+  })
+
+  it('handles the skip$-qualifier', (done) => {
+    const q = { skip$: 5 } 
+    const result = metaquery(q)
+
+    expect(result).to.equal({ skip: 5 })
+
+    return done()
+  })
+
+  it('handles a negative skip$', (done) => {
+    const q = { skip$: -5 }
+    const result = metaquery(q)
+
+    expect(result).to.equal({ skip: 0 })
+
+    return done()
+  })
+
+  it('handles the field$-qualifier', (done) => {
+    const q = { fields$: ['email', 'score'] }
+    const result = metaquery(q)
+
+    expect(result).to.equal({ fields: ['email', 'score'] })
+
+    return done()
+  })
+
+  it('handles multiple supported qualifiers', (done) => {
+    const q = {
+      sort$: { email: 1 },
+      limit$: 10,
+      skip$: 1,
+      fields$: ['email']
+    }
+
+    const result = metaquery(q)
+
+    expect(result).to.equal({
+      sort: [['email', 'ascending']],
+      limit: 10,
+      skip: 1,
+      fields: ['email']
     })
 
     return done()

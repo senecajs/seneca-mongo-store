@@ -119,10 +119,6 @@ module.exports = function (opts) {
         return doUpsert(upsert_fields, msg, coll, done)
 
         function isUpsert(msg) {
-          if (null == msg.q) {
-            return null
-          }
-
           if (!Array.isArray(msg.q.upsert$)) {
             return null
           }

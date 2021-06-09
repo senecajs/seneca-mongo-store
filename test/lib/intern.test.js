@@ -10,7 +10,7 @@ const it = make_it(lab)
 const Util = require('util')
 
 const { intern } = require('../../lib/intern')
-const { fixquery, metaquery } = intern
+const { fixquery, metaquery, makeid } = intern
 
 
 describe('fixquery', () => {
@@ -259,6 +259,17 @@ describe('metaquery', () => {
       skip: 1,
       fields: ['email']
     })
+
+    return done()
+  })
+})
+
+describe('makeid', () => {
+  it('returns non-hex-strings as is', (done) => {
+    const fake_id = '_'.repeat(24)
+    const result = makeid(fake_id)
+
+    expect(result).to.equal(fake_id)
 
     return done()
   })

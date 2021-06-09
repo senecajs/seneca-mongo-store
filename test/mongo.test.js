@@ -21,8 +21,14 @@ const it = make_it(lab)
 
 const Shared = require('seneca-store-test')
 
+// TODO: Seneca must be initialized inside a describe block, else it will
+// litter the terminal with log output.
+//
 const si = makeSenecaForTest()
 
+// TODO: Seneca must be initialized inside a describe block, else it will
+// litter the terminal with log output.
+//
 const si_merge = makeSenecaForTest({
   mongo_store_opts: {
     merge: false,

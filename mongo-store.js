@@ -244,7 +244,7 @@ module.exports = function (opts) {
       return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
           const mq = metaquery(q)
-          const qq = fixquery(q)
+          const qq = fixquery(q, opts)
 
           return coll.findOne(qq, mq, function (err, entp) {
             if (!error(args, err, cb)) {
@@ -269,7 +269,7 @@ module.exports = function (opts) {
       return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
           const mq = metaquery(q)
-          const qq = fixquery(q)
+          const qq = fixquery(q, opts)
 
           return coll.find(qq, mq, function (err, cur) {
             if (!error(args, err, cb)) {
@@ -304,7 +304,7 @@ module.exports = function (opts) {
 
       getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          const qq = fixquery(q)
+          const qq = fixquery(q, opts)
           const mq = metaquery(q)
 
           if (all) {

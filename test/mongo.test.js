@@ -26,7 +26,7 @@ const si = makeSenecaForTest()
 const si_merge = makeSenecaForTest({
   mongo_store_opts: {
     merge: false,
-  },
+  }
 })
 
 describe('mongo tests', function () {
@@ -110,6 +110,136 @@ describe('mongo tests', function () {
   describe('extra tests', () => {
     it('extra test', function (done) {
       extratest(si, done)
+    })
+
+    describe('#list$', () => {
+      describe('when mongo_operator_shortcut:false', () => {
+        const si = makeSenecaForTest({
+          mongo_store_opts: {
+            mongo_operator_shortcut: false
+          }
+        })
+
+
+        before(clearDb)
+
+        after(clearDb)
+
+
+        before(() => new Promise((resolve, reject) => {
+          si.make('products')
+            .data$({ name: 'cherry', price: 95 })
+            .save$((err, product) => {
+              if (err) {
+                return reject(err)
+              }
+
+              return resolve(product)
+            })
+        }))
+
+        before(() => new Promise((resolve, reject) => {
+          si.make('products')
+            .data$({ name: 'orange', price: 200 })
+            .save$((err, product) => {
+              if (err) {
+                return reject(err)
+              }
+
+              return resolve(product)
+            })
+        }))
+
+
+        it('removes mongo props from the query', (fin) => {
+          si.test(fin)
+
+          si.make('products')
+            .list$({
+              $or: [{ name: 'cherry' }, { price: 200 }]
+            }, (err, products) => {
+              if (err) {
+                return fin(err)
+              }
+
+              expect(products.length).to.equal(2)
+
+              return fin()
+            })
+        })
+      })
+
+      describe('when mongo_operator_shortcut:true', () => {
+        const si = makeSenecaForTest({
+          mongo_store_opts: {
+            mongo_operator_shortcut: true
+          }
+        })
+
+
+        before(clearDb)
+
+        after(clearDb)
+
+
+        before(() => new Promise((resolve, reject) => {
+          si.make('products')
+            .data$({ name: 'blackberry', price: 95 })
+            .save$((err, product) => {
+              if (err) {
+                return reject(err)
+              }
+
+              return resolve(product)
+            })
+        }))
+
+        before(() => new Promise((resolve, reject) => {
+          si.make('products')
+            .data$({ name: 'orange', price: 200 })
+            .save$((err, product) => {
+              if (err) {
+                return reject(err)
+              }
+
+              return resolve(product)
+            })
+        }))
+
+
+        it('removes mongo props from the query', (fin) => {
+          si.test(fin)
+
+          si.make('products')
+            .list$({
+              $or: [{ name: 'cherry' }, { price: 200 }]
+            }, (err, products) => {
+              if (err) {
+                return fin(err)
+              }
+
+              expect(products.length).to.equal(1)
+              expect(products[0].name).to.equal('orange')
+
+              return fin()
+            })
+        })
+      })
+
+      describe('when mongo_operator_shortcut is missing', () => {
+      })
+
+      function clearDb() {
+        return new Promise((resolve, reject) => {
+          si.make('products').remove$({ all$: true }, (err) => {
+            if (err) {
+              return reject(err)
+            }
+
+            return resolve()
+          })
+        })
+      }
     })
 
     describe('#save$', () => {

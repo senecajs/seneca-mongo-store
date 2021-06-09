@@ -415,12 +415,12 @@ describe('#save$, when the merge:false option is passed to the plugin', () => {
   })
 
 
-  beforeEach(() => clearDb(si_merge))
+  before(() => clearDb(si_merge))
 
-  afterEach(() => clearDb(si_merge))
+  after(() => clearDb(si_merge))
 
 
-  beforeEach(
+  before(
     () =>
       new Promise((resolve, reject) => {
         si_merge
@@ -439,7 +439,7 @@ describe('#save$, when the merge:false option is passed to the plugin', () => {
 
   let target_user_id
 
-  beforeEach(
+  before(
     () =>
       new Promise((resolve, reject) => {
         si_merge
@@ -460,7 +460,7 @@ describe('#save$, when the merge:false option is passed to the plugin', () => {
 
   let target_user
 
-  beforeEach(
+  before(
     () =>
       new Promise((resolve, reject) => {
         // Do a fresh fetch from the db.
@@ -514,9 +514,12 @@ describe('#save$, when the merge:false option is passed to the plugin', () => {
 describe('#save$, when without the merge option', () => {
   const si = makeSenecaForTest()
 
-  beforeEach(() => clearDb(si))
+  before(() => clearDb(si))
 
-  beforeEach(
+  after(() => clearDb(si))
+
+
+  before(
     () =>
       new Promise((resolve, reject) => {
         si.make('users')
@@ -531,9 +534,10 @@ describe('#save$, when without the merge option', () => {
       })
   )
 
+
   let target_user_id
 
-  beforeEach(
+  before(
     () =>
       new Promise((resolve, reject) => {
         si.make('users')
@@ -550,9 +554,10 @@ describe('#save$, when without the merge option', () => {
       })
   )
 
+
   let target_user
 
-  beforeEach(
+  before(
     () =>
       new Promise((resolve, reject) => {
         // Do a fresh fetch from the db.
@@ -563,14 +568,13 @@ describe('#save$, when without the merge option', () => {
           }
 
           Assert.ok(user, 'users')
+
           target_user = user
 
           return resolve()
         })
       })
   )
-
-  afterEach(() => clearDb(si))
 
   it('updates the existing entity', (fin) => {
     si.test(fin)
@@ -604,304 +608,309 @@ describe('#save$, when without the merge option', () => {
   })
 })
 
-describe('upsert, when plugin options include the "generate_id" function', () => {
-  describe('matching entity exists', () => {
-    const new_id = 'bbbba6f73a861890cc1f4e23'
+describe('upsert, generate_id option, matching entity exists', () => {
+  const new_id = 'bbbba6f73a861890cc1f4e23'
 
-    const si = makeSenecaForTest({
-      mongo_store_opts: {
-        generate_id(ent) {
-          if ('age' in ent) {
-            return new_id
-          }
-
-          return null
+  const si = makeSenecaForTest({
+    mongo_store_opts: {
+      generate_id(ent) {
+        if ('age' in ent) {
+          return new_id
         }
+
+        return null
       }
-    })
+    }
+  })
 
-    before(() => waitOnSeneca(si))
-
-    beforeEach(() => clearDb(si))
+  before(() => waitOnSeneca(si))
 
 
-    let target_user_id
+  before(() => clearDb(si))
 
-    beforeEach(
-      () =>
-        new Promise((resolve, reject) => {
-          si.make('users')
-            .data$({ first_name: 'Elvis', last_name: 'Presley' })
-            .save$((err, user) => {
-              if (err) {
-                return reject(err)
-              }
+  after(() => clearDb(si))
 
-              target_user_id = user.id
 
-              return resolve()
-            })
-        })
-    )
+  let target_user_id
 
-    let target_user
-
-    beforeEach(
-      () =>
-        new Promise((resolve, reject) => {
-          // Do a fresh fetch from the db.
-          //
-          si.make('users').load$(target_user_id, (err, user) => {
+  before(
+    () =>
+      new Promise((resolve, reject) => {
+        si.make('users')
+          .data$({ first_name: 'Elvis', last_name: 'Presley' })
+          .save$((err, user) => {
             if (err) {
               return reject(err)
             }
 
-            Assert.ok(user, 'users')
-            target_user = user
+            target_user_id = user.id
 
             return resolve()
           })
-        })
-    )
+      })
+  )
 
-    afterEach(() => clearDb(si))
+  let target_user
 
-    it('updates the fields and ignores the generate_id option', (fin) => {
-      si.test(fin)
-
-      si.make('users')
-        .data$({ first_name: 'Elvis', last_name: 'PRESLEY', age: 25 })
-        .save$({ upsert$: ['first_name'] }, (err) => {
+  before(
+    () =>
+      new Promise((resolve, reject) => {
+        // Do a fresh fetch from the db.
+        //
+        si.make('users').load$(target_user_id, (err, user) => {
           if (err) {
-            return fin(err)
+            return reject(err)
           }
 
-          si.make('users').list$({}, (err, users) => {
-            if (err) {
-              return fin(err)
-            }
+          Assert.ok(user, 'users')
+          target_user = user
 
-            expect(users.length).to.equal(1)
-
-            expect(users[0]).to.contain({
-              first_name: 'Elvis',
-              last_name: 'PRESLEY',
-              age: 25,
-            })
-
-            expect(users[0].id).not.to.equal(new_id)
-
-            return fin()
-          })
+          return resolve()
         })
-    })
-  })
+      })
+  )
 
-  describe('matching entity does not exist', () => {
-    const new_id = 'ffffa6f73a861890cc1f4e23'
+  it('updates the fields and ignores the generate_id option', (fin) => {
+    si.test(fin)
 
-    const si = makeSenecaForTest({
-      mongo_store_opts: {
-        generate_id(_ent) {
-          return new_id
+    si.make('users')
+      .data$({ first_name: 'Elvis', last_name: 'PRESLEY', age: 25 })
+      .save$({ upsert$: ['first_name'] }, (err) => {
+        if (err) {
+          return fin(err)
         }
-      }
-    })
 
-    before(() => waitOnSeneca(si))
-
-
-    beforeEach(() => clearDb(si))
-
-    afterEach(() => clearDb(si))
-
-
-    it('creates a new entity with the given id', (fin) => {
-      si.test(fin)
-
-      si.make('users')
-        .data$({ first_name: 'Frank', last_name: 'Sinatra' })
-        .save$({ upsert$: ['first_name'] }, (err) => {
+        si.make('users').list$({}, (err, users) => {
           if (err) {
             return fin(err)
           }
 
-          si.make('users').list$({}, (err, users) => {
-            if (err) {
-              return fin(err)
-            }
+          expect(users.length).to.equal(1)
 
-            expect(users.length).to.equal(1)
-
-            const user = users[0]
-
-            expect(user.id).to.equal(new_id)
-
-            return fin()
+          expect(users[0]).to.contain({
+            first_name: 'Elvis',
+            last_name: 'PRESLEY',
+            age: 25
           })
+
+          expect(users[0].id).not.to.equal(new_id)
+
+          return fin()
         })
-    })
+      })
   })
 })
 
-describe('upsert, when many matching entities exist', () => {
+describe("upsert, generate_id option, matching entity doesn't exist", () => {
+  const new_id = 'ffffa6f73a861890cc1f4e23'
+
+  const si = makeSenecaForTest({
+    mongo_store_opts: {
+      generate_id(_ent) {
+        return new_id
+      }
+    }
+  })
+
+  before(() => waitOnSeneca(si))
+
+
+  before(() => clearDb(si))
+
+  after(() => clearDb(si))
+
+
+  it('creates a new entity with the given id', (fin) => {
+    si.test(fin)
+
+    si.make('users')
+      .data$({ first_name: 'Frank', last_name: 'Sinatra' })
+      .save$({ upsert$: ['first_name'] }, (err) => {
+        if (err) {
+          return fin(err)
+        }
+
+        si.make('users').list$({}, (err, users) => {
+          if (err) {
+            return fin(err)
+          }
+
+          expect(users.length).to.equal(1)
+
+          const user = users[0]
+
+          expect(user.id).to.equal(new_id)
+
+          return fin()
+        })
+      })
+  })
+})
+
+describe('upsert, matches many entities on 1 upsert$ field', () => {
   const si = makeSenecaForTest()
 
 
-  beforeEach(() => clearDb(si))
+  before(() => clearDb(si))
 
-  afterEach(() => clearDb(si))
+  after(() => clearDb(si))
 
 
-  describe('matches on 1 upsert$ field', () => {
-    beforeEach(
-      () =>
-        new Promise((fin) => {
-          si.make('products')
-            .data$({ label: 'a toothbrush', price: '3.95' })
-            .save$(fin)
-        })
-    )
+  before(
+    () =>
+      new Promise((fin) => {
+        si.make('products')
+          .data$({ label: 'a toothbrush', price: '3.95' })
+          .save$(fin)
+      })
+  )
 
-    beforeEach(
-      () =>
-        new Promise((fin) => {
-          si.make('products')
-            .data$({ label: 'a toothbrush', price: '3.70' })
-            .save$(fin)
-        })
-    )
+  before(
+    () =>
+      new Promise((fin) => {
+        si.make('products')
+          .data$({ label: 'a toothbrush', price: '3.70' })
+          .save$(fin)
+      })
+  )
 
-    beforeEach(
-      () =>
-        new Promise((fin) => {
-          si.make('products')
-            .data$({ label: 'bbs tires', price: '4.10' })
-            .save$(fin)
-        })
-    )
+  before(
+    () =>
+      new Promise((fin) => {
+        si.make('products')
+          .data$({ label: 'bbs tires', price: '4.10' })
+          .save$(fin)
+      })
+  )
 
-    it('updates a single matching entity', (fin) => {
-      si.test(fin)
+  it('updates a single matching entity', (fin) => {
+    si.test(fin)
 
-      si.make('products')
-        .data$({ label: 'a toothbrush', price: '4.95' })
-        .save$({ upsert$: ['label'] }, (err) => {
+    si.make('products')
+      .data$({ label: 'a toothbrush', price: '4.95' })
+      .save$({ upsert$: ['label'] }, (err) => {
+        if (err) {
+          return fin(err)
+        }
+
+        si.make('products').list$({}, (err, products) => {
           if (err) {
             return fin(err)
           }
 
-          si.make('products').list$({}, (err, products) => {
-            if (err) {
-              return fin(err)
-            }
+          expect(products.length).to.equal(3)
 
-            expect(products.length).to.equal(3)
-
-            expect(products[0]).to.contain({
-              label: 'a toothbrush',
-              price: '4.95',
-            })
-
-            expect(products[1]).to.contain({
-              label: 'a toothbrush',
-              price: '3.70',
-            })
-
-            expect(products[2]).to.contain({
-              label: 'bbs tires',
-              price: '4.10',
-            })
-
-            return fin()
+          expect(products[0]).to.contain({
+            label: 'a toothbrush',
+            price: '4.95'
           })
+
+          expect(products[1]).to.contain({
+            label: 'a toothbrush',
+            price: '3.70'
+          })
+
+          expect(products[2]).to.contain({
+            label: 'bbs tires',
+            price: '4.10'
+          })
+
+          return fin()
         })
-    })
+      })
   })
+})
 
-  describe('matches on 2 upsert$ fields', () => {
-    beforeEach(
-      () =>
-        new Promise((fin) => {
-          si.make('products')
-            .data$({
-              label: 'a toothbrush',
-              price: '3.95',
-              coolness_factor: 2,
-            })
-            .save$(fin)
-        })
-    )
+describe('upsert, matches many entities on 2 upsert$ fields', () => {
+  const si = makeSenecaForTest()
 
-    beforeEach(
-      () =>
-        new Promise((fin) => {
-          si.make('products')
-            .data$({
-              label: 'a toothbrush',
-              price: '3.70',
-              coolness_factor: 3,
-            })
-            .save$(fin)
-        })
-    )
 
-    beforeEach(
-      () =>
-        new Promise((fin) => {
-          si.make('products')
-            .data$({
-              label: 'bbs tires',
-              price: '4.10',
-              coolness_factor: 7,
-            })
-            .save$(fin)
-        })
-    )
+  before(() => clearDb(si))
 
-    it('updates a single matching entity', (fin) => {
-      si.test(fin)
+  after(() => clearDb(si))
 
-      si.make('products')
-        .data$({
-          label: 'a toothbrush',
-          price: '3.95',
-          coolness_factor: 4,
-        })
-        .save$({ upsert$: ['label', 'price'] }, (err) => {
+
+  before(
+    () =>
+      new Promise((fin) => {
+        si.make('products')
+          .data$({
+            label: 'a toothbrush',
+            price: '3.95',
+            coolness_factor: 2
+          })
+          .save$(fin)
+      })
+  )
+
+  before(
+    () =>
+      new Promise((fin) => {
+        si.make('products')
+          .data$({
+            label: 'a toothbrush',
+            price: '3.70',
+            coolness_factor: 3
+          })
+          .save$(fin)
+      })
+  )
+
+  before(
+    () =>
+      new Promise((fin) => {
+        si.make('products')
+          .data$({
+            label: 'bbs tires',
+            price: '4.10',
+            coolness_factor: 7
+          })
+          .save$(fin)
+      })
+  )
+
+  it('updates a single matching entity', (fin) => {
+    si.test(fin)
+
+    si.make('products')
+      .data$({
+        label: 'a toothbrush',
+        price: '3.95',
+        coolness_factor: 4
+      })
+      .save$({ upsert$: ['label', 'price'] }, (err) => {
+        if (err) {
+          return fin(err)
+        }
+
+        si.make('products').list$({}, (err, products) => {
           if (err) {
             return fin(err)
           }
 
-          si.make('products').list$({}, (err, products) => {
-            if (err) {
-              return fin(err)
-            }
+          expect(products.length).to.equal(3)
 
-            expect(products.length).to.equal(3)
-
-            expect(products[0]).to.contain({
-              label: 'a toothbrush',
-              price: '3.95',
-              coolness_factor: 4,
-            })
-
-            expect(products[1]).to.contain({
-              label: 'a toothbrush',
-              price: '3.70',
-              coolness_factor: 3,
-            })
-
-            expect(products[2]).to.contain({
-              label: 'bbs tires',
-              price: '4.10',
-              coolness_factor: 7,
-            })
-
-            return fin()
+          expect(products[0]).to.contain({
+            label: 'a toothbrush',
+            price: '3.95',
+            coolness_factor: 4,
           })
+
+          expect(products[1]).to.contain({
+            label: 'a toothbrush',
+            price: '3.70',
+            coolness_factor: 3,
+          })
+
+          expect(products[2]).to.contain({
+            label: 'bbs tires',
+            price: '4.10',
+            coolness_factor: 7,
+          })
+
+          return fin()
         })
-    })
+      })
   })
 })
 
@@ -1201,7 +1210,7 @@ function makeSenecaForTest(opts = {}) {
   seneca.use(require('..'), {
     uri: 'mongodb://127.0.0.1:27017',
     db: 'senecatest',
-    ...mongo_store_opts,
+    ...mongo_store_opts
   })
 
   return seneca

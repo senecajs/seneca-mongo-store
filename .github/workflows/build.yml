@@ -15,11 +15,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [8.x, 10.x, 12.x, 14.x]
+        os: [ubuntu-latest]
+        node-version: [10.x, 12.x, 14.x]
 
     runs-on: ${{ matrix.os }} 
-        
+
+    services:
+      mongodb:
+        image: mongo:3.6
+        ports:
+          - 27017:27017
+
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -27,5 +33,4 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
-    - run: npm run build --if-present
     - run: npm test

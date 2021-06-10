@@ -11,7 +11,10 @@ const { make_it } = require('../support/helpers')
 const it = make_it(lab)
 
 const MongoStore = require('../../')
-const { fixquery, metaquery, makeid, makeent, idstr } = MongoStore.intern
+
+const {
+  fixquery, metaquery, makeid, makeent, idstr, should_strip_mongo_qualifiers
+} = MongoStore.intern
 
 
 describe('fixquery', () => {
@@ -323,6 +326,35 @@ describe('idstr', () => {
     const result = idstr(hexable)
 
     expect(result).to.equal('lolwat')
+
+    return done()
+  })
+})
+
+describe('should_strip_mongo_qualifiers', () => {
+  it('should strip mongo, when false is explicitly passed', (done) => {
+    const plugin_opts = { mongo_operator_shortcut: false }
+    const result = should_strip_mongo_qualifiers(plugin_opts)
+
+    expect(result).to.equal(true)
+
+    return done()
+  })
+
+  it('should keep mongo, when true is explicitly passed', (done) => {
+    const plugin_opts = { mongo_operator_shortcut: true }
+    const result = should_strip_mongo_qualifiers(plugin_opts)
+
+    expect(result).to.equal(false)
+
+    return done()
+  })
+
+  it('should keep mongo, when the option is not passed at all', (done) => {
+    const plugin_opts = { some_other_option: false }
+    const result = should_strip_mongo_qualifiers(plugin_opts)
+
+    expect(result).to.equal(false)
 
     return done()
   })

@@ -205,7 +205,60 @@ describe('#list$, when mongo_operator_shortcut:true', () => {
   }))
 
 
-  it('removes mongo props from the query', (fin) => {
+  it('keeps mongo props in the query', (fin) => {
+    si.test(fin)
+
+    si.make('products')
+      .list$({
+        $or: [{ name: 'cherry' }, { price: 200 }]
+      }, (err, products) => {
+        if (err) {
+          return fin(err)
+        }
+
+        expect(products.length).to.equal(1)
+        expect(products[0].name).to.equal('orange')
+
+        return fin()
+      })
+  })
+})
+
+describe('#list$, when the mongo_operator_shortcut option is missing', () => {
+  const si = makeSenecaForTest()
+
+
+  before(() => clearDb(si))
+
+  after(() => clearDb(si))
+
+
+  before(() => new Promise((resolve, reject) => {
+    si.make('products')
+      .data$({ name: 'blackberry', price: 95 })
+      .save$((err, product) => {
+        if (err) {
+          return reject(err)
+        }
+
+        return resolve(product)
+      })
+  }))
+
+  before(() => new Promise((resolve, reject) => {
+    si.make('products')
+      .data$({ name: 'orange', price: 200 })
+      .save$((err, product) => {
+        if (err) {
+          return reject(err)
+        }
+
+        return resolve(product)
+      })
+  }))
+
+
+  it('keeps mongo props in the query', (fin) => {
     si.test(fin)
 
     si.make('products')

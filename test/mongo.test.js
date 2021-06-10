@@ -224,6 +224,63 @@ describe('#list$, when mongo_operator_shortcut:true', () => {
   })
 })
 
+describe('#list$, mongo_operator_shortcut:true, mixed query', () => {
+  const si = makeSenecaForTest({
+    mongo_store_opts: {
+      mongo_operator_shortcut: true
+    }
+  })
+
+
+  before(() => clearDb(si))
+
+  after(() => clearDb(si))
+
+
+  before(() => new Promise((resolve, reject) => {
+    si.make('products')
+      .data$({ name: 'cherry', price: 95, version: 1 })
+      .save$((err, product) => {
+        if (err) {
+          return reject(err)
+        }
+
+        return resolve(product)
+      })
+  }))
+
+  before(() => new Promise((resolve, reject) => {
+    si.make('products')
+      .data$({ name: 'orange', price: 200, version: 2 })
+      .save$((err, product) => {
+        if (err) {
+          return reject(err)
+        }
+
+        return resolve(product)
+      })
+  }))
+
+
+  it('does not break array-args', (fin) => {
+    si.test(fin)
+
+    si.make('products')
+      .list$({
+        version: [1, 2],
+        $or: [{ name: 'cherry' }, { price: 200 }]
+      }, (err, products) => {
+        if (err) {
+          return fin(err)
+        }
+
+        expect(products.length).to.equal(2)
+
+        return fin()
+      })
+  })
+})
+
 describe('#list$, when the mongo_operator_shortcut option is missing', () => {
   const si = makeSenecaForTest()
 

@@ -110,7 +110,7 @@ describe('fixquery', () => {
       $or: [{ name: 'cherry' }, { price: 200 }]
     }
 
-    const result = fixquery(q)
+    const result = fixquery(q, {})
 
     expect(result).to.equal({
       foo: 'abc',

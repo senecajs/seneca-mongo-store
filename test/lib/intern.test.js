@@ -6,13 +6,12 @@ const expect = Code.expect
 
 const lab = (exports.lab = Lab.script())
 const { describe, before, beforeEach, after, afterEach } = lab
+
+const { make_it } = require('../support/helpers')
 const it = make_it(lab)
 
-
-const Util = require('util')
-
-const Plugin = require('../../')
-const { fixquery, metaquery, makeid, makeent, idstr } = Plugin.intern
+const MongoStore = require('../../')
+const { fixquery, metaquery, makeid, makeent, idstr } = MongoStore.intern
 
 
 describe('fixquery', () => {
@@ -328,23 +327,4 @@ describe('idstr', () => {
     return done()
   })
 })
-
-// TODO: Move this under ./test/support/helpers.js
-//
-function make_it(lab) {
-  return function it(name, opts, func) {
-    if ('function' === typeof opts) {
-      func = opts
-      opts = {}
-    }
-
-    lab.it(
-      name,
-      opts,
-      Util.promisify(function (x, fin) {
-        func(fin)
-      })
-    )
-  }
-}
 

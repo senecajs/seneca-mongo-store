@@ -5,11 +5,12 @@
 
 'use strict'
 
-const Util = require('util')
 const Assert = require('assert')
 
 const Seneca = require('seneca')
 const Async = require('async')
+
+const Shared = require('seneca-store-test')
 
 const Lab = require('@hapi/lab')
 const Code = require('@hapi/code')
@@ -17,9 +18,10 @@ const expect = Code.expect
 
 const lab = (exports.lab = Lab.script())
 const { describe, before, beforeEach, after, afterEach } = lab
+
+const { make_it } = require('./support/helpers')
 const it = make_it(lab)
 
-const Shared = require('seneca-store-test')
 
 describe('shared tests', function () {
   const si = makeSenecaForTest()
@@ -1180,23 +1182,6 @@ describe('mongo regular connection test', function () {
     })
   })
 })
-
-function make_it(lab) {
-  return function it(name, opts, func) {
-    if ('function' === typeof opts) {
-      func = opts
-      opts = {}
-    }
-
-    lab.it(
-      name,
-      opts,
-      Util.promisify(function (x, fin) {
-        func(fin)
-      })
-    )
-  }
-}
 
 function makeSenecaForTest(opts = {}) {
   const seneca = Seneca({ log: 'test' })

@@ -11,8 +11,8 @@ const it = make_it(lab)
 
 const Util = require('util')
 
-const { intern } = require('../../lib/intern')
-const { fixquery, metaquery, makeid, makeent, idstr } = intern
+const Plugin = require('../../')
+const { fixquery, metaquery, makeid, makeent, idstr } = Plugin.intern
 
 
 describe('fixquery', () => {
@@ -347,3 +347,4 @@ function make_it(lab) {
     )
   }
 }
+

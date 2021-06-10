@@ -13,7 +13,7 @@ native$ = object => use object as query, no meta settings
 native$ = array => use first elem as query, second elem as meta settings
 */
 
-module.exports = function (opts) {
+const mongoStore = function (opts) {
   const seneca = this
   let desc
 
@@ -359,7 +359,7 @@ module.exports = function (opts) {
           done(err)
         }
       })
-    },
+    }
   }
 
   const meta = seneca.store.init(seneca, opts, store)
@@ -379,7 +379,12 @@ module.exports = function (opts) {
     name: store.name,
     tag: meta.tag,
     export: {
-      mongo: () => dbinst,
-    },
+      mongo: () => dbinst
+    }
   }
 }
+
+
+mongoStore.intern = intern
+
+module.exports = mongoStore

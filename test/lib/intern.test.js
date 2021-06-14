@@ -107,17 +107,23 @@ describe('fixquery', () => {
   })
 
   it('retains mongo-qualifiers', done => {
-    const q = {
-      foo: 'abc',
-      $or: [{ name: 'cherry' }, { price: 200 }]
+    try {
+      suppressSenecaLogsOnStdout()
+
+      const q = {
+        foo: 'abc',
+        $or: [{ name: 'cherry' }, { price: 200 }]
+      }
+
+      const result = fixquery(q, si, {})
+
+      expect(result).to.equal({
+        foo: 'abc',
+        $or: [{ name: 'cherry' }, { price: 200 }]
+      })
+    } finally {
+      restoreStdout()
     }
-
-    const result = fixquery(q, si, {})
-
-    expect(result).to.equal({
-      foo: 'abc',
-      $or: [{ name: 'cherry' }, { price: 200 }]
-    })
 
     return done()
   })
@@ -432,5 +438,9 @@ function bufferSenecaLogsOnStdout(out_logs) {
 
 function restoreStdout() {
   process.stdout.write = writeToStdout
+}
+
+function suppressSenecaLogsOnStdout() {
+  return bufferSenecaLogsOnStdout([])
 }
 

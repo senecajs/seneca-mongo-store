@@ -18,6 +18,8 @@ const {
 
 
 describe('fixquery', () => {
+  const si = makeSenecaForTest()
+
   it('handles the native$-qualifier', (done) => {
     const q = {
       native$: {
@@ -25,7 +27,7 @@ describe('fixquery', () => {
       }
     }
 
-    const result = fixquery(q)
+    const result = fixquery(q, si, {})
 
     expect(result).to.equal({
       '$or': [{ name: 'cherry' }, { price: 200 }]
@@ -35,7 +37,7 @@ describe('fixquery', () => {
   })
 
   it('handles ids', (done) => {
-    const result = fixquery('myPreciousId')
+    const result = fixquery('myPreciousId', si, {})
 
     expect(result).to.equal({ _id: 'myPreciousId' })
 
@@ -43,7 +45,7 @@ describe('fixquery', () => {
   })
 
   it('handles multiple ids', (done) => {
-    const result = fixquery(['id0', 'id1', 'id2'])
+    const result = fixquery(['id0', 'id1', 'id2'], si, {})
 
     expect(result).to.equal({
       _id: { '$in': ['id0', 'id1', 'id2'] }
@@ -54,7 +56,7 @@ describe('fixquery', () => {
 
   it('handles ids inside a query', (done) => {
     const q = { id: 'myPreciousId' }
-    const result = fixquery(q)
+    const result = fixquery(q, si, {})
 
     expect(result).to.equal({ _id: 'myPreciousId' })
 
@@ -65,7 +67,7 @@ describe('fixquery', () => {
   //
   it('discards other fields when handling ids', (done) => {
     const q = { id: 'myPreciousId', foo: 37 }
-    const result = fixquery(q)
+    const result = fixquery(q, si, {})
 
     expect(result).to.equal({ _id: 'myPreciousId' })
 
@@ -74,7 +76,7 @@ describe('fixquery', () => {
 
   it('handles multiple ids inside a query', (done) => {
     const q = { id: ['id0', 'id1', 'id2'] }
-    const result = fixquery(q)
+    const result = fixquery(q, si, {})
 
     expect(result).to.equal({
       _id: { $in: ['id0', 'id1', 'id2'] }
@@ -85,7 +87,7 @@ describe('fixquery', () => {
 
   it('handles both array- and non-array- fields', done => {
     const q = { score: 123, fruits: ['blackberry', 'oranges'] }
-    const result = fixquery(q)
+    const result = fixquery(q, si, {})
 
     expect(result).to.equal({
       score: 123,
@@ -97,7 +99,7 @@ describe('fixquery', () => {
 
   it('filters out seneca-qualifiers', done => {
     const q = { foo$: 'foo', bar: 37 }
-    const result = fixquery(q)
+    const result = fixquery(q, si, {})
 
     expect(result).to.equal({ bar: 37 })
 
@@ -110,7 +112,7 @@ describe('fixquery', () => {
       $or: [{ name: 'cherry' }, { price: 200 }]
     }
 
-    const result = fixquery(q, {})
+    const result = fixquery(q, si, {})
 
     expect(result).to.equal({
       foo: 'abc',
@@ -126,7 +128,7 @@ describe('fixquery', () => {
       $or: [{ name: 'cherry' }, { price: 200 }]
     }
 
-    const result = fixquery(q, { mongo_operator_shortcut: false })
+    const result = fixquery(q, si, { mongo_operator_shortcut: false })
 
     expect(result).to.equal({
       foo: 'abc'
@@ -134,6 +136,50 @@ describe('fixquery', () => {
 
     return done()
   })
+
+  it('warns about mongo-qualif., mongo_operator_shortcut:true', done => {
+    const all_logs = []
+
+    try {
+      bufferSenecaLogsOnStdout(all_logs)
+
+      const q = {
+        foo: 'abc',
+        $or: [{ name: 'cherry' }, { price: 200 }]
+      }
+
+      void fixquery(q, si, { mongo_operator_shortcut: true })
+    } finally {
+      restoreStdout()
+    }
+
+
+    const warn_logs = all_logs.filter(
+      (log) => 'warn' === log.level_name
+    )
+
+    const deprecation_warning = warn_logs.find(log => {
+      if (!Array.isArray(log.data)) {
+        return false
+      }
+
+      const log_msg = log.data[0]
+
+      if ('string' !== typeof log_msg) {
+        return false
+      }
+
+      return log_msg.includes('Passing MongoDB operators directly')
+    })
+
+    expect(deprecation_warning).to.exist()
+
+
+    return done()
+  })
+  function makeSenecaForTest() {
+    return Seneca({ log: 'test' })
+  }
 })
 
 describe('metaquery', () => {
@@ -359,4 +405,32 @@ describe('should_strip_mongo_qualifiers', () => {
     return done()
   })
 })
+
+
+const writeToStdout = process.stdout.write
+
+function bufferSenecaLogsOnStdout(out_logs) {
+  process.stdout.write = (out) => {
+    const log = (() => {
+      try {
+        return JSON.parse(out)
+      } catch (_err) {
+        return null
+      }
+    })()
+
+    const is_log = null != log && 'level_name' in log
+
+    if (is_log) {
+      out_logs.push(log)
+      return
+    }
+
+    return writeToStdout.call(process.stdout, out)
+  }
+}
+
+function restoreStdout() {
+  process.stdout.write = writeToStdout
+}
 

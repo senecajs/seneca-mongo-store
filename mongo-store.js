@@ -236,7 +236,7 @@ const mongoStore = function (opts) {
       return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
           const mq = intern.metaquery(q)
-          const qq = intern.fixquery(q, opts)
+          const qq = intern.fixquery(q, seneca, opts)
 
           return coll.findOne(qq, mq, function (err, entp) {
             if (!error(args, err, cb)) {
@@ -261,7 +261,7 @@ const mongoStore = function (opts) {
       return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
           const mq = intern.metaquery(q)
-          const qq = intern.fixquery(q, opts)
+          const qq = intern.fixquery(q, seneca, opts)
 
           return coll.find(qq, mq, function (err, cur) {
             if (!error(args, err, cb)) {
@@ -296,8 +296,8 @@ const mongoStore = function (opts) {
 
       getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          const qq = intern.fixquery(q, opts)
           const mq = intern.metaquery(q)
+          const qq = intern.fixquery(q, seneca, opts)
 
           if (all) {
             return coll.find(qq, mq, function (err, cur) {

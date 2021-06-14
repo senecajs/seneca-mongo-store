@@ -13,7 +13,7 @@ native$ = object => use object as query, no meta settings
 native$ = array => use first elem as query, second elem as meta settings
 */
 
-const mongoStore = function (opts) {
+const mongo_store = function mongo_store(options) {
   const seneca = this
   let desc
 
@@ -142,7 +142,7 @@ const mongoStore = function (opts) {
 
           const public_entdata = msg.ent.data$(false)
           const replacement = { $set: public_entdata }
-          const new_id = intern.ensure_id(msg.ent, opts)
+          const new_id = intern.ensure_id(msg.ent, options)
 
           if (null != new_id) {
             replacement.$setOnInsert = { _id: new_id }
@@ -169,7 +169,7 @@ const mongoStore = function (opts) {
         function createNew(msg, coll, done) {
           const new_doc = (function () {
             const public_entdata = msg.ent.data$(false)
-            const id = intern.ensure_id(msg.ent, opts)
+            const id = intern.ensure_id(msg.ent, options)
 
             const new_doc = Object.assign({}, public_entdata)
 
@@ -203,7 +203,7 @@ const mongoStore = function (opts) {
         let set = entp
         let func = 'findOneAndReplace'
 
-        if (intern.should_merge(ent, opts)) {
+        if (intern.should_merge(ent, options)) {
           set = { $set: entp }
           func = 'findOneAndUpdate'
         }
@@ -236,7 +236,7 @@ const mongoStore = function (opts) {
       return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
           const mq = intern.metaquery(q)
-          const qq = intern.fixquery(q, seneca, opts)
+          const qq = intern.fixquery(q, seneca, options)
 
           return coll.findOne(qq, mq, function (err, entp) {
             if (!error(args, err, cb)) {
@@ -261,7 +261,7 @@ const mongoStore = function (opts) {
       return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
           const mq = intern.metaquery(q)
-          const qq = intern.fixquery(q, seneca, opts)
+          const qq = intern.fixquery(q, seneca, options)
 
           return coll.find(qq, mq, function (err, cur) {
             if (!error(args, err, cb)) {
@@ -297,7 +297,7 @@ const mongoStore = function (opts) {
       getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
           const mq = intern.metaquery(q)
-          const qq = intern.fixquery(q, seneca, opts)
+          const qq = intern.fixquery(q, seneca, options)
 
           if (all) {
             return coll.find(qq, mq, function (err, cur) {
@@ -362,11 +362,11 @@ const mongoStore = function (opts) {
     }
   }
 
-  const meta = seneca.store.init(seneca, opts, store)
+  const meta = seneca.store.init(seneca, options, store)
   desc = meta.desc
 
   seneca.add({ init: store.name, tag: meta.tag }, function (args, done) {
-    configure(opts, function (err) {
+    configure(options, function (err) {
       if (err) {
         return seneca.die('store', err, { store: store.name, desc: desc })
       }
@@ -385,6 +385,6 @@ const mongoStore = function (opts) {
 }
 
 
-mongoStore.intern = intern
+mongo_store.intern = intern
 
-module.exports = mongoStore
+module.exports = mongo_store

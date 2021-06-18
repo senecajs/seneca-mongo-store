@@ -2,27 +2,18 @@
 'use strict'
 
 const Mongo = require('mongodb')
-const Dot = require('mongo-dot-notation')
 const MongoClient = Mongo.MongoClient
 
-const name = 'mongo-store'
+const { intern } = require('./lib/intern')
 
-const {
-  ensure_id,
-  makeid,
-  idstr,
-  fixquery,
-  metaquery,
-  makeent,
-  should_merge,
-} = require('./lib/common')
+const name = 'mongo-store'
 
 /*
 native$ = object => use object as query, no meta settings
 native$ = array => use first elem as query, second elem as meta settings
 */
 
-module.exports = function (opts) {
+const mongo_store = function mongo_store(options) {
   const seneca = this
   let desc
 
@@ -117,6 +108,7 @@ module.exports = function (opts) {
         return create(msg, coll, done)
       })
 
+
       function create(msg, coll, done) {
         const upsert_fields = isUpsert(msg)
 
@@ -126,11 +118,8 @@ module.exports = function (opts) {
 
         return doUpsert(upsert_fields, msg, coll, done)
 
-        function isUpsert(msg) {
-          if (null == msg.q) {
-            return null
-          }
 
+        function isUpsert(msg) {
           if (!Array.isArray(msg.q.upsert$)) {
             return null
           }
@@ -152,8 +141,8 @@ module.exports = function (opts) {
           }, {})
 
           const public_entdata = msg.ent.data$(false)
-          const replacement = Dot.flatten(public_entdata)
-          const new_id = ensure_id(msg.ent, opts)
+          const replacement = { $set: public_entdata }
+          const new_id = intern.ensure_id(msg.ent, options)
 
           if (null != new_id) {
             replacement.$setOnInsert = { _id: new_id }
@@ -170,11 +159,9 @@ module.exports = function (opts) {
               }
 
               const doc = update.value
-              const fent = makeent(doc, msg.ent, seneca)
+              const { ent } = msg
 
-              seneca.log.debug('save/upsert', msg.ent, desc)
-
-              return done(null, fent)
+              return finalizeSave('save/upsert', doc, ent, seneca, done)
             }
           )
         }
@@ -182,7 +169,7 @@ module.exports = function (opts) {
         function createNew(msg, coll, done) {
           const new_doc = (function () {
             const public_entdata = msg.ent.data$(false)
-            const id = ensure_id(msg.ent, opts)
+            const id = intern.ensure_id(msg.ent, options)
 
             const new_doc = Object.assign({}, public_entdata)
 
@@ -199,11 +186,9 @@ module.exports = function (opts) {
             }
 
             const doc = inserts.ops[0]
-            const fent = makeent(doc, msg.ent, seneca)
+            const { ent } = msg
 
-            seneca.log.debug('save/insert', msg.ent, desc)
-
-            return done(null, fent)
+            return finalizeSave('save/insert', doc, ent, seneca, done)
           })
         }
       }
@@ -212,28 +197,35 @@ module.exports = function (opts) {
         const ent = msg.ent
         const entp = ent.data$(false)
 
-        const q = { _id: makeid(ent.id) }
+        const q = { _id: intern.makeid(ent.id) }
         delete entp.id
 
         let set = entp
-        let func = 'replaceOne'
+        let func = 'findOneAndReplace'
 
-        if (should_merge(ent, opts)) {
-          set = Dot.flatten(entp)
-          func = 'updateOne'
+        if (intern.should_merge(ent, options)) {
+          set = { $set: entp }
+          func = 'findOneAndUpdate'
         }
 
-        coll[func](q, set, { upsert: true }, function (err) {
-          if (!error(msg, err, done)) {
-            seneca.log.debug('save/update', ent, desc)
-
-            coll.findOne(q, {}, function (err, doc) {
-              if (!error(msg, err, done)) {
-                return done(null, makeent(doc, ent, seneca))
-              }
-            })
+        coll[func](q, set, { upsert: true, returnOriginal: false }, function (err, update) {
+          if (error(msg, err, done)) {
+            return
           }
+
+          const doc = update.value
+          const { ent } = msg
+
+          return finalizeSave('save/update', doc, ent, seneca, done)
         })
+      }
+
+      function finalizeSave(operation_name, doc, ent, seneca, done) {
+        const fent = intern.makeent(doc, ent, seneca)
+
+        seneca.log.debug(operation_name, ent, desc)
+
+        return done(null, fent)
       }
     },
 
@@ -243,14 +235,14 @@ module.exports = function (opts) {
 
       return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          const mq = metaquery(q)
-          const qq = fixquery(q)
+          const mq = intern.metaquery(q)
+          const qq = intern.fixquery(q, seneca, options)
 
           return coll.findOne(qq, mq, function (err, entp) {
             if (!error(args, err, cb)) {
               let fent = null
               if (entp) {
-                entp.id = idstr(entp._id)
+                entp.id = intern.idstr(entp._id)
                 delete entp._id
                 fent = qent.make$(entp)
               }
@@ -268,8 +260,8 @@ module.exports = function (opts) {
 
       return getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          const mq = metaquery(q)
-          const qq = fixquery(q)
+          const mq = intern.metaquery(q)
+          const qq = intern.fixquery(q, seneca, options)
 
           return coll.find(qq, mq, function (err, cur) {
             if (!error(args, err, cb)) {
@@ -279,7 +271,7 @@ module.exports = function (opts) {
                 if (!error(args, err, cb)) {
                   if (entp) {
                     let fent = null
-                    entp.id = idstr(entp._id)
+                    entp.id = intern.idstr(entp._id)
                     delete entp._id
                     fent = qent.make$(entp)
                     list.push(fent)
@@ -304,8 +296,8 @@ module.exports = function (opts) {
 
       getcoll(args, qent, function (err, coll) {
         if (!error(args, err, cb)) {
-          const qq = fixquery(q)
-          const mq = metaquery(q)
+          const mq = intern.metaquery(q)
+          const qq = intern.fixquery(q, seneca, options)
 
           if (all) {
             return coll.find(qq, mq, function (err, cur) {
@@ -319,7 +311,7 @@ module.exports = function (opts) {
                       let fent = null
                       if (entp) {
                         toDelete.push(entp._id)
-                        entp.id = idstr(entp._id)
+                        entp.id = intern.idstr(entp._id)
                         delete entp._id
                         fent = qent.make$(entp)
                       }
@@ -367,14 +359,14 @@ module.exports = function (opts) {
           done(err)
         }
       })
-    },
+    }
   }
 
-  const meta = seneca.store.init(seneca, opts, store)
+  const meta = seneca.store.init(seneca, options, store)
   desc = meta.desc
 
   seneca.add({ init: store.name, tag: meta.tag }, function (args, done) {
-    configure(opts, function (err) {
+    configure(options, function (err) {
       if (err) {
         return seneca.die('store', err, { store: store.name, desc: desc })
       }
@@ -387,7 +379,12 @@ module.exports = function (opts) {
     name: store.name,
     tag: meta.tag,
     export: {
-      mongo: () => dbinst,
-    },
+      mongo: () => dbinst
+    }
   }
 }
+
+
+mongo_store.intern = intern
+
+module.exports = mongo_store

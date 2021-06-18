@@ -46,7 +46,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "mongo-dot-notation": "2.0.0",
     "mongodb": "3.5.9"
   },
   "devDependencies": {

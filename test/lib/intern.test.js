@@ -13,7 +13,8 @@ const it = make_it(lab)
 const MongoStore = require('../../')
 
 const {
-  fixquery, metaquery, makeid, makeent, idstr, should_strip_mongo_qualifiers
+  fixquery, metaquery, makeid, makeent, idstr, should_strip_mongo_qualifiers,
+  attempt_upsert
 } = MongoStore.intern
 
 
@@ -412,6 +413,121 @@ describe('should_strip_mongo_qualifiers', () => {
   })
 })
 
+describe('attempt_upsert', () => {
+  const filter_by = { email: 'jimi.hendrix@example.com' }
+  const replacement = { email: 'jimi.hendrix@experience.com' }
+  const fake_update = { fake$: 'update' }
+
+  const fake_duplicate_error = new Error()
+  fake_duplicate_error.code = 11000
+  fake_duplicate_error.codeName = 'DuplicateKey'
+
+  it('returns the result when the first attempt is successful', (done) => {
+    let num_calls = 0
+    
+    const fake_coll = {
+      findOneAndUpdate(filter_by_arg, replacement_arg, opts_arg, cb) {
+        expect(filter_by_arg).to.equal(filter_by)
+        expect(replacement_arg).to.equal(replacement)
+        expect(opts_arg).to.equal({ upsert: true, returnOriginal: false })
+
+        num_calls++
+
+        return cb(null, fake_update)
+      }
+    }
+
+    attempt_upsert(fake_coll, filter_by, replacement, (err, update) => {
+      if (err) {
+        return done(err)
+      }
+
+      expect(num_calls).to.equal(1)
+      expect(update).to.equal(fake_update)
+
+      return done()
+    })
+  })
+
+  it('tries again on MongoDB duplicate errors', (done) => {
+    let num_calls = 0
+    
+    const fake_coll = {
+      findOneAndUpdate(filter_by_arg, replacement_arg, opts_arg, cb) {
+        num_calls++
+
+        if (1 === num_calls) {
+          return cb(fake_duplicate_error)
+        }
+
+        expect(filter_by_arg).to.equal(filter_by)
+        expect(replacement_arg).to.equal(replacement)
+        expect(opts_arg).to.equal({ upsert: true, returnOriginal: false })
+
+        return cb(null, fake_update)
+      }
+    }
+
+    attempt_upsert(fake_coll, filter_by, replacement, (err, update) => {
+      if (err) {
+        return done(err)
+      }
+
+      expect(num_calls).to.equal(2)
+      expect(update).to.equal(fake_update)
+
+      return done()
+    })
+  })
+
+  it('tries again no more than 3 times', (done) => {
+    let num_calls = 0
+    
+    const fake_coll = {
+      findOneAndUpdate(filter_by_arg, replacement_arg, opts_arg, cb) {
+        expect(filter_by_arg).to.equal(filter_by)
+        expect(replacement_arg).to.equal(replacement)
+        expect(opts_arg).to.equal({ upsert: true, returnOriginal: false })
+
+        num_calls++
+
+        return cb(fake_duplicate_error)
+      }
+    }
+
+    attempt_upsert(fake_coll, filter_by, replacement, (err, update) => {
+      expect(err).to.equal(fake_duplicate_error)
+      expect(num_calls).to.equal(3)
+
+      return done()
+    })
+  })
+
+  it('does not try again on other errors', (done) => {
+    let num_calls = 0
+
+    const fake_error = new Error('some kind of error')
+    
+    const fake_coll = {
+      findOneAndUpdate(filter_by_arg, replacement_arg, opts_arg, cb) {
+        expect(filter_by_arg).to.equal(filter_by)
+        expect(replacement_arg).to.equal(replacement)
+        expect(opts_arg).to.equal({ upsert: true, returnOriginal: false })
+
+        num_calls++
+
+        return cb(fake_error)
+      }
+    }
+
+    attempt_upsert(fake_coll, filter_by, replacement, (err, update) => {
+      expect(err).to.equal(fake_error)
+      expect(num_calls).to.equal(1)
+
+      return done()
+    })
+  })
+})
 
 const writeToStdout = process.stdout.write
 

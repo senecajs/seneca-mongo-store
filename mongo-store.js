@@ -148,22 +148,43 @@ const mongo_store = function mongo_store(options) {
             replacement.$setOnInsert = { _id: new_id }
           }
 
-          return coll.findOneAndUpdate(
-            filter_by,
-            replacement,
-            { upsert: true, returnOriginal: false },
+          return attemptUpsert()
 
-            function (err, update) {
-              if (error(msg, err, done)) {
-                return
+
+          function attemptUpsert(attempt_no = 1) {
+            // NOTE:
+            // Sources:
+            // - https://stackoverflow.com/questions/29305405/mongodb-impossible-e11000-duplicate-key-error-dup-key-when-upserting
+            // - https://jira.mongodb.org/browse/SERVER-14322
+            //
+            // > > It is possible that two updates come in with upsert:true,
+            // > > resulting in neither finding a document and both inserting
+            // > > new documents which conflict on unique index violations of
+            // > > the query predicate.
+            // >
+            // > The "solution" here is to add a retry code into the client.
+            //
+            return coll.findOneAndUpdate(
+              filter_by,
+              replacement,
+              { upsert: true, returnOriginal: false },
+
+              function (err, update) {
+                if (err) {
+                  if (intern.is_mongo_duplicate_key_error(err) && attempt_no < 3) {
+                    return attemptUpsert(attempt_no + 1)
+                  }
+
+                  return error(msg, err, done)
+                }
+
+                const doc = update.value
+                const { ent } = msg
+
+                return finalizeSave('save/upsert', doc, ent, seneca, done)
               }
-
-              const doc = update.value
-              const { ent } = msg
-
-              return finalizeSave('save/upsert', doc, ent, seneca, done)
-            }
-          )
+            )
+          }
         }
 
         function createNew(msg, coll, done) {

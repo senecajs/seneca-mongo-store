@@ -148,12 +148,11 @@ const mongo_store = function mongo_store(options) {
             replacement.$setOnInsert = { _id: new_id }
           }
 
-          return coll.findOneAndUpdate(
+          return intern.attempt_upsert(
+            coll,
             filter_by,
             replacement,
-            { upsert: true, returnOriginal: false },
-
-            function (err, update) {
+            (err, update) => {
               if (error(msg, err, done)) {
                 return
               }
@@ -162,8 +161,7 @@ const mongo_store = function mongo_store(options) {
               const { ent } = msg
 
               return finalizeSave('save/upsert', doc, ent, seneca, done)
-            }
-          )
+            })
         }
 
         function createNew(msg, coll, done) {

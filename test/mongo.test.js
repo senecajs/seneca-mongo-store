@@ -32,9 +32,9 @@ describe('shared tests', function () {
     }
   })
 
-  before(prepareForRaceConditionTesting)
+  before(() => prepareForRaceConditionTesting(si))
 
-  after(unprepareAfterRaceConditionTesting)
+  after(() => unprepareAfterRaceConditionTesting(si))
 
   Shared.basictest({
     seneca: si,
@@ -65,7 +65,7 @@ describe('shared tests', function () {
   // and what field will be used in a race condition test in seneca-store-test.
   // We may want to come up with a better alternative in the future.
   //
-  function prepareForRaceConditionTesting() {
+  function prepareForRaceConditionTesting(si) {
     return new Promise((resolve, reject) => {
       return si.make('users').native$((err, db) => {
         if (err) {
@@ -85,7 +85,7 @@ describe('shared tests', function () {
     })
   }
 
-  function unprepareAfterRaceConditionTesting() {
+  function unprepareAfterRaceConditionTesting(si) {
     return new Promise((resolve, reject) => {
       return si.make('users').native$((err, db) => {
         if (err) {

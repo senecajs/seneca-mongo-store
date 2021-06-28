@@ -55,7 +55,7 @@
     "@hapi/lab": "24.2.1",
     "async": "3.2.0",
     "coveralls": "3.1.0",
-    "prettier": "^2.3.2",
+    "prettier": "2.3.2",
     "seneca": "3.23.3",
     "seneca-entity": "14.0.0",
     "seneca-store-test": "4.0.2"

@@ -1,6 +1,6 @@
 {
   "name": "seneca-mongo-store",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "Seneca data store plugin for MongoDB",
   "main": "mongo-store.js",
   "scripts": {
@@ -16,7 +16,8 @@
     "reset": "npm run clean && npm i && npm test",
     "clean": "rm -rf node_modules package-lock.json yarn.lock",
     "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
-    "repo-publish": "npm run clean && npm i --registry=http://registry.npmjs.org && npm run prettier && npm test && npm run repo-tag && npm publish --access public --registry=http://registry.npmjs.org"
+    "repo-publish": "npm run clean && npm i --registry=http://registry.npmjs.org && npm run repo-publish-quick",
+    "repo-publish-quick": "npm run prettier && npm test && npm run repo-tag && npm publish --access public --registry=http://registry.npmjs.org"
   },
   "repository": {
     "type": "git",
@@ -33,6 +34,7 @@
   "author": "Richard Rodger (http://richardrodger.com)",
   "contributors": [
     "Richard Rodger (http://richardrodger.com)",
+    "Efim Bogdanosky (https://github.com/lilsweetcaligula)",
     "Peter Elger (https://github.com/pelger)",
     "Cristian Ianto (https://github.com/iantocristian)",
     "Mircea Alexandru (https://github.com/mirceaalexandru)",
@@ -46,7 +48,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "mongodb": "3.5.9"
+    "mongodb": "3.6.9"
   },
   "devDependencies": {
     "@hapi/code": "8.0.3",
@@ -55,7 +57,7 @@
     "coveralls": "3.1.0",
     "seneca": "3.23.3",
     "seneca-entity": "14.0.0",
-    "seneca-store-test": "4.0.0"
+    "seneca-store-test": "4.0.2"
   },
   "files": [
     "LICENSE.txt",

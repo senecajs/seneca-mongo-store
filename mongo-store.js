@@ -108,7 +108,6 @@ const mongo_store = function mongo_store(options) {
         return create(msg, coll, done)
       })
 
-
       function create(msg, coll, done) {
         const upsert_fields = isUpsert(msg)
 
@@ -117,7 +116,6 @@ const mongo_store = function mongo_store(options) {
         }
 
         return doUpsert(upsert_fields, msg, coll, done)
-
 
         function isUpsert(msg) {
           if (!Array.isArray(msg.q.upsert$)) {
@@ -161,7 +159,8 @@ const mongo_store = function mongo_store(options) {
               const { ent } = msg
 
               return finalizeSave('save/upsert', doc, ent, seneca, done)
-            })
+            }
+          )
         }
 
         function createNew(msg, coll, done) {
@@ -206,7 +205,10 @@ const mongo_store = function mongo_store(options) {
           func = 'findOneAndUpdate'
         }
 
-        coll[func](q, set, { upsert: true, returnOriginal: false }, function (err, update) {
+        coll[func](q, set, { upsert: true, returnOriginal: false }, function (
+          err,
+          update
+        ) {
           if (error(msg, err, done)) {
             return
           }
@@ -357,7 +359,7 @@ const mongo_store = function mongo_store(options) {
           done(err)
         }
       })
-    }
+    },
   }
 
   const meta = seneca.store.init(seneca, options, store)
@@ -377,11 +379,10 @@ const mongo_store = function mongo_store(options) {
     name: store.name,
     tag: meta.tag,
     export: {
-      mongo: () => dbinst
-    }
+      mongo: () => dbinst,
+    },
   }
 }
-
 
 mongo_store.intern = intern
 

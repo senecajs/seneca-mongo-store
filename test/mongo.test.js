@@ -22,14 +22,13 @@ const { describe, before, beforeEach, after, afterEach } = lab
 const { make_it } = require('./support/helpers')
 const it = make_it(lab)
 
-
 describe('shared tests', function () {
   const si = makeSenecaForTest()
 
   const si_merge = makeSenecaForTest({
     mongo_store_opts: {
-      merge: false
-    }
+      merge: false,
+    },
   })
 
   before(() => prepareForRaceConditionTesting(si))
@@ -39,22 +38,22 @@ describe('shared tests', function () {
   Shared.basictest({
     seneca: si,
     senecaMerge: si_merge,
-    script: lab
+    script: lab,
   })
 
   Shared.limitstest({
     seneca: si,
-    script: lab
+    script: lab,
   })
 
   Shared.sorttest({
     seneca: si,
-    script: lab
+    script: lab,
   })
 
   Shared.upserttest({
     seneca: si,
-    script: lab
+    script: lab,
   })
 
   // NOTE: WARNING: The reason we need a unique index on the users.email
@@ -104,58 +103,60 @@ describe('shared tests', function () {
   }
 })
 
-
 it('extra test', function (done) {
   const si = makeSenecaForTest()
   extratest(si, done)
 })
 
-
 describe('#list$, when mongo_operator_shortcut:false', () => {
   const si = makeSenecaForTest({
     mongo_store_opts: {
-      mongo_operator_shortcut: false
-    }
+      mongo_operator_shortcut: false,
+    },
   })
-
 
   before(() => clearDb(si))
 
   after(() => clearDb(si))
 
+  before(
+    () =>
+      new Promise((resolve, reject) => {
+        si.make('products')
+          .data$({ name: 'cherry', price: 95 })
+          .save$((err, product) => {
+            if (err) {
+              return reject(err)
+            }
 
-  before(() => new Promise((resolve, reject) => {
-    si.make('products')
-      .data$({ name: 'cherry', price: 95 })
-      .save$((err, product) => {
-        if (err) {
-          return reject(err)
-        }
-
-        return resolve(product)
+            return resolve(product)
+          })
       })
-  }))
+  )
 
-  before(() => new Promise((resolve, reject) => {
-    si.make('products')
-      .data$({ name: 'orange', price: 200 })
-      .save$((err, product) => {
-        if (err) {
-          return reject(err)
-        }
+  before(
+    () =>
+      new Promise((resolve, reject) => {
+        si.make('products')
+          .data$({ name: 'orange', price: 200 })
+          .save$((err, product) => {
+            if (err) {
+              return reject(err)
+            }
 
-        return resolve(product)
+            return resolve(product)
+          })
       })
-  }))
-
+  )
 
   it('removes mongo props from the query', (fin) => {
     si.test(fin)
 
-    si.make('products')
-      .list$({
-        $or: [{ name: 'cherry' }, { price: 200 }]
-      }, (err, products) => {
+    si.make('products').list$(
+      {
+        $or: [{ name: 'cherry' }, { price: 200 }],
+      },
+      (err, products) => {
         if (err) {
           return fin(err)
         }
@@ -163,55 +164,60 @@ describe('#list$, when mongo_operator_shortcut:false', () => {
         expect(products.length).to.equal(2)
 
         return fin()
-      })
+      }
+    )
   })
 })
 
 describe('#list$, when mongo_operator_shortcut:true', () => {
   const si = makeSenecaForTest({
     mongo_store_opts: {
-      mongo_operator_shortcut: true
-    }
+      mongo_operator_shortcut: true,
+    },
   })
-
 
   before(() => clearDb(si))
 
   after(() => clearDb(si))
 
+  before(
+    () =>
+      new Promise((resolve, reject) => {
+        si.make('products')
+          .data$({ name: 'blackberry', price: 95 })
+          .save$((err, product) => {
+            if (err) {
+              return reject(err)
+            }
 
-  before(() => new Promise((resolve, reject) => {
-    si.make('products')
-      .data$({ name: 'blackberry', price: 95 })
-      .save$((err, product) => {
-        if (err) {
-          return reject(err)
-        }
-
-        return resolve(product)
+            return resolve(product)
+          })
       })
-  }))
+  )
 
-  before(() => new Promise((resolve, reject) => {
-    si.make('products')
-      .data$({ name: 'orange', price: 200 })
-      .save$((err, product) => {
-        if (err) {
-          return reject(err)
-        }
+  before(
+    () =>
+      new Promise((resolve, reject) => {
+        si.make('products')
+          .data$({ name: 'orange', price: 200 })
+          .save$((err, product) => {
+            if (err) {
+              return reject(err)
+            }
 
-        return resolve(product)
+            return resolve(product)
+          })
       })
-  }))
-
+  )
 
   it('keeps mongo props in the query', (fin) => {
     si.test(fin)
 
-    si.make('products')
-      .list$({
-        $or: [{ name: 'cherry' }, { price: 200 }]
-      }, (err, products) => {
+    si.make('products').list$(
+      {
+        $or: [{ name: 'cherry' }, { price: 200 }],
+      },
+      (err, products) => {
         if (err) {
           return fin(err)
         }
@@ -220,56 +226,61 @@ describe('#list$, when mongo_operator_shortcut:true', () => {
         expect(products[0].name).to.equal('orange')
 
         return fin()
-      })
+      }
+    )
   })
 })
 
 describe('#list$, mongo_operator_shortcut:true, mixed query', () => {
   const si = makeSenecaForTest({
     mongo_store_opts: {
-      mongo_operator_shortcut: true
-    }
+      mongo_operator_shortcut: true,
+    },
   })
-
 
   before(() => clearDb(si))
 
   after(() => clearDb(si))
 
+  before(
+    () =>
+      new Promise((resolve, reject) => {
+        si.make('products')
+          .data$({ name: 'cherry', price: 95, version: 1 })
+          .save$((err, product) => {
+            if (err) {
+              return reject(err)
+            }
 
-  before(() => new Promise((resolve, reject) => {
-    si.make('products')
-      .data$({ name: 'cherry', price: 95, version: 1 })
-      .save$((err, product) => {
-        if (err) {
-          return reject(err)
-        }
-
-        return resolve(product)
+            return resolve(product)
+          })
       })
-  }))
+  )
 
-  before(() => new Promise((resolve, reject) => {
-    si.make('products')
-      .data$({ name: 'orange', price: 200, version: 2 })
-      .save$((err, product) => {
-        if (err) {
-          return reject(err)
-        }
+  before(
+    () =>
+      new Promise((resolve, reject) => {
+        si.make('products')
+          .data$({ name: 'orange', price: 200, version: 2 })
+          .save$((err, product) => {
+            if (err) {
+              return reject(err)
+            }
 
-        return resolve(product)
+            return resolve(product)
+          })
       })
-  }))
-
+  )
 
   it('does not break array-args', (fin) => {
     si.test(fin)
 
-    si.make('products')
-      .list$({
+    si.make('products').list$(
+      {
         version: [1, 2],
-        $or: [{ name: 'cherry' }, { price: 200 }]
-      }, (err, products) => {
+        $or: [{ name: 'cherry' }, { price: 200 }],
+      },
+      (err, products) => {
         if (err) {
           return fin(err)
         }
@@ -277,51 +288,56 @@ describe('#list$, mongo_operator_shortcut:true, mixed query', () => {
         expect(products.length).to.equal(2)
 
         return fin()
-      })
+      }
+    )
   })
 })
 
 describe('#list$, when the mongo_operator_shortcut option is missing', () => {
   const si = makeSenecaForTest()
 
-
   before(() => clearDb(si))
 
   after(() => clearDb(si))
 
+  before(
+    () =>
+      new Promise((resolve, reject) => {
+        si.make('products')
+          .data$({ name: 'blackberry', price: 95 })
+          .save$((err, product) => {
+            if (err) {
+              return reject(err)
+            }
 
-  before(() => new Promise((resolve, reject) => {
-    si.make('products')
-      .data$({ name: 'blackberry', price: 95 })
-      .save$((err, product) => {
-        if (err) {
-          return reject(err)
-        }
-
-        return resolve(product)
+            return resolve(product)
+          })
       })
-  }))
+  )
 
-  before(() => new Promise((resolve, reject) => {
-    si.make('products')
-      .data$({ name: 'orange', price: 200 })
-      .save$((err, product) => {
-        if (err) {
-          return reject(err)
-        }
+  before(
+    () =>
+      new Promise((resolve, reject) => {
+        si.make('products')
+          .data$({ name: 'orange', price: 200 })
+          .save$((err, product) => {
+            if (err) {
+              return reject(err)
+            }
 
-        return resolve(product)
+            return resolve(product)
+          })
       })
-  }))
-
+  )
 
   it('keeps mongo props in the query', (fin) => {
     si.test(fin)
 
-    si.make('products')
-      .list$({
-        $or: [{ name: 'cherry' }, { price: 200 }]
-      }, (err, products) => {
+    si.make('products').list$(
+      {
+        $or: [{ name: 'cherry' }, { price: 200 }],
+      },
+      (err, products) => {
         if (err) {
           return fin(err)
         }
@@ -330,18 +346,17 @@ describe('#list$, when the mongo_operator_shortcut option is missing', () => {
         expect(products[0].name).to.equal('orange')
 
         return fin()
-      })
+      }
+    )
   })
 })
 
 describe('the save$ query includes the id$ field', () => {
   const si = makeSenecaForTest()
 
-
   beforeEach(() => clearDb(si))
 
   afterEach(() => clearDb(si))
-
 
   const new_id = 'ffffa6f73a861890cc1f4e23'
 
@@ -399,8 +414,8 @@ describe('the mongo store plugin is passed the `generate_id` option', () => {
     mongo_store_opts: {
       generate_id(_ent) {
         return new_id
-      }
-    }
+      },
+    },
   })
 
   beforeEach(() => clearDb(si))
@@ -446,7 +461,7 @@ describe('the mongo store plugin is passed the `generate_id` option', () => {
         expect(user).to.contain({
           id: new_id,
           first_name: 'Frank',
-          last_name: 'Sinatra'
+          last_name: 'Sinatra',
         })
 
         return fin()
@@ -462,8 +477,8 @@ describe('both the save$.id$ field is present and the plugin includes the `gener
     mongo_store_opts: {
       generate_id(_ent) {
         return new_id_via_generate_id
-      }
-    }
+      },
+    },
   })
 
   before(() => waitOnSeneca(si))
@@ -522,15 +537,13 @@ describe('both the save$.id$ field is present and the plugin includes the `gener
 describe('#save$, when the merge:false option is passed to the plugin', () => {
   const si_merge = makeSenecaForTest({
     mongo_store_opts: {
-      merge: false
-    }
+      merge: false,
+    },
   })
-
 
   before(() => clearDb(si_merge))
 
   after(() => clearDb(si_merge))
-
 
   before(
     () =>
@@ -547,7 +560,6 @@ describe('#save$, when the merge:false option is passed to the plugin', () => {
           })
       })
   )
-
 
   let target_user_id
 
@@ -569,7 +581,6 @@ describe('#save$, when the merge:false option is passed to the plugin', () => {
       })
   )
 
-
   let target_user
 
   before(
@@ -589,7 +600,6 @@ describe('#save$, when the merge:false option is passed to the plugin', () => {
         })
       })
   )
-
 
   it('replaces the existing entity', (fin) => {
     si_merge.test(fin)
@@ -630,7 +640,6 @@ describe('#save$, when without the merge option', () => {
 
   after(() => clearDb(si))
 
-
   before(
     () =>
       new Promise((resolve, reject) => {
@@ -645,7 +654,6 @@ describe('#save$, when without the merge option', () => {
           })
       })
   )
-
 
   let target_user_id
 
@@ -665,7 +673,6 @@ describe('#save$, when without the merge option', () => {
           })
       })
   )
-
 
   let target_user
 
@@ -731,17 +738,15 @@ describe('upsert, generate_id option, matching entity exists', () => {
         }
 
         return null
-      }
-    }
+      },
+    },
   })
 
   before(() => waitOnSeneca(si))
 
-
   before(() => clearDb(si))
 
   after(() => clearDb(si))
-
 
   let target_user_id
 
@@ -802,7 +807,7 @@ describe('upsert, generate_id option, matching entity exists', () => {
           expect(users[0]).to.contain({
             first_name: 'Elvis',
             last_name: 'PRESLEY',
-            age: 25
+            age: 25,
           })
 
           expect(users[0].id).not.to.equal(new_id)
@@ -820,17 +825,15 @@ describe("upsert, generate_id option, matching entity doesn't exist", () => {
     mongo_store_opts: {
       generate_id(_ent) {
         return new_id
-      }
-    }
+      },
+    },
   })
 
   before(() => waitOnSeneca(si))
 
-
   before(() => clearDb(si))
 
   after(() => clearDb(si))
-
 
   it('creates a new entity with the given id', (fin) => {
     si.test(fin)
@@ -862,11 +865,9 @@ describe("upsert, generate_id option, matching entity doesn't exist", () => {
 describe('upsert, matches many entities on 1 upsert$ field', () => {
   const si = makeSenecaForTest()
 
-
   before(() => clearDb(si))
 
   after(() => clearDb(si))
-
 
   before(
     () =>
@@ -914,17 +915,17 @@ describe('upsert, matches many entities on 1 upsert$ field', () => {
 
           expect(products[0]).to.contain({
             label: 'a toothbrush',
-            price: '4.95'
+            price: '4.95',
           })
 
           expect(products[1]).to.contain({
             label: 'a toothbrush',
-            price: '3.70'
+            price: '3.70',
           })
 
           expect(products[2]).to.contain({
             label: 'bbs tires',
-            price: '4.10'
+            price: '4.10',
           })
 
           return fin()
@@ -936,11 +937,9 @@ describe('upsert, matches many entities on 1 upsert$ field', () => {
 describe('upsert, matches many entities on 2 upsert$ fields', () => {
   const si = makeSenecaForTest()
 
-
   before(() => clearDb(si))
 
   after(() => clearDb(si))
-
 
   before(
     () =>
@@ -949,7 +948,7 @@ describe('upsert, matches many entities on 2 upsert$ fields', () => {
           .data$({
             label: 'a toothbrush',
             price: '3.95',
-            coolness_factor: 2
+            coolness_factor: 2,
           })
           .save$(fin)
       })
@@ -962,7 +961,7 @@ describe('upsert, matches many entities on 2 upsert$ fields', () => {
           .data$({
             label: 'a toothbrush',
             price: '3.70',
-            coolness_factor: 3
+            coolness_factor: 3,
           })
           .save$(fin)
       })
@@ -975,7 +974,7 @@ describe('upsert, matches many entities on 2 upsert$ fields', () => {
           .data$({
             label: 'bbs tires',
             price: '4.10',
-            coolness_factor: 7
+            coolness_factor: 7,
           })
           .save$(fin)
       })
@@ -988,7 +987,7 @@ describe('upsert, matches many entities on 2 upsert$ fields', () => {
       .data$({
         label: 'a toothbrush',
         price: '3.95',
-        coolness_factor: 4
+        coolness_factor: 4,
       })
       .save$({ upsert$: ['label', 'price'] }, (err) => {
         if (err) {
@@ -1305,9 +1304,8 @@ function makeSenecaForTest(opts = {}) {
   seneca.use(require('..'), {
     uri: 'mongodb://127.0.0.1:27017',
     db: 'senecatest',
-    ...mongo_store_opts
+    ...mongo_store_opts,
   })
 
   return seneca
 }
-

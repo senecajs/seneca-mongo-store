@@ -183,7 +183,7 @@ This address must be inserted into the test/mongo.test.js file as the value for 
 
 
 ## License
-Copyright (c) 2012 - 2016, Richard Rodger and other contributors.
+Copyright (c) 2012 - 2021, Richard Rodger and other contributors.
 Licensed under [MIT][].
 
 [MIT]: ./LICENSE.txt

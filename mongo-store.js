@@ -205,19 +205,21 @@ const mongo_store = function mongo_store(options) {
           func = 'findOneAndUpdate'
         }
 
-        coll[func](q, set, { upsert: true, returnOriginal: false }, function (
-          err,
-          update
-        ) {
-          if (error(msg, err, done)) {
-            return
+        coll[func](
+          q,
+          set,
+          { upsert: true, returnOriginal: false },
+          function (err, update) {
+            if (error(msg, err, done)) {
+              return
+            }
+
+            const doc = update.value
+            const { ent } = msg
+
+            return finalizeSave('save/update', doc, ent, seneca, done)
           }
-
-          const doc = update.value
-          const { ent } = msg
-
-          return finalizeSave('save/update', doc, ent, seneca, done)
-        })
+        )
       }
 
       function finalizeSave(operation_name, doc, ent, seneca, done) {
@@ -317,12 +319,13 @@ const mongo_store = function mongo_store(options) {
                       }
                       list.push(fent)
                     } else {
-                      coll.deleteMany({ _id: { $in: toDelete } }, function (
-                        err
-                      ) {
-                        seneca.log.debug('remove/all', q, desc)
-                        cb(err, null)
-                      })
+                      coll.deleteMany(
+                        { _id: { $in: toDelete } },
+                        function (err) {
+                          seneca.log.debug('remove/all', q, desc)
+                          cb(err, null)
+                        }
+                      )
                     }
                   }
                 })

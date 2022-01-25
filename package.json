@@ -61,6 +61,7 @@
     "seneca-store-test": "4.0.2"
   },
   "files": [
+    "lib/**/*.js",
     "LICENSE.txt",
     "README.md",
     "mongo-store.js"

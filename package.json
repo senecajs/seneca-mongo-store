@@ -48,17 +48,17 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "mongodb": "3.6.9"
+    "mongodb": "^3.7.3"
   },
   "devDependencies": {
-    "@hapi/code": "8.0.3",
-    "@hapi/lab": "24.2.1",
-    "async": "3.2.0",
-    "coveralls": "3.1.0",
-    "prettier": "2.3.2",
-    "seneca": "3.23.3",
-    "seneca-entity": "14.0.0",
-    "seneca-store-test": "4.0.2"
+    "@hapi/code": "9.0.2",
+    "@hapi/lab": "25.0.1",
+    "async": "3.2.4",
+    "coveralls": "3.1.1",
+    "prettier": "2.8.0",
+    "seneca": "3.29.0",
+    "seneca-entity": "18.4.0",
+    "seneca-store-test": "5.1.0"
   },
   "files": [
     "lib/**/*.js",

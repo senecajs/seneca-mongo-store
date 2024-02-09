@@ -365,7 +365,9 @@ const mongo_store = function mongo_store(options) {
     },
   }
 
-  const meta = seneca.store.init(seneca, options, store)
+  let init = seneca.export("entity/init");
+  const meta = init(seneca, options, store);
+  // const meta = seneca.store.init(seneca, options, store)
   desc = meta.desc
 
   seneca.add({ init: store.name, tag: meta.tag }, function (args, done) {

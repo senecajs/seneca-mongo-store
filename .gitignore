@@ -24,3 +24,4 @@ docs/annotated
 .history
 package-lock.json
 coverage.html
+.vscode

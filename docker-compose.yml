@@ -1,4 +1,6 @@
-mongo:
-  build: ./docker
-  ports:
-    - "27017:27017"
+version: '3.9'
+services:
+  mongo:
+    build: ./docker
+    ports:
+      - "27017:27017"

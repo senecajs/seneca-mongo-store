@@ -10,6 +10,9 @@
 [![DeepScan grade](https://deepscan.io/api/teams/5016/projects/11815/branches/175630/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=5016&pid=11815&bid=175630)
 [![Gitter chat][gitter-badge]][gitter-url]
 
+| ![Voxgig](https://www.voxgig.com/res/img/vgt01r.png) | This open source module is sponsored and supported by [Voxgig](https://www.voxgig.com). |
+|---|---|
+
 [![js-standard-style][standard-badge]][standard-style]
 
 This module is a plugin for [Seneca.js][]. It provides a storage engine that uses

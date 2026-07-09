@@ -1,4 +1,0 @@
-mongo:
-  build: ./docker
-  ports:
-    - "27017:27017"

@@ -1,0 +1,81 @@
+From 6408846025378950a9a291ed1f518ce9c5722710 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 8 Oct 2026 11:36:09 +0000
+Subject: [PATCH] Run CI on Node 24 and 22 with a MongoDB 9 service container
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01LaHppcejXbSsAH4BZXNsjV
+---
+ .github/workflows/build.yml | 44 +++++++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 19 deletions(-)
+
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+index 424814e..53b7b22 100644
+--- a/.github/workflows/build.yml
++++ b/.github/workflows/build.yml
+@@ -1,37 +1,43 @@
+-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+-
+ name: build
+ 
+ on:
+   push:
+-    branches: [ master ]
++    branches: [master, main]
+   pull_request:
+-    branches: [ master ]
++    branches: [master, main]
+ 
+ jobs:
+   build:
+-    timeout-minutes: 4
++    timeout-minutes: 10
+ 
+     strategy:
+       fail-fast: false
+       matrix:
+-        os: [ubuntu-latest]
+-        node-version: [10.x, 12.x, 14.x]
++        node-version: [24.x, 22.x]
+ 
+-    runs-on: ${{ matrix.os }} 
++    runs-on: ubuntu-latest
+ 
+     services:
+-      mongodb:
+-        image: mongo:3.6
++      mongo:
++        image: mongo:9.0
+         ports:
+-          - 27017:27017
++          - 27117:27017
++        options: >-
++          --health-cmd "mongosh --quiet --eval 'db.adminCommand(\"ping\").ok'"
++          --health-interval 5s
++          --health-timeout 5s
++          --health-retries 20
++
++    env:
++      SENECA_TEST_MONGO_HOST: 127.0.0.1
++      SENECA_TEST_MONGO_PORT: 27117
+ 
+     steps:
+-    - uses: actions/checkout@v2
+-    - name: Use Node.js ${{ matrix.node-version }}
+-      uses: actions/setup-node@v1
+-      with:
+-        node-version: ${{ matrix.node-version }}
+-    - run: npm install
+-    - run: npm test
++      - uses: actions/checkout@v4
++      - name: Use Node.js ${{ matrix.node-version }}
++        uses: actions/setup-node@v4
++        with:
++          node-version: ${{ matrix.node-version }}
++      - run: npm install
++      - run: npm run build --if-present
++      - run: npm test
+-- 
+2.43.0
+

@@ -1,4 +1,13 @@
-mongo:
-  build: ./docker
-  ports:
-    - "27017:27017"
+name: seneca-mongo-store
+
+services:
+  mongo:
+    image: mongo:9.0
+    container_name: seneca-mongo-store-mongo
+    ports:
+      - "27117:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20

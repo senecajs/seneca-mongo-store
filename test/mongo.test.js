@@ -8,6 +8,9 @@
 const Assert = require('assert')
 
 const Seneca = require('seneca')
+
+const MONGO_HOST = process.env.SENECA_TEST_MONGO_HOST || '127.0.0.1'
+const MONGO_PORT = parseInt(process.env.SENECA_TEST_MONGO_PORT || '27117', 10)
 const Async = require('async')
 
 const Shared = require('seneca-store-test')
@@ -21,6 +24,21 @@ const { describe, before, beforeEach, after, afterEach } = lab
 
 const { make_it } = require('./support/helpers')
 const it = make_it(lab)
+
+// Every Seneca instance opened by this file is closed after all tests,
+// so the MongoDB client connections are released and the process exits.
+const opened = []
+
+function track(seneca) {
+  opened.push(seneca)
+  return seneca
+}
+
+after(async function () {
+  for (const seneca of opened) {
+    await new Promise((resolve) => seneca.close(resolve))
+  }
+})
 
 describe('shared tests', function () {
   const si = makeSenecaForTest()
@@ -1254,20 +1272,20 @@ function extratest(si, done) {
   )
 }
 
-const si2 = Seneca()
+const si2 = track(Seneca())
 
 describe('mongo regular connection test', function () {
-  before({}, function (done) {
+  before(function () {
     if (si2.version >= '2.0.0') {
       si2.use('entity')
     }
     si2.use(require('..'), {
       name: 'senecatest',
-      host: '127.0.0.1',
-      port: 27017,
+      host: MONGO_HOST,
+      port: MONGO_PORT,
     })
 
-    si2.ready(done)
+    return waitOnSeneca(si2)
   })
 
   it('simple test', function (done) {
@@ -1293,7 +1311,7 @@ describe('mongo regular connection test', function () {
 })
 
 function makeSenecaForTest(opts = {}) {
-  const seneca = Seneca({ log: 'test' })
+  const seneca = track(Seneca({ log: 'test' }))
 
   if (seneca.version >= '2.0.0') {
     seneca.use('entity')
@@ -1302,7 +1320,7 @@ function makeSenecaForTest(opts = {}) {
   const { mongo_store_opts } = opts
 
   seneca.use(require('..'), {
-    uri: 'mongodb://127.0.0.1:27017',
+    uri: 'mongodb://' + MONGO_HOST + ':' + MONGO_PORT,
     db: 'senecatest',
     ...mongo_store_opts,
   })

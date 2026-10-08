@@ -6,7 +6,8 @@
 A MongoDB store for the Seneca entity API: `save$`, `load$`, `list$` and
 `remove$` read and write MongoDB collections. Works with Seneca 3 and the
 Seneca 4 prerelease (with seneca-entity), on Node 22 and 24. Published on
-npm as `seneca-mongo-store`.
+npm as `@seneca/mongo-store` (releases up to 5.0.1 were published
+unscoped as `seneca-mongo-store`).
 
 [![npm version][npm-badge]][npm-url]
 [![Build](https://github.com/senecajs/seneca-mongo-store/actions/workflows/build.yml/badge.svg)](https://github.com/senecajs/seneca-mongo-store/actions/workflows/build.yml)
@@ -18,7 +19,7 @@ npm as `seneca-mongo-store`.
 ## Install
 
 ```sh
-npm install seneca seneca-entity seneca-mongo-store
+npm install seneca seneca-entity @seneca/mongo-store
 ```
 
 You need a MongoDB server; `npm run services:up` in this repository starts
@@ -108,5 +109,5 @@ License: MIT, see [LICENSE](LICENSE).
 [Senecajs org]: https://github.com/senecajs/
 [node-mongodb-native]: https://github.com/mongodb/node-mongodb-native
 [github issue]: https://github.com/senecajs/seneca-mongo-store/issues
-[npm-badge]: https://img.shields.io/npm/v/seneca-mongo-store.svg
-[npm-url]: https://npmjs.com/package/seneca-mongo-store
+[npm-badge]: https://img.shields.io/npm/v/@seneca/mongo-store.svg
+[npm-url]: https://npmjs.com/package/@seneca/mongo-store

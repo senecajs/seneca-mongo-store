@@ -16,14 +16,14 @@ Any MongoDB server works; change the URI below to point at yours.
 ## 2. Install
 
 ```sh
-npm install seneca seneca-entity seneca-mongo-store
+npm install seneca seneca-entity @seneca/mongo-store
 ```
 
 ## 3. Write the program
 
 This is [examples/getting-started.js](../examples/getting-started.js). Inside
 this repository it loads the plugin with `require('../..')`; in your own
-project use `require('seneca-mongo-store')` or `.use('mongo-store', ...)`.
+project use `require('@seneca/mongo-store')` or `.use('mongo-store', ...)`.
 
 ```js
 const Seneca = require('seneca')

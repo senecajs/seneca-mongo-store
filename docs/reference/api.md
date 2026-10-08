@@ -12,7 +12,7 @@ tagged name, for example `seneca.export('mongo-store$main')`.
 
 ## intern
 
-`require('seneca-mongo-store').intern` holds the internal helpers used by
+`require('@seneca/mongo-store').intern` holds the internal helpers used by
 the store and its unit tests: `ensure_id`, `makeid`, `idstr`, `fixquery`,
 `metaquery`, `makeent`, `should_merge`, `is_seneca_directive`,
 `is_mongo_operator`, `should_strip_mongo_qualifiers`,

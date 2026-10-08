@@ -365,7 +365,13 @@ const mongo_store = function mongo_store(options) {
     },
   }
 
-  const meta = seneca.store.init(seneca, options, store)
+  // seneca-entity 28+ (used with Seneca 4) no longer decorates seneca.store;
+  // the store init function is exported as entity/init instead.
+  const store_init =
+    seneca.store && seneca.store.init
+      ? seneca.store.init
+      : seneca.export('entity/init')
+  const meta = store_init(seneca, options, store)
   desc = meta.desc
 
   seneca.add({ init: store.name, tag: meta.tag }, function (args, done) {

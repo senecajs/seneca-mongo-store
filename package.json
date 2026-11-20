@@ -1,6 +1,6 @@
 {
   "name": "@seneca/mongo-store",
-  "version": "5.1.0",
+  "version": "6.0.0",
   "description": "Seneca data store plugin for MongoDB",
   "main": "mongo-store.js",
   "scripts": {
@@ -19,7 +19,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/senecajs/seneca-mongo-store"
+    "url": "git+https://github.com/senecajs/seneca-mongo-store.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=24"
   },
   "keywords": [
     "seneca",
@@ -51,19 +57,21 @@
   "devDependencies": {
     "@hapi/code": "^9.0.3",
     "@hapi/lab": "^26.0.0",
+    "@seneca/entity": "^29.0.0",
+    "@seneca/store-test": "^7.0.0",
     "async": "3.2.4",
     "prettier": "2.8.0",
-    "seneca": "^4.0.0-rc5",
-    "seneca-entity": "^28.1.0",
-    "seneca-store-test": "^6.0.0"
+    "seneca": "^4.0.0"
   },
   "files": [
     "lib/**/*.js",
+    "CHANGES.md",
     "LICENSE.txt",
     "README.md",
     "mongo-store.js"
   ],
   "peerDependencies": {
-    "seneca": ">=3 || >=4.0.0-rc5"
+    "seneca": "^4.0.0",
+    "@seneca/entity": "^29.0.0"
   }
 }

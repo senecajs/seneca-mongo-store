@@ -5,7 +5,7 @@ Goal: point the store at your MongoDB server and database.
 ## Use a URI
 
 ```js
-seneca.use('mongo-store', {
+seneca.use('@seneca/mongo-store', {
   uri: 'mongodb://127.0.0.1:27017',
   db: 'mydb',
 })
@@ -19,7 +19,7 @@ the database named in the URI, or `test`.
 ## Use host and port
 
 ```js
-seneca.use('mongo-store', {
+seneca.use('@seneca/mongo-store', {
   host: '127.0.0.1', // or server
   port: 27017, // default 27017
   name: 'mydb', // or db
@@ -34,7 +34,7 @@ not set.
 Put them in the URI, URL encoded:
 
 ```js
-seneca.use('mongo-store', {
+seneca.use('@seneca/mongo-store', {
   uri: 'mongodb://user:p%40ss@db.example.com:27017/?authSource=admin',
   db: 'mydb',
 })
@@ -51,14 +51,14 @@ plugin is loaded but never used, for example in a configuration check.
 
 ## Use several stores
 
-Load the plugin more than once with different tags and a seneca-entity
+Load the plugin more than once with different tags and an entity store
 `map`, so each store owns some entity canons:
 
 ```js
 seneca
-  .use('entity')
-  .use('mongo-store$main', { uri: 'mongodb://127.0.0.1:27017', db: 'main' })
-  .use('mongo-store$audit', {
+  .use('@seneca/entity')
+  .use('@seneca/mongo-store$main', { uri: 'mongodb://127.0.0.1:27017', db: 'main' })
+  .use('@seneca/mongo-store$audit', {
     uri: 'mongodb://127.0.0.1:27017',
     db: 'audit',
     map: { '-/-/audit_log': '*' },

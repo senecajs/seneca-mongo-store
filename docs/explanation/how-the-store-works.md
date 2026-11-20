@@ -3,11 +3,11 @@
 ## Lifecycle
 
 The plugin builds a store object with `save`, `load`, `list`, `remove`,
-`close` and `native` functions and hands it to the seneca-entity store
-`init` function. On Seneca 4 with seneca-entity 28 that function is the
-`entity/init` export; older seneca-entity versions decorated `seneca.store`
-instead, and the plugin uses that when present. seneca-entity registers one
-action per command and canon, and adds the close hook.
+`close` and `native` functions and hands it to the store `init` function
+of the entity plugin, the `entity/init` export of `@seneca/entity`. The
+entity plugin must be loaded first; without it the store stops with an
+error that says so. `@seneca/entity` registers one action per command and
+canon, and adds the close hook.
 
 The plugin then adds its `init:mongo-store` action, which Seneca runs while
 loading the plugin. It connects with `MongoClient.connect`, so `ready` only
@@ -32,13 +32,14 @@ which only helps when the upsert fields have a unique index.
 
 ## Seneca 3 versus Seneca 4
 
-The store code is the same for both. Differences are in the surrounding
-packages: seneca-entity 28 exports the store init function, Seneca 4 closes
-through `sys:seneca,cmd:close`, does not wrap errors, and reads plugin
-options only from `use()` and `options.plugin`.
+Version 6 supports Seneca 4 only; Seneca 3 users stay on
+`seneca-mongo-store@5`. On Seneca 4 the entity plugin is `@seneca/entity`,
+which exports the store init function. Seneca 4 closes through
+`sys:seneca,cmd:close`, does not wrap errors, and reads plugin options only
+from `use()` and `options.plugin`.
 
 ## Limits
 
 The plugin uses the `mongodb` 3.7 driver, which logs deprecation warnings
-(for example for `returnOriginal` and `fields`) but works with MongoDB 9.0.
+(for example for `returnOriginal` and `fields`) but works with MongoDB 7.0 and 9.0.
 `sort$` uses only its first field.

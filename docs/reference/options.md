@@ -16,7 +16,7 @@ behaviour when an option is absent. Source: `mongo-store.js` and
 | `merge` | boolean | `true` | `false` replaces whole documents on update. |
 | `generate_id` | function | none | `generate_id(ent)` returns the id for new entities. |
 | `mongo_operator_shortcut` | boolean | `true` | `false` drops top level `$` keys from queries. |
-| `map` | object | `{ '-/-/-': '*' }` | seneca-entity store option: which canons this store serves. |
+| `map` | object | `{ '-/-/-': '*' }` | Entity store option of `@seneca/entity`: which canons this store serves. |
 
 ## uri
 
@@ -69,6 +69,6 @@ keys are removed from the query.
 
 ## map
 
-Handled by seneca-entity, not by this plugin. Use it with a plugin tag to
+Handled by `@seneca/entity`, not by this plugin. Use it with a plugin tag to
 run several stores; see
 [Configure the connection](../how-to/configure-the-connection.md#use-several-stores).

@@ -2,7 +2,7 @@
 
 Goal: run the plugin test suite against a real MongoDB.
 
-1. Use Node 24 or 22 and install the dependencies:
+1. Use Node.js 24 or later and install the dependencies:
 
    ```sh
    npm install
@@ -32,15 +32,7 @@ Goal: run the plugin test suite against a real MongoDB.
 
    Example with another server: `SENECA_TEST_MONGO_PORT=27017 npm test`.
 
-4. Optionally test with the unreleased Seneca 4.0.0 build:
-
-   ```sh
-   npm install --no-save /path/to/seneca-4.0.0.tgz
-   npm test
-   npm install   # back to the seneca devDependency
-   ```
-
-5. Stop and remove the container and its volume:
+4. Stop and remove the container and its volume:
 
    ```sh
    npm run services:down

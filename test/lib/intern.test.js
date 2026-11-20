@@ -356,7 +356,7 @@ describe('makeent', () => {
 
   function makeSenecaForTest() {
     return Seneca({ log: 'test' })
-      .use('entity')
+      .use('@seneca/entity')
   }
 })
 

@@ -16,14 +16,14 @@ Any MongoDB server works; change the URI below to point at yours.
 ## 2. Install
 
 ```sh
-npm install seneca seneca-entity @seneca/mongo-store
+npm install seneca@^4 @seneca/entity @seneca/mongo-store
 ```
 
 ## 3. Write the program
 
 This is [examples/getting-started.js](../examples/getting-started.js). Inside
 this repository it loads the plugin with `require('../..')`; in your own
-project use `require('@seneca/mongo-store')` or `.use('mongo-store', ...)`.
+project use `require('@seneca/mongo-store')` or `.use('@seneca/mongo-store', ...)`.
 
 ```js
 const Seneca = require('seneca')
@@ -34,7 +34,7 @@ const port = process.env.SENECA_TEST_MONGO_PORT || '27117'
 async function main() {
   const seneca = Seneca()
     .test()
-    .use('entity')
+    .use('@seneca/entity')
     .use(require('../..'), {
       uri: 'mongodb://' + host + ':' + port,
       db: 'getting_started',
@@ -70,7 +70,7 @@ main()
 node docs/examples/getting-started.js
 ```
 
-Output with `seneca@4.0.0-rc5` (test mode log lines omitted):
+Output with `seneca@4.0.0` (test mode log lines omitted):
 
 ```
 saved 24 Pink Lady 0.99
@@ -81,8 +81,9 @@ left after remove 0
 
 ## What happens
 
-* `use('entity')` adds the entity API. `seneca-mongo-store` registers itself
-  as the store for every entity (`-/-/-`).
+* `use('@seneca/entity')` adds the entity API. It must be loaded before the
+  store. `@seneca/mongo-store` registers itself as the store for every
+  entity (`-/-/-`).
 * The store connects to MongoDB in its init action, before `ready` fires.
 * `save$` inserts a document into the `fruit` collection. The MongoDB
   `ObjectId` is returned as a 24 character hex string in `id`.

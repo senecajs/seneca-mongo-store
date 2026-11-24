@@ -1,6 +1,6 @@
 # Messages
 
-The store implements the seneca-entity store commands. Each is registered
+The store implements the entity store commands of `@seneca/entity`. Each is registered
 for every canon in `map` (by default all), as `sys:entity,cmd:<cmd>`
 (Seneca 3 also accepts `role:entity,cmd:<cmd>`). Applications normally use
 the entity methods (`save$`, `load$`, `list$`, `remove$`, `native$`).
@@ -45,7 +45,7 @@ Pattern `sys:entity,cmd:native`. Reply: the driver `Db` object.
 
 ## close
 
-seneca-entity registers the store close on `sys:seneca,cmd:close`. It
+`@seneca/entity` registers the store close on `sys:seneca,cmd:close`. It
 closes the MongoDB client once; `seneca.close()` triggers it.
 
 ## init

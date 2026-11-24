@@ -8,7 +8,7 @@ const port = process.env.SENECA_TEST_MONGO_PORT || '27117'
 async function main() {
   const seneca = Seneca()
     .test()
-    .use('entity')
+    .use('@seneca/entity')
     .use(require('../..'), {
       uri: 'mongodb://' + host + ':' + port,
       db: 'getting_started',

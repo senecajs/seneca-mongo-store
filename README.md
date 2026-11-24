@@ -4,10 +4,10 @@
 # @seneca/mongo-store
 
 A MongoDB store for the Seneca entity API: `save$`, `load$`, `list$` and
-`remove$` read and write MongoDB collections. Works with Seneca 3 and the
-Seneca 4 prerelease (with seneca-entity), on Node 22 and 24. Published on
-npm as `@seneca/mongo-store` (releases up to 5.0.1 were published
-unscoped as `seneca-mongo-store`).
+`remove$` read and write MongoDB collections. Version 6 works with
+Seneca 4 and `@seneca/entity` 29, on Node.js 24 or later. Published on npm
+as `@seneca/mongo-store` (releases up to 5.0.1 were published unscoped as
+`seneca-mongo-store`; Seneca 3 users stay on `seneca-mongo-store@5`).
 
 [![npm version][npm-badge]][npm-url]
 [![Build](https://github.com/senecajs/seneca-mongo-store/actions/workflows/build.yml/badge.svg)](https://github.com/senecajs/seneca-mongo-store/actions/workflows/build.yml)
@@ -19,7 +19,7 @@ unscoped as `seneca-mongo-store`).
 ## Install
 
 ```sh
-npm install seneca seneca-entity @seneca/mongo-store
+npm install seneca@^4 @seneca/entity @seneca/mongo-store
 ```
 
 You need a MongoDB server; `npm run services:up` in this repository starts
@@ -31,8 +31,8 @@ one with Docker.
 const Seneca = require('seneca')
 
 const seneca = Seneca()
-  .use('entity')
-  .use('mongo-store', { uri: 'mongodb://127.0.0.1:27017', db: 'mydb' })
+  .use('@seneca/entity')
+  .use('@seneca/mongo-store', { uri: 'mongodb://127.0.0.1:27017', db: 'mydb' })
 
 seneca.ready(async function () {
   const apple = await seneca
@@ -78,8 +78,8 @@ The full feature index is in [docs/README.md](docs/README.md).
 
 ## Contributing
 
-The [Senecajs org][] encourages open participation. To run the tests (Node
-24 or 22, devDependency `seneca@^4.0.0-rc5`):
+The [Senecajs org][] encourages open participation. To run the tests (Node.js
+24 or later, devDependency `seneca@^4.0.0`):
 
 ```sh
 npm install
@@ -98,10 +98,10 @@ The CI workflow is delivered as a patch in [.patches](.patches/README.md)
 This plugin uses the [MongoDB Node.js driver][node-mongodb-native]
 (`mongodb` 3.7) and has been part of Seneca since 2010.
 
-| Plugin | Seneca | seneca-entity | Node | MongoDB tested |
+| Plugin | Seneca | Entity plugin | Node | MongoDB tested |
 | ------ | ------ | ------------- | ---- | -------------- |
-| 5.1 | 4 (tested), 3 | 28 (tested), older via `seneca.store` | 22, 24 | 9.0 |
-| 5.0 | 3 | 18 | 10 to 14 | 3.6 |
+| 6.0 | 4 | `@seneca/entity` 29 | 24 or later | 7.0 |
+| 5.0 | 3 | `seneca-entity` 18 | 10 to 14 | 3.6 |
 
 License: MIT, see [LICENSE](LICENSE).
 

@@ -13,7 +13,7 @@ const MONGO_HOST = process.env.SENECA_TEST_MONGO_HOST || '127.0.0.1'
 const MONGO_PORT = parseInt(process.env.SENECA_TEST_MONGO_PORT || '27117', 10)
 const Async = require('async')
 
-const Shared = require('seneca-store-test')
+const Shared = require('@seneca/store-test')
 
 const Lab = require('@hapi/lab')
 const Code = require('@hapi/code')
@@ -79,7 +79,7 @@ describe('shared tests', function () {
   // the plugin will fail the race condition tests.
   //
   // It is a case of a leaky abstraction that we "know" what collection
-  // and what field will be used in a race condition test in seneca-store-test.
+  // and what field will be used in a race condition test in @seneca/store-test.
   // We may want to come up with a better alternative in the future.
   //
   function prepareForRaceConditionTesting(si) {
@@ -1277,7 +1277,7 @@ const si2 = track(Seneca())
 describe('mongo regular connection test', function () {
   before(function () {
     if (si2.version >= '2.0.0') {
-      si2.use('entity')
+      si2.use('@seneca/entity')
     }
     si2.use(require('..'), {
       name: 'senecatest',
@@ -1314,7 +1314,7 @@ function makeSenecaForTest(opts = {}) {
   const seneca = track(Seneca({ log: 'test' }))
 
   if (seneca.version >= '2.0.0') {
-    seneca.use('entity')
+    seneca.use('@seneca/entity')
   }
 
   const { mongo_store_opts } = opts

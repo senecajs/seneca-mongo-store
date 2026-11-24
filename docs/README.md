@@ -1,4 +1,4 @@
-# seneca-mongo-store documentation
+# @seneca/mongo-store documentation
 
 The documentation follows the [Diátaxis](https://diataxis.fr/) structure.
 Start with the tutorial, use the how-to guides for tasks, look things up in
@@ -48,7 +48,7 @@ The programs are in [examples](examples/).
 | `merge` | option | [Options](reference/options.md#merge) |
 | `generate_id` | option | [Options](reference/options.md) |
 | `mongo_operator_shortcut` | option | [Options](reference/options.md) |
-| `map` | option (seneca-entity store option) | [Options](reference/options.md#map) |
+| `map` | option (entity store option) | [Options](reference/options.md#map) |
 | `sys:entity,cmd:save` | action | [Messages](reference/messages.md#save) |
 | `sys:entity,cmd:load` | action | [Messages](reference/messages.md#load) |
 | `sys:entity,cmd:list` | action | [Messages](reference/messages.md#list) |

@@ -365,12 +365,14 @@ const mongo_store = function mongo_store(options) {
     },
   }
 
-  // seneca-entity 28+ (used with Seneca 4) no longer decorates seneca.store;
-  // the store init function is exported as entity/init instead.
-  const store_init =
-    seneca.store && seneca.store.init
-      ? seneca.store.init
-      : seneca.export('entity/init')
+  // @seneca/entity exports the store init function as entity/init.
+  const store_init = seneca.export('entity/init')
+  if ('function' !== typeof store_init) {
+    throw new Error(
+      'mongo-store: load @seneca/entity before this plugin, for example ' +
+        "seneca.use('@seneca/entity').use('@seneca/mongo-store')"
+    )
+  }
   const meta = store_init(seneca, options, store)
   desc = meta.desc
 

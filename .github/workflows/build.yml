@@ -1,37 +1,47 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
 name: build
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ master ]
+    branches: [master, main]
   pull_request:
-    branches: [ master ]
+    branches: [master, main]
+
+permissions:
+  contents: read
 
 jobs:
   build:
-    timeout-minutes: 4
+    timeout-minutes: 10
 
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [24.x, 26.x]
 
-    runs-on: ${{ matrix.os }} 
+    runs-on: ubuntu-latest
 
     services:
-      mongodb:
-        image: mongo:3.6
+      mongo:
+        image: mongo:9.0
         ports:
-          - 27017:27017
+          - 27117:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand(\"ping\").ok'"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      SENECA_TEST_MONGO_HOST: 127.0.0.1
+      SENECA_TEST_MONGO_PORT: 27117
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm test
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm run build --if-present
+      - run: npm test
